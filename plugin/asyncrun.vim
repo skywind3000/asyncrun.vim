@@ -108,6 +108,11 @@ function! s:NotSupport()
 	call s:ErrorMsg(l:msg)
 endfunc
 
+let s:asyncrun_windows = 0
+let g:asyncrun_windows = 0
+let s:asyncrun_support = 0
+let g:asyncrun_support = 0
+
 " check running in windows
 if has('win32') || has('win64') || has('win95') || has('win16')
 	let s:asyncrun_windows = 1
