@@ -1,5 +1,5 @@
 # Preface
-This plugin allows you to run shell commands in background and output to quickfix window.
+This plugin allows you to run shell commands in background and output to quickfix window in realtime.
 
 ## Install
 Copy `asyncrun.vim` to your `~/.vim/plugin` or use Vundle to install it from `skywind3000/asyncrun.vim` .
@@ -97,4 +97,9 @@ stop the running job, when "!" is included, job will be stopped by signal KILL
 ### Requirements:
     vim 7.4.1829 is minimal version to support async mode
 
+
+## Credits
+Author: skywind3000
+Please vote it if you like it: 
+http://www.vim.org/scripts/script.php?script_id=5431
 
