@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com
 " Last change: 2016.8.24
 "
-" Run shell commands in background and output to quickfix:
+" Run shell command in background and output to quickfix:
 "     :AsyncRun{!} [cmd] ...
 "
 "     when "!" is included, auto-scroll in quickfix will be disabled
@@ -52,7 +52,7 @@
 "     g:asyncrun_status - 'running', 'success' or 'failure'
 "
 " Requirements:
-"     vim version is above 7.4.2100
+"     vim version is above 7.4.1829
 "
 
 "----------------------------------------------------------------------
