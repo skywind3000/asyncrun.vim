@@ -27,6 +27,12 @@ Macro '`%:p:h`' stands for current file dir.
 ### Lookup man page
     :AsyncRun! man -S 3:2:1 <cword>
 
+### Git push
+    :AsyncRun git push origin master
+
+### Setup `<F7>` to compile file
+    :noremap <F7> :AsyncRun gcc % -o %< <cr> 
+
 ## Manual
 
 There are two vim commands: `:AsyncRun` and `:AsyncStop` to control async jobs.
