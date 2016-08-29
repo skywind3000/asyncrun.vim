@@ -347,7 +347,11 @@ function! g:AsyncRun_Job_Start(cmd)
 			if s:asyncrun_windows == 0
 				let l:temp = []
 				for l:item in a:cmd
-					let l:temp += [fnameescape(l:item)]
+					if l:item != '|'
+						let l:temp += [fnameescape(l:item)]
+					else
+						let l:temp += ['|']
+					endif
 				endfor
 				let l:args += [join(l:temp, ' ')]
 			else
