@@ -440,7 +440,7 @@ endfunc
 "----------------------------------------------------------------------
 " AsyncRun
 "----------------------------------------------------------------------
-function! s:AsyncRun(bang, ...)
+function! s:AsyncRun(bang, mods, ...)
 	let $VIM_FILEPATH = expand("%:p")
 	let $VIM_FILENAME = expand("%:t")
 	let $VIM_FILEDIR = expand("%:p:h")
@@ -492,9 +492,13 @@ function! s:AsyncRun(bang, ...)
 		let l:part += [shellescape(l:item)]
 	endfor
 	let l:command = join(l:part, ' ')
-	if g:asyncrun_mode == 0 && s:asyncrun_support != 0
+	let l:mode = g:asyncrun_mode
+	if a:mods == 'verbose'
+		let l:mode = 2
+	endif
+	if l:mode == 0 && s:asyncrun_support != 0
 		call g:AsyncRun_Job_Start(l:cmd)
-	elseif g:asyncrun_mode <= 1 && has('quickfix')
+	elseif l:mode <= 1 && has('quickfix')
 		call s:MakeSave()
 		let &l:makeprg = l:command
 		exec "make!"
@@ -537,8 +541,11 @@ endfunc
 "----------------------------------------------------------------------
 " Commands
 "----------------------------------------------------------------------
-command! -bang -nargs=* AsyncRun call s:AsyncRun('<bang>', <f-args>)
-command! -bang -nargs=0 AsyncStop call s:AsyncStop('<bang>')
+command! -bang -nargs=* AsyncRun 
+	\ call s:AsyncRun('<bang>', <q-mods>, <f-args>)
+
+command! -bang -nargs=0 AsyncStop 
+	\ call s:AsyncStop('<bang>')
 
 
 
