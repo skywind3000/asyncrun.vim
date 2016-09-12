@@ -56,6 +56,13 @@
 " Requirements:
 "     vim 7.4.1829 is minimal version to support async mode
 "
+" Examples:
+"     :AsyncRun gcc % -o %<
+"     :AsyncRun make -f Mymakefile
+"     :AsyncRun! grep -R <cword> .
+"     :noremap <F7> :AsyncRun gcc % -o %< <cr>
+"
+"
 
 "----------------------------------------------------------------------
 "- Global Settings & Variables
