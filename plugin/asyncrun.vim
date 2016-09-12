@@ -9,6 +9,8 @@
 "     :AsyncRun{!} [cmd] ...
 "
 "     when "!" is included, auto-scroll in quickfix will be disabled
+"     parameters are splited by space, if a parameter contains space,
+"     it should be escaped as backslash + space (just like ex commands)
 "
 " Parameters will be expanded if they start with '%', '#' or '<' :
 "     %:p     - File name of current buffer with full path
