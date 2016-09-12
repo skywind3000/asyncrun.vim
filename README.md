@@ -43,7 +43,7 @@ There are two vim commands: `:AsyncRun` and `:AsyncStop` to control async jobs.
 :AsyncRun{!} [cmd] ...
 ```
 
-run shell command in background and output to quickfix. when `!` is included, auto-scroll in quickfix will be disabled.
+run shell command in background and output to quickfix. when `!` is included, auto-scroll in quickfix will be disabled. Parameters are splited by space, if a parameter contains space, it should be escaped as backslash + space (just like ex commands).
 
 Parameters accept macros start with '`%`', '`#`' or '`<`' :
 
@@ -72,7 +72,6 @@ Environment variables are set before executing:
     $VIM_CFILE     - Current filename under cursor
     $VIM_GUI       - Is running under gui ?
     $VIM_VERSION   - Value of v:version
-    $VIM_MODE      - Execute via 0:!, 1:makeprg, 2:system()
     $VIM_COLUMNS   - How many columns in vim's screen
     $VIM_LINES     - How many lines in vim's screen
 
