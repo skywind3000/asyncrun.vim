@@ -1,7 +1,9 @@
 " asyncrun.vim - Run shell commands in background and output to quickfix
 "
 " Maintainer: skywind3000 (at) gmail.com
-" Last change: 2016.8.24
+" Homepage: http://www.vim.org/scripts/script.php?script_id=5431
+"
+" Last change: 2016.9.12
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun{!} [cmd] ...
