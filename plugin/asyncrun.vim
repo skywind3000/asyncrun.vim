@@ -42,7 +42,7 @@
 "     $VIM_LINES     - How many lines in vim's screen
 "
 "     parameters also accept these environment variables wrapped by 
-"     "$(...)", and "$(VIM_FILEDIR)" will be expanded as file path
+"     "$(...)", and "$(VIM_FILEDIR)" will be expanded as file directory
 "
 " Stop the running job by signal TERM:
 "     :AsyncStop{!}
