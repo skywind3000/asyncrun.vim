@@ -75,6 +75,8 @@ Environment variables are set before executing:
     $VIM_COLUMNS   - How many columns in vim's screen
     $VIM_LINES     - How many lines in vim's screen
 
+These environment variables wrapped by `$(...)` (eg. `$(VIM_FILENAME)`) will also be expanded in the parameters.
+
 ### AsyncStop - Stop the running job
 
 ```VimL
@@ -96,6 +98,25 @@ stop the running job, when "!" is included, job will be stopped by signal KILL
 ### Requirements:
     vim 7.4.1829 is minimal version to support async mode
 
+## More Examples
+
+### Translate markdown to pdf
+
+```VimL
+:AsyncRun pandoc --output $(VIM_FILENOEXT).pdf %:p
+```
+
+### Invoke chrome to open current html (non-windows)
+
+```VimL
+:AsyncRun chrome %
+```
+
+### Invoke chrome to open current html (windows)
+
+```VimL
+:AsyncRun C:\Program\ Files\ (x86)\Google\Chrome\Application\chrome.exe %
+```
 
 ## Credits
 Author: skywind3000
