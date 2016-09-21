@@ -503,10 +503,17 @@ function! s:AsyncRun(bang, mods, ...)
 	else
 		let s:async_scroll = 1
 	endif
+	let l:mode = g:asyncrun_mode
+	if a:mods == 'verbose'
+		let l:mode = 2
+	endif
 	for l:index in range(a:0)
 		let l:item = a:{l:index + 1}
 		let l:name = l:item
-		if index(['%', '%<', '#', '#<'], l:item) >= 0
+		if l:item == '<exe>'
+			let l:mode = 2
+			continue
+		elseif index(['%', '%<', '#', '#<'], l:item) >= 0
 			let l:name = expand(l:item)
 		elseif index(['%:', '#:'], l:item[:1]) >= 0
 			let l:name = expand(l:item)
@@ -526,10 +533,6 @@ function! s:AsyncRun(bang, mods, ...)
 		let l:part += [shellescape(l:item)]
 	endfor
 	let l:command = join(l:part, ' ')
-	let l:mode = g:asyncrun_mode
-	if a:mods == 'verbose'
-		let l:mode = 2
-	endif
 	if l:mode == 0 && s:asyncrun_support != 0
 		call g:AsyncRun_Job_Start(l:cmd)
 	elseif l:mode <= 1 && has('quickfix')
@@ -575,12 +578,16 @@ endfunc
 "----------------------------------------------------------------------
 " Commands
 "----------------------------------------------------------------------
-command! -bang -nargs=* -complete=file AsyncRun 
-	\ call s:AsyncRun('<bang>', <q-mods>, <f-args>)
+if has('patch-7.4.1900')
+	command! -bang -nargs=+ -complete=file AsyncRun 
+		\ call s:AsyncRun('<bang>', <q-mods>, <f-args>)
+else
+	command! -bang -nargs=+ -complete=file AsyncRun 
+		\ call s:AsyncRun('<bang>', '', <f-args>)
+endif
 
-command! -bang -nargs=0 AsyncStop 
-	\ call s:AsyncStop('<bang>')
 
+command! -bang -nargs=0 AsyncStop call s:AsyncStop('<bang>')
 
 
 
