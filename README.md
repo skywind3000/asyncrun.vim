@@ -130,7 +130,7 @@ Some times when you are opening the quickfix window, you just want to read the c
 
 Spliting a new window in vim will get previous window scrolled, which is annoying when you  toggle quickfix window frequently. You can use vim builtin `winsaveview()` / `winrestview()` to prevent previous window scroll before and after `:copen`.
 
-Fortunately, there is an `asyncrun#quickfix_toggle(height)` function for you to toggle quickfix window in a convenience way.
+So there are some vimscript to write, if you want to use quickfix efficiently. Fortunately, there is an `asyncrun#quickfix_toggle(height)` function for you to toggle quickfix window in a convenience way.
 
 Use F9 to toggle quickfix window rapidly:
 
