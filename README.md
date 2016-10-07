@@ -98,21 +98,6 @@ stop the running job, when "!" is included, job will be stopped by signal KILL
 ### Requirements:
     vim 7.4.1829 is minimal version to support async mode
 
-### Quickfix window:
-
-AsyncRun uses quickfix window to output job results in realtime, in order to see the job outputs, you need open quickfix window at first by using `:copen` (see :help copen).
-
-For convenience, there is an `asyncrun#quickfix_toggle(height)` function for you to toggle quickfix window rapidly (first time to open quickfix, second time to close it).
-
-Use F9 to toggle quickfix window rapidly:
-
-```VimL
-noremap <F9> :call asyncrun#quickfix_toggle(8)<cr>
-```
-
-Now you can have your F9 to toggle quickfix window open or close rapidly.
-
-
 ## More Examples
 
 ### Translate markdown to pdf
@@ -132,6 +117,35 @@ Now you can have your F9 to toggle quickfix window open or close rapidly.
 ```VimL
 :AsyncRun C:\Program\ Files\ (x86)\Google\Chrome\Application\chrome.exe %
 ```
+
+## Best practice with quickfix window
+
+AsyncRun uses quickfix window to show job outputs, in order to see the outputs in realtime, you need open quickfix window at first by using `:copen` (see :help copen).
+
+A better way is to use `:botright copen` when you have multiple vertical splitted windows.
+
+You can leave quickfix window always open or you can make a function to toggle it when you need it.
+
+Some times when you are opening the quickfix window, you just want to read the content in it. But `:copen` will move current window to the quickfix window, so you need save current window id before `:copen` and move to previous window after `:copen` finished. 
+
+Spliting a new window in vim will get previous window scrolled, which is annoying when you  toggle quickfix window frequently. You can use vim builtin `winsaveview()` / `winrestview()` to prevent previous window scroll before and after `:copen`.
+
+Fortunately, there is an `asyncrun#quickfix_toggle(height)` function for you to toggle quickfix window in a convenience way.
+
+Use F9 to toggle quickfix window rapidly:
+
+```VimL
+noremap <F9> :call asyncrun#quickfix_toggle(8)<cr>
+```
+
+This function will:
+
+* Open a new quickfix window if it hasn't been open in the current tab page.
+* Close a quickfix window if it has already been open in the current tab page.
+* Jump back to previous window when open/close the quickfix window
+* Avoid automatic scroll in previous window when open a new quickfix window
+
+Now you can have your F9 to toggle quickfix window open or close rapidly.
 
 ## Credits
 Author: skywind3000

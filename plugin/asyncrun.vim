@@ -68,11 +68,10 @@
 "     :noremap <F7> :AsyncRun gcc % -o %< <cr>
 "
 " Additional:
-"     The output of background job is redirected into quickfix by 
-"     AsyncRun in realtime. To see the result of AsyncRun you need 
-"     open quickfix window by using :copen (:help copen/cclose).
-"     or use ':call asyncrun#quickfix_toggle(8)' to show/close it.
-"
+"     AsyncRun uses quickfix window to show job outputs, in order to 
+"     see the outputs in realtime, you need open quickfix window at 
+"     first by using :copen (see :help copen/cclose). Or use
+"     ':call asyncrun#quickfix_toggle(8)' to open/close it rapidly.
 "
 
 "----------------------------------------------------------------------
