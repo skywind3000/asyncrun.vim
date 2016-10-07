@@ -135,7 +135,7 @@ So there are some vimscript to write, if you want to use quickfix efficiently. F
 Use F9 to toggle quickfix window rapidly:
 
 ```VimL
-noremap <F9> :call asyncrun#quickfix_toggle(8)<cr>
+:noremap <F9> :call asyncrun#quickfix_toggle(8)<cr>
 ```
 
 This function will:
