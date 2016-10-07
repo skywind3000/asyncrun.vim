@@ -67,6 +67,11 @@
 "     :AsyncRun! grep -R <cword> .
 "     :noremap <F7> :AsyncRun gcc % -o %< <cr>
 "
+" Additional:
+"     The output of background job is redirected into quickfix by 
+"     AsyncRun in realtime. To see the result of AsyncRun you need 
+"     open quickfix window by using :copen (:help copen/cclose).
+"
 "
 
 "----------------------------------------------------------------------
