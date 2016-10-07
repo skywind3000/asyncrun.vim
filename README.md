@@ -98,6 +98,21 @@ stop the running job, when "!" is included, job will be stopped by signal KILL
 ### Requirements:
     vim 7.4.1829 is minimal version to support async mode
 
+### Quickfix window:
+
+AsyncRun uses quickfix window to output job results in realtime, in order to see the job outputs, you need open quickfix window at first by using `:copen` (see :help copen).
+
+For convenience, there is an `asyncrun#quickfix_toggle(height)` function for you to toggle quickfix window rapidly (first time to open quickfix, second time to close it).
+
+Use F9 to toggle quickfix window rapidly:
+
+```VimL
+noremap <F9> :call asyncrun#quickfix_toggle(8)<cr>
+```
+
+Now you can have your F9 to toggle quickfix window open or close rapidly.
+
+
 ## More Examples
 
 ### Translate markdown to pdf

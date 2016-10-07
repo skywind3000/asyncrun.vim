@@ -71,6 +71,7 @@
 "     The output of background job is redirected into quickfix by 
 "     AsyncRun in realtime. To see the result of AsyncRun you need 
 "     open quickfix window by using :copen (:help copen/cclose).
+"     or use ':call asyncrun#quickfix_toggle(8)' to show/close it.
 "
 "
 
@@ -593,6 +594,40 @@ endif
 
 
 command! -bang -nargs=0 AsyncStop call s:AsyncStop('<bang>')
+
+
+
+"----------------------------------------------------------------------
+" Fast command to toggle quickfix
+"----------------------------------------------------------------------
+function! asyncrun#quickfix_toggle(size)
+	function! s:WindowCheck(mode)
+		if getbufvar('%', '&buftype') == 'quickfix'
+			let s:quickfix_open = 1
+			return
+		endif
+		if a:mode == 0
+			let w:quickfix_save = winsaveview()
+		else
+			call winrestview(w:quickfix_save)
+		endif
+	endfunc
+	let s:quickfix_open = 0
+	let l:winnr = winnr()			
+	windo call s:WindowCheck(0)
+	if s:quickfix_open == 0
+		exec 'botright copen '.a:size
+		wincmd k
+	else
+		cclose
+	endif
+	windo call s:WindowCheck(1)
+	try
+		silent exec ''.l:winnr.'wincmd w'
+	catch /.*/
+	endtry
+endfunc
+
 
 
 
