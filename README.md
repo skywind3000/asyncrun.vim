@@ -120,7 +120,7 @@ stop the running job, when "!" is included, job will be stopped by signal KILL
 
 ### Update tags in background
 
-Sometimes, updating tags is very slow in large projects. Previously, there is nothing you can do while waiting ctags running. And with AsyncRun, we can continue editing / navigating our source code while running the ctags:
+Updating tags is very slow for large projects. Previously, there is nothing you can do while waiting ctags running. And now with AsyncRun, we can continue editing / navigating our source code while running the ctags:
 
 ```VimL
 :AsyncRun ctags -R --fields=+S .
