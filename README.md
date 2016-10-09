@@ -118,6 +118,19 @@ stop the running job, when "!" is included, job will be stopped by signal KILL
 :AsyncRun C:\Program\ Files\ (x86)\Google\Chrome\Application\chrome.exe %
 ```
 
+### Update tags in background
+
+Sometimes, updating tags is very slow in large projects. Previously, there is nothing you can do while waiting ctags running. And with AsyncRun, we can continue editing / navigating our source code while running the ctags:
+
+```VimL
+:AsyncRun ctags -R --fields=+S .
+:AsyncRun ctags -R -f %:p:h/ctags.out --fields=+iaS %:p:h
+:AsyncRun ctags -R -f $(VIM_FILEDIR)/ctags.out --fields=+iaS %:p:h
+```
+
+(NOTE: The two commands will be expanded as the same thing)
+
+
 ## Best practice with quickfix window
 
 AsyncRun uses quickfix window to show job outputs, in order to see the outputs in realtime, you need open quickfix window at first by using `:copen` (see :help copen).
