@@ -37,7 +37,7 @@
 "     $VIM_CFILE     - Current filename under cursor
 "     $VIM_GUI       - Is running under gui ?
 "     $VIM_VERSION   - Value of v:version
-"     $VIM_MODE      - Execute via 0:!, 1:makeprg, 2:system()
+"     $VIM_MODE      - Execute via 0:!, 1:makeprg, 2:system(), 3:silent
 "     $VIM_COLUMNS   - How many columns in vim's screen
 "     $VIM_LINES     - How many lines in vim's screen
 "
@@ -559,10 +559,18 @@ function! s:AsyncRun(bang, mods, ...)
 				redir END
 			endif
 			let l:ccc = shellescape(l:tmp)
-			silent exec '!start cmd /C '. l:ccc
-			redraw!
+			if l:mode == 2
+				silent exec '!start cmd /C '. l:ccc
+			else
+				silent exec '!start /b cmd /C '. l:ccc
+			endif
+			redraw
 		else
-			exec '!' . l:command
+			if l:mode == 2
+				exec '!' . l:command
+			else
+				call system(l:command . ' &')
+			endif
 		endif
 	endif
 endfunc
