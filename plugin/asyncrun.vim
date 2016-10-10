@@ -98,7 +98,7 @@ if !exists('g:asyncrun_save')
 endif
 
 if !exists('g:asyncrun_timer')
-	let g:asyncrun_timer = 100
+	let g:asyncrun_timer = -1
 endif
 
 if !exists('g:asyncrun_code')
