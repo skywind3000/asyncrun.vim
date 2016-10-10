@@ -96,7 +96,7 @@ stop the running job, when "!" is included, job will be stopped by signal KILL
     g:asyncrun_status - 'running', 'success' or 'failure'
 
 #### Requirements:
-vim 7.4.1829 is minimal version to support async mode. If you are use older versions, `asyncrun_mode` will fall from `0/async/default` to `1/sync`.
+vim 7.4.1829 is minimal version to support async mode. If you are use older versions, `asyncrun_mode` will fall back from `0/async/default` to `1/sync`.
 
 ## More
 
