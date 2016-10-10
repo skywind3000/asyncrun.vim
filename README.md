@@ -6,38 +6,38 @@ Copy `asyncrun.vim` to your `~/.vim/plugin` or use Vundle to install it from `sk
 
 ## Tutorials
 
-### Async run gcc to compile current file
+#### Async run gcc to compile current file
 	:AsyncRun gcc % -o %<
 	:AsyncRun g++ -O3 % -o %< -lpthread 
 This command will run gcc in the background and output to the quickfix window in realtime. Macro '`%`' stands for filename and '`%>`' represents filename without extension.
 
-### Async run make
+#### Async run make
     :AsyncRun make
 	:AsyncRun make -f makefile
 
-### Grep key word 
+#### Grep key word 
     :AsyncRun! grep -R word . 
     :AsyncRun! grep -R <cword> . 
 when `!` is included, auto-scroll in quickfix will be disabled. `<cword>` represents current word under cursor.
 
-### Compile go project
+#### Compile go project
     :AsyncRun go build %:p:h
 Macro '`%:p:h`' stands for current file dir. 
 
-### Lookup man page
+#### Lookup man page
     :AsyncRun! man -S 3:2:1 <cword>
 
-### Git push
+#### Git push
     :AsyncRun git push origin master
 
-### Setup `<F7>` to compile file
+#### Setup `<F7>` to compile file
     :noremap <F7> :AsyncRun gcc % -o %< <cr> 
 
 ## Manual
 
 There are two vim commands: `:AsyncRun` and `:AsyncStop` to control async jobs.
 
-### AsyncRun - Run shell command
+#### AsyncRun - Run shell command
 
 ```VimL
 :AsyncRun{!} [cmd] ...
@@ -77,7 +77,7 @@ Environment variables are set before executing:
 
 These environment variables wrapped by `$(...)` (eg. `$(VIM_FILENAME)`) will also be expanded in the parameters.
 
-### AsyncStop - Stop the running job
+#### AsyncStop - Stop the running job
 
 ```VimL
 :AsyncStop{!}
@@ -85,40 +85,40 @@ These environment variables wrapped by `$(...)` (eg. `$(VIM_FILENAME)`) will als
 
 stop the running job, when "!" is included, job will be stopped by signal KILL
 
-### Settings:
+#### Settings:
 
     g:asyncrun_exit - script will be executed after finished
     g:asyncrun_bell - non-zero to ring a bell after finished
     g:asyncrun_mode - 0:async(require vim 7.4.1829) 1:sync 2:shell
 
-### Variables:
+#### Variables:
     g:asyncrun_code - exit code
     g:asyncrun_status - 'running', 'success' or 'failure'
 
-### Requirements:
-    vim 7.4.1829 is minimal version to support async mode
+#### Requirements:
+vim 7.4.1829 is minimal version to support async mode. If you are use older versions, `asyncrun_mode` will fall from `0/async/default` to `1/sync`.
 
-## More Examples
+## More
 
-### Translate markdown to pdf
+#### Translate markdown to pdf
 
 ```VimL
 :AsyncRun pandoc --output $(VIM_FILENOEXT).pdf %:p
 ```
 
-### Invoke chrome to open current html (non-windows)
+#### Invoke chrome to open current html (non-windows)
 
 ```VimL
 :AsyncRun chrome %
 ```
 
-### Invoke chrome to open current html (windows)
+#### Invoke chrome to open current html (windows)
 
 ```VimL
 :AsyncRun C:\Program\ Files\ (x86)\Google\Chrome\Application\chrome.exe %
 ```
 
-### Update tags in background
+#### Update tags in background
 
 Updating tags is very slow for large projects. Previously, there is nothing you can do while waiting ctags running. And now with AsyncRun, we can continue editing / navigating our source code while running the ctags:
 
@@ -130,35 +130,12 @@ Updating tags is very slow for large projects. Previously, there is nothing you 
 
 (NOTE: The two commands will be expanded as the same thing)
 
+#### Further Reading
 
-## Best practice with quickfix window
+- [Notify user job finished by playing a sound](https://github.com/skywind3000/asyncrun.vim/wiki/Playing-Sound)
+- [Best practice with quickfix windows](https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-Best-Practice)
+- [View progress in status line](https://github.com/skywind3000/asyncrun.vim/wiki/View-Progress-in-Status-Line)
 
-AsyncRun uses quickfix window to show job outputs, in order to see the outputs in realtime, you need open quickfix window at first by using `:copen` (see :help copen).
-
-A better way is to use `:botright copen` when you have multiple vertical splitted windows.
-
-You can leave quickfix window always open or you can make a function to toggle it when you need it.
-
-Some times when you are opening the quickfix window, you just want to read the content in it. But `:copen` will move current window to the quickfix window, so you need save current window id before `:copen` and move to previous window after `:copen` finished. 
-
-Spliting a new window in vim will get previous window scrolled, which is annoying when you  toggle quickfix window frequently. You can use vim builtin `winsaveview()` / `winrestview()` to prevent previous window scroll before and after `:copen`.
-
-So there are some vimscript to write, if you want to use quickfix efficiently. Fortunately, there is an `asyncrun#quickfix_toggle(height)` function for you to toggle quickfix window in a convenience way.
-
-Use F9 to toggle quickfix window rapidly:
-
-```VimL
-:noremap <F9> :call asyncrun#quickfix_toggle(8)<cr>
-```
-
-This function will:
-
-* Open a new quickfix window if it hasn't been open in the current tab page.
-* Close a quickfix window if it has already been open in the current tab page.
-* Jump back to previous window when open/close the quickfix window
-* Avoid automatic scroll in previous window when open a new quickfix window
-
-Now you can have your F9 to toggle quickfix window open or close rapidly.
 
 ## Credits
 Author: skywind3000
