@@ -100,38 +100,7 @@ vim 7.4.1829 is minimal version to support async mode. If you are use older vers
 
 ## More
 
-#### Translate markdown to pdf
-
-```VimL
-:AsyncRun pandoc --output $(VIM_FILENOEXT).pdf %:p
-```
-
-#### Invoke chrome to open current html (non-windows)
-
-```VimL
-:AsyncRun chrome %
-```
-
-#### Invoke chrome to open current html (windows)
-
-```VimL
-:AsyncRun C:\Program\ Files\ (x86)\Google\Chrome\Application\chrome.exe %
-```
-
-#### Update tags in background
-
-Updating tags is very slow for large projects. Previously, there is nothing you can do while waiting ctags running. And now with AsyncRun, we can continue editing / navigating our source code while running the ctags:
-
-```VimL
-:AsyncRun ctags -R --fields=+S .
-:AsyncRun ctags -R -f %:p:h/ctags.out --fields=+iaS %:p:h
-:AsyncRun ctags -R -f $(VIM_FILEDIR)/ctags.out --fields=+iaS %:p:h
-```
-
-(NOTE: The two commands will be expanded as the same thing)
-
-#### Further Reading
-
+- [Additional examples for using asyncrun (background update ctags, convert md to pdf, lint, ...)](https://github.com/skywind3000/asyncrun.vim/wiki/Additional-Examples)
 - [Notify user job finished by playing a sound](https://github.com/skywind3000/asyncrun.vim/wiki/Playing-Sound)
 - [Best practice with quickfix windows](https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-Best-Practice)
 - [View progress in status line](https://github.com/skywind3000/asyncrun.vim/wiki/View-Progress-in-Status-Line)
