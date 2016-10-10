@@ -409,7 +409,7 @@ function! g:AsyncRun_Job_Start(cmd)
 			if g:asyncrun_timer > 0
 				let l:options = {'repeat':-1}
 				let l:name = 'g:AsyncRun_Job_OnTimer'
-				let s:async_timer = timer_start(1000, l:name, l:options)
+				let s:async_timer = timer_start(100, l:name, l:options)
 			endif
 			let s:async_state = 1
 			let g:asyncrun_status = "running"
