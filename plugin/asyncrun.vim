@@ -210,10 +210,12 @@ endfunc
 " invoked on timer or finished
 function! s:AsyncRun_Job_Update(count)
 	let l:count = 0
+	let l:total = 0
 	while s:async_tail < s:async_head
 		let l:text = s:async_output[s:async_tail]
 		if l:text != '' 
 			caddexpr l:text
+			let l:total += 1
 		endif
 		unlet s:async_output[s:async_tail]
 		let s:async_tail += 1
@@ -222,7 +224,7 @@ function! s:AsyncRun_Job_Update(count)
 			break
 		endif
 	endwhile
-	if s:async_scroll != 0
+	if s:async_scroll != 0 && l:total > 0
 		call s:AsyncRun_Job_AutoScroll()
 	endif
 	return l:count
