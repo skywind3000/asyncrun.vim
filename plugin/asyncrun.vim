@@ -102,7 +102,7 @@ if !exists('g:asyncrun_save')
 endif
 
 if !exists('g:asyncrun_timer')
-	let g:asyncrun_timer = -1
+	let g:asyncrun_timer = 100
 endif
 
 if !exists('g:asyncrun_code')
@@ -220,16 +220,28 @@ function! s:AsyncRun_Job_AutoScroll()
 	endif
 endfunc
 
-" check cursor in quick is on the last line
+" check if quickfix window can scroll now
 function! s:AsyncRun_Job_CheckScroll()
 	if g:asyncrun_last == 0
 		return 1
-	else
+	elseif g:asyncrun_last == 1
 		let s:async_check_last = 1
 		let l:winnr = winnr()
 		windo call s:AsyncRun_Job_Cursor()
 		silent exec ''.l:winnr.'wincmd w'
 		return s:async_check_last
+	elseif g:asyncrun_last == 2
+		if &buftype == 'quickfix'
+			return (line('.') == line('$'))
+		else
+			return 1
+		endif
+	else
+		if &buftype == 'quickfix'
+			return (line('.') == line('$'))
+		else
+			return (!pumvisible())
+		endif
 	endif
 endfunc
 
