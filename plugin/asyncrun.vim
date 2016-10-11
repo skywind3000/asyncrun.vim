@@ -202,7 +202,7 @@ endfunc
 
 " quickfix window cursor check
 function! s:AsyncRun_Job_Cursor()
-	if &ft == 'qf'
+	if &buftype == 'quickfix'
 		if line('.') != line('$')
 			let s:async_check_last = 0
 		endif
