@@ -93,6 +93,10 @@ if !exists('g:asyncrun_mode')
 	let g:asyncrun_mode = 0
 endif
 
+if !exists('g:asyncrun_last')
+	let g:asyncrun_last = 0
+endif
+
 if !exists('g:asyncrun_save')
 	let g:asyncrun_save = 0
 endif
@@ -196,6 +200,15 @@ function! s:AsyncRun_Job_Scroll()
 	endif
 endfunc
 
+" quickfix window cursor check
+function! s:AsyncRun_Job_Cursor()
+	if &ft == 'qf'
+		if line('.') != line('$')
+			let s:async_check_last = 0
+		endif
+	endif
+endfunc
+
 " find quickfix window and scroll to the bottom then return last window
 function! s:AsyncRun_Job_AutoScroll()
 	if s:async_quick == 0
@@ -207,10 +220,24 @@ function! s:AsyncRun_Job_AutoScroll()
 	endif
 endfunc
 
+" check cursor in quick is on the last line
+function! s:AsyncRun_Job_CheckScroll()
+	if g:asyncrun_last == 0
+		return 1
+	else
+		let s:async_check_last = 1
+		let l:winnr = winnr()
+		windo call s:AsyncRun_Job_Cursor()
+		silent exec ''.l:winnr.'wincmd w'
+		return s:async_check_last
+	endif
+endfunc
+
 " invoked on timer or finished
 function! s:AsyncRun_Job_Update(count)
 	let l:count = 0
 	let l:total = 0
+	let l:check = s:AsyncRun_Job_CheckScroll()
 	while s:async_tail < s:async_head
 		let l:text = s:async_output[s:async_tail]
 		if l:text != '' 
@@ -224,7 +251,7 @@ function! s:AsyncRun_Job_Update(count)
 			break
 		endif
 	endwhile
-	if s:async_scroll != 0 && l:total > 0
+	if s:async_scroll != 0 && l:total > 0 && l:check != 0
 		call s:AsyncRun_Job_AutoScroll()
 	endif
 	return l:count
@@ -281,6 +308,7 @@ function! s:AsyncRun_Job_OnFinish(what)
 	call s:AsyncRun_Job_Update(-1)
 	let l:current = float2nr(reltimefloat(reltime()))
 	let l:last = l:current - s:async_start
+	let l:check = s:AsyncRun_Job_CheckScroll()
 	if s:async_code == 0
 		caddexpr "[Finished in ".l:last." seconds]"
 		let g:asyncrun_status = "success"
@@ -290,7 +318,7 @@ function! s:AsyncRun_Job_OnFinish(what)
 		let g:asyncrun_status = "failure"
 	endif
 	let s:async_state = 0
-	if s:async_scroll != 0
+	if s:async_scroll != 0 && l:check != 0
 		call s:AsyncRun_Job_AutoScroll()
 	endif
 	let g:asyncrun_code = s:async_code
