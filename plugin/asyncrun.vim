@@ -223,7 +223,11 @@ endfunc
 " check if quickfix window can scroll now
 function! s:AsyncRun_Job_CheckScroll()
 	if g:asyncrun_last == 0
-		return 1
+		if &buftype == 'quickfix'
+			return (line('.') == line('$'))
+		else
+			return 1
+		endif
 	elseif g:asyncrun_last == 1
 		let s:async_check_last = 1
 		let l:winnr = winnr()
@@ -231,11 +235,7 @@ function! s:AsyncRun_Job_CheckScroll()
 		silent exec ''.l:winnr.'wincmd w'
 		return s:async_check_last
 	elseif g:asyncrun_last == 2
-		if &buftype == 'quickfix'
-			return (line('.') == line('$'))
-		else
-			return 1
-		endif
+		return 1
 	else
 		if &buftype == 'quickfix'
 			return (line('.') == line('$'))
