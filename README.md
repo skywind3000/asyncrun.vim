@@ -109,15 +109,15 @@ vim 7.4.1829 is minimal version to support async mode. If you are use older vers
 
 ## History
 
-- 2016-10-12 `1.1.0`: quickfix window scroll only if cursor is on the last line
-- 2016-10-10 `1.0.3`: reduce quickfix output latency.
-- 2016-10-09 `1.0.2`: fixed an issue in replacing macros in parameters.
-- 2016-10-07 `1.0.1`: Add a convenient way to toggle quickfix window (asyncrun#quickfix_toggle)
-- 2016-09-21 `1.0.0`: can fall back to sync mode for older vim versions now to keep compatibility
-- 2016-09-15 `0.0.3`: new: arguments now accept environment variables wrapped by $(...)
-- 2016-09-12 `0.0.2`: some improvements and more documents for a tiny tutorial.
-- 2016-09-08 `0.0.1`: improve arguments parsing
-- 2016-08-24 `0.0.0`: initial version
+- 1.1.0 (2016-10-12): quickfix window scroll only if cursor is on the last line
+- 1.0.3 (2016-10-10): reduce quickfix output latency.
+- 1.0.2 (2016-10-09): fixed an issue in replacing macros in parameters.
+- 1.0.1 (2016-10-07): Add a convenient way to toggle quickfix window (asyncrun#quickfix_toggle)
+- 1.0.0 (2016-09-21): can fall back to sync mode for older vim versions now to keep compatibility
+- 0.0.3 (2016-09-15): new: arguments now accept environment variables wrapped by $(...)
+- 0.0.2 (2016-09-12): some improvements and more documents for a tiny tutorial.
+- 0.0.1 (2016-09-08): improve arguments parsing
+- 0.0.0 (2016-08-24): initial version
 
 ## Credits
 Author: skywind3000
