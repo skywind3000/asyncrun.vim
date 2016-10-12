@@ -90,7 +90,6 @@ stop the running job, when "!" is included, job will be stopped by signal KILL
 - g:asyncrun_exit - script will be executed after finished
 - g:asyncrun_bell - non-zero to ring a bell after finished
 - g:asyncrun_mode - 0:async(require vim 7.4.1829) 1:sync 2:shell
-- g:asyncrun_last - non-zero to scroll quickfix window only if cursor is on the last line ([see here](https://github.com/skywind3000/asyncrun.vim/wiki/Scroll-the-quickfix-window-only-if-cursor-is-on-the-last-line))
 
 #### Variables:
 - g:asyncrun_code - exit code
