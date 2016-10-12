@@ -107,6 +107,17 @@ vim 7.4.1829 is minimal version to support async mode. If you are use older vers
 - [Scroll the quickfix window only if the cursor is on the last line](https://github.com/skywind3000/asyncrun.vim/wiki/Scroll-the-quickfix-window-only-if-cursor-is-on-the-last-line)
 - [Open quickfix window automatically when something adds to it](https://github.com/skywind3000/asyncrun.vim/wiki/Open-quickfix-window-when-text-adds-to-it)
 
+## History
+
+- 2016-10-12 `1.1.0`: quickfix window scroll only if cursor is on the last line
+- 2016-10-10 `1.0.3`: reduce quickfix output latency.
+- 2016-10-09 `1.0.2`: fixed an issue in replacing macros in parameters.
+- 2016-10-07 `1.0.1`: Add a convenient way to toggle quickfix window (asyncrun#quickfix_toggle)
+- 2016-09-21 `1.0.0`: can fall back to sync mode for older vim versions now to keep compatibility
+- 2016-09-15 `0.0.3`: new: arguments now accept environment variables wrapped by $(...)
+- 2016-09-12 `0.0.2`: some improvements and more documents for a tiny tutorial.
+- 2016-09-08 `0.0.1`: improve arguments parsing
+- 2016-08-24 `0.0.0`: initial version
 
 ## Credits
 Author: skywind3000
