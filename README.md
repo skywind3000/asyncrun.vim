@@ -87,6 +87,7 @@ Environment variables are set before executing:
     $VIM_VERSION   - Value of v:version
     $VIM_COLUMNS   - How many columns in vim's screen
     $VIM_LINES     - How many lines in vim's screen
+	$VIM_SVRNAME   - Value of v:servername for +clientserver usage 
 
 These environment variables wrapped by `$(...)` (eg. `$(VIM_FILENAME)`) will also be expanded in the parameters.
 
