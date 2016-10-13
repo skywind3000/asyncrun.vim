@@ -1,5 +1,5 @@
 # Preface
-This plugin allows you to run shell commands in background and output to quickfix window in realtime. It takes the advantage of new apis in vim 8 to provide a super easy command `:AsyncRun` for you.
+This plugin allows you to run shell commands in background and output to quickfix window in realtime. It takes the advantage of new apis in vim 8 to provide a super easy command `:AsyncRun` for you:
 
 - Easy to use, just start your background command by `:AsyncRun` (just like old "!" command).
 - Fully asynchronous, command is done in the background. No need to wait for the entire process to finish.
@@ -9,12 +9,14 @@ This plugin allows you to run shell commands in background and output to quickfi
 - Fast and lightweight, just a single self-contained "asyncrun.vim" source file.  
 - Corresponding user experience on both windows and unix.  
 
-## Example
-
-![](https://raw.githubusercontent.com/skywind3000/asyncrun.vim/master/screenshot.gif)
+If that doesn't excite you, then perhaps this GIF screen capture below will change your mind.
 
 ## Install
 Copy `asyncrun.vim` to your `~/.vim/plugin` or use Vundle to install it from `skywind3000/asyncrun.vim` .
+
+## Screenshot
+
+![](https://raw.githubusercontent.com/skywind3000/asyncrun.vim/master/screenshot.gif)
 
 ## Tutorials
 
