@@ -14,7 +14,7 @@ If that doesn't excite you, then perhaps this GIF screen capture below will chan
 ## Install
 Copy `asyncrun.vim` to your `~/.vim/plugin` or use Vundle to install it from `skywind3000/asyncrun.vim` .
 
-## Screenshot
+## Example
 
 ![](https://raw.githubusercontent.com/skywind3000/asyncrun.vim/master/screenshot.gif)
 
