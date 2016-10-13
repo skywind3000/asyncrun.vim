@@ -1,12 +1,12 @@
 ## Preface
 This plugin takes the advantage of new apis in Vim 8 to enable you to run shell commands in background and read output in the quickfix window in realtime:
 
-- Easy to use, just start your background command by `:AsyncRun` (just like old "!" command).
-- Command is done in the background. No need to wait for the entire process to finish.
-- The output are displayed in the quickfix window, errors are matched with  "errorformat".
-- You can start exploring the error output immediately or keep working in vim while executing.
+- Easy to use, just start your background command by `:AsyncRun` (just like old "!" cmd).
+- Command is done in the background, no need to wait for the entire process to finish.
+- Output are displayed in the quickfix window, errors are matched with `errorformat`.
+- You can explore the error output immediately or keep working in vim while executing.
 - Ring the bell or play a sound to notify you job finished while you're focusing on editing.
-- Fast and lightweight, just a single self-contained "asyncrun.vim" source file.  
+- Fast and lightweight, just a single self-contained `asyncrun.vim` source file.  
 
 If that doesn't excite you, then perhaps this GIF screen capture below will change your mind.
 
