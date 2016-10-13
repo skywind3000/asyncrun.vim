@@ -1,4 +1,4 @@
-# Preface
+## Preface
 This plugin allows you to run shell commands in background and output to quickfix window in realtime. It takes the advantage of new apis in vim 8 to provide a super easy command `:AsyncRun` for you:
 
 - Easy to use, just start your background command by `:AsyncRun` (just like old "!" command).
