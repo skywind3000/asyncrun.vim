@@ -1,5 +1,17 @@
 # Preface
-This plugin allows you to run shell commands in background and output to quickfix window in realtime.
+This plugin allows you to run shell commands in background and output to quickfix window in realtime. It takes the advantage of new apis in vim 8 to provide a super easy command `:AsyncRun` for you.
+
+- Easy to use, just start your background command by `:AsyncRun` (just like old "!" command).
+- Fully asynchronous, command is done in the background. No need to wait for the entire process to finish.
+- The output are displayed in the quickfix window in realtime, errors are matched with  "errorformat".
+- You can start exploring the error output immediately or keep working in vim as usual while executing.
+- Ring the bell or play a sound to notify you job finished while you're focusing on editing.
+- Fast and lightweight, just a single self-contained "asyncrun.vim" source file.  
+- Corresponding user experience on both windows and unix.  
+
+## Example
+
+![](https://raw.githubusercontent.com/skywind3000/asyncrun.vim/master/screenshot.gif)
 
 ## Install
 Copy `asyncrun.vim` to your `~/.vim/plugin` or use Vundle to install it from `skywind3000/asyncrun.vim` .
@@ -109,12 +121,13 @@ vim 7.4.1829 is minimal version to support async mode. If you are use older vers
 
 ## History
 
+- 1.1.1 (2016-10-13): use the vim native &shell and &shellcmdflag config to execute commands.
 - 1.1.0 (2016-10-12): quickfix window scroll only if cursor is on the last line
 - 1.0.3 (2016-10-10): reduce quickfix output latency.
 - 1.0.2 (2016-10-09): fixed an issue in replacing macros in parameters.
 - 1.0.1 (2016-10-07): Add a convenient way to toggle quickfix window (asyncrun#quickfix_toggle)
-- 1.0.0 (2016-09-21): can fall back to sync mode for older vim versions now to keep compatibility
-- 0.0.3 (2016-09-15): new: arguments now accept environment variables wrapped by $(...)
+- 1.0.0 (2016-09-21): can fall back to sync mode to compatible older vim versions.
+- 0.0.3 (2016-09-15): new arguments now accept environment variables wrapped by $(...)
 - 0.0.2 (2016-09-12): some improvements and more documents for a tiny tutorial.
 - 0.0.1 (2016-09-08): improve arguments parsing
 - 0.0.0 (2016-08-24): initial version
