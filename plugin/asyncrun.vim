@@ -45,7 +45,7 @@
 "     "$(...)", and "$(VIM_FILEDIR)" will be expanded as file directory
 "
 " There can be some options before [cmd]:
-"     -mode=0/1/2  - start mode: 0(async,default), 1(makeprg), 2(!)
+"     -mode=0/1/2  - start mode: 0(async, default), 1(makeprg), 2(!)
 "     -cwd=?       - initial directory, (use current directory if unset)
 "     -save=0/1    - non-zero to save unsaved files before executing
 "     -program=?   - set to 'make' to use '&makeprg'
