@@ -8,6 +8,8 @@ This plugin takes the advantage of new apis in Vim 8 to enable you to run shell 
 - Ring the bell or play a sound to notify you job finished while you're focusing on editing.
 - Fast and lightweight, just a single self-contained `asyncrun.vim` source file.  
 
+`asyncrun.vim` can cooperate with `vim-fugitive`, see [here](https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-vim-fugitive).
+
 If that doesn't excite you, then perhaps this GIF screen capture below will change your mind.
 
 ## Install
@@ -45,6 +47,7 @@ Macro '`%:p:h`' stands for current file dir.
 
 #### Setup `<F7>` to compile file
     :noremap <F7> :AsyncRun gcc "%" -o "%<" <cr> 
+
 
 ## Manual
 
@@ -130,7 +133,9 @@ vim 7.4.1829 is minimal version to support async mode. If you are use older vers
 - [View progress in status line](https://github.com/skywind3000/asyncrun.vim/wiki/View-Progress-in-Status-Line)
 - [Best practice with quickfix windows](https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-Best-Practice)
 - [Scroll the quickfix window only if the cursor is on the last line](https://github.com/skywind3000/asyncrun.vim/wiki/Scroll-the-quickfix-window-only-if-cursor-is-on-the-last-line)
-- [Open quickfix window automatically when something adds to it](https://github.com/skywind3000/asyncrun.vim/wiki/Open-quickfix-window-when-text-adds-to-it)
+- [Cooperate with vim-fugitive](https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-vim-fugitive)
+- [Replace old ':make' command with asyncrun](https://github.com/skywind3000/asyncrun.vim/wiki/Replace-old-make-command-with-AsyncRun)
+
 
 ## History
 
