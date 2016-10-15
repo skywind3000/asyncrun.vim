@@ -8,7 +8,7 @@ This plugin takes the advantage of new apis in Vim 8 to enable you to run shell 
 - Ring the bell or play a sound to notify you job finished while you're focusing on editing.
 - Fast and lightweight, just a single self-contained `asyncrun.vim` source file.  
 
-`asyncrun.vim` can cooperate with `vim-fugitive`, see [here](https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-vim-fugitive).
+`asyncrun.vim` can cooperate with `vim-fugitive`, see the bottom of the README.
 
 If that doesn't excite you, then perhaps this GIF screen capture below will change your mind.
 
@@ -125,6 +125,14 @@ stop the running job, when "!" is included, job will be stopped by signal KILL
 
 #### Requirements:
 vim 7.4.1829 is minimal version to support async mode. If you are use older versions, `g:asyncrun_mode` will fall back from `0/async` to `1/sync`.
+
+#### Cooperate with vim-fugitive:
+
+asyncrun.vim can cooperate with `vim-fugitive`, see [here](https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-vim-fugitive).
+
+![](https://raw.githubusercontent.com/skywind3000/asyncrun.vim/master/cooperate_with_fugitive.gif)
+
+
 
 ## More
 
