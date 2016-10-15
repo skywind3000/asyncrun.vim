@@ -20,8 +20,8 @@ Copy `asyncrun.vim` to your `~/.vim/plugin` or use Vundle to install it from `sk
 ## Tutorials
 
 #### Async run gcc to compile current file
-	:AsyncRun gcc % -o %<
-	:AsyncRun g++ -O3 % -o %< -lpthread 
+	:AsyncRun gcc "%" -o "%<"
+	:AsyncRun g++ -O3 "%" -o "%<" -lpthread 
 This command will run gcc in the background and output to the quickfix window in realtime. Macro '`%`' stands for filename and '`%>`' represents filename without extension.
 
 #### Async run make
@@ -30,21 +30,21 @@ This command will run gcc in the background and output to the quickfix window in
 
 #### Grep key word 
     :AsyncRun! grep -R word . 
-    :AsyncRun! grep -R <cword> . 
+    :AsyncRun! grep -R "<cword>" . 
 when `!` is included, auto-scroll in quickfix will be disabled. `<cword>` represents current word under cursor.
 
 #### Compile go project
-    :AsyncRun go build %:p:h
+    :AsyncRun go build "%:p:h"
 Macro '`%:p:h`' stands for current file dir. 
 
 #### Lookup man page
-    :AsyncRun! man -S 3:2:1 <cword>
+    :AsyncRun! man -S 3:2:1 "<cword>"
 
 #### Git push
     :AsyncRun git push origin master
 
 #### Setup `<F7>` to compile file
-    :noremap <F7> :AsyncRun gcc % -o %< <cr> 
+    :noremap <F7> :AsyncRun gcc "%" -o "%<" <cr> 
 
 ## Manual
 
@@ -53,10 +53,11 @@ There are two vim commands: `:AsyncRun` and `:AsyncStop` to control async jobs.
 #### AsyncRun - Run shell command
 
 ```VimL
-:AsyncRun{!} [cmd] ...
+:AsyncRun{!} {options} [cmd] ...
 ```
 
-run shell command in background and output to quickfix. when `!` is included, auto-scroll in quickfix will be disabled. Parameters are splited by space, if a parameter contains space, it should be escaped as backslash + space (just like ex commands).
+run shell command in background and output to quickfix. when `!` is included, auto-scroll in quickfix will be disabled. Parameters are splited by space, if a parameter contains space, it should be **quoted** or escaped as backslash + space (unix only).
+
 
 Parameters accept macros start with '`%`', '`#`' or '`<`' :
 
@@ -91,6 +92,15 @@ Environment variables are set before executing:
 
 These environment variables wrapped by `$(...)` (eg. `$(VIM_FILENAME)`) will also be expanded in the parameters.
 
+There can be some options before your `[cmd]`:
+
+    -mode=0/1/2 - start mode: 0(async, default), 1(makeprg), 2(!)
+    -cwd=?      - initial directory, (use current directory if unset)
+    -save=0/1   - non-zero to save unsaved files before executing
+    -program=?  - set to `make` to use `&makeprg`, `grep` to use `&grepprg` 
+
+All options must start with a minus and position **before** `[cmd]`. Since no shell command  string starts with a minus. So they can be distinguished from shell command easily without any ambiguity.   
+
 #### AsyncStop - Stop the running job
 
 ```VimL
@@ -104,6 +114,7 @@ stop the running job, when "!" is included, job will be stopped by signal KILL
 - g:asyncrun_exit - script will be executed after finished
 - g:asyncrun_bell - non-zero to ring a bell after finished
 - g:asyncrun_mode - 0:async(require vim 7.4.1829) 1:sync 2:shell
+- g:asyncrun_encs - set when shell encoding is different with `&encoding`
 
 #### Variables:
 - g:asyncrun_code - exit code
@@ -123,6 +134,7 @@ vim 7.4.1829 is minimal version to support async mode. If you are use older vers
 
 ## History
 
+- 1.2.0 (2016-10-16): refactor, correct arguments parsing, cmd options and &makeprg supports
 - 1.1.1 (2016-10-13): use the vim native &shell and &shellcmdflag config to execute commands.
 - 1.1.0 (2016-10-12): quickfix window scroll only if cursor is on the last line
 - 1.0.3 (2016-10-10): reduce quickfix output latency.

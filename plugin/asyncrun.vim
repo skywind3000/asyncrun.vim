@@ -3,14 +3,14 @@
 " Maintainer: skywind3000 (at) gmail.com
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last change: 2016.9.15
+" Last change: 2016.10.16
 "
 " Run shell command in background and output to quickfix:
-"     :AsyncRun{!} [cmd] ...
+"     :AsyncRun{!} {options} [cmd] ...
 "
 "     when "!" is included, auto-scroll in quickfix will be disabled
 "     parameters are splited by space, if a parameter contains space,
-"     it should be escaped as backslash + space (just like ex commands)
+"     it should be quoted or escaped as backslash + space (unix only).
 "
 " Parameters will be expanded if they start with '%', '#' or '<' :
 "     %:p     - File name of current buffer with full path
@@ -44,6 +44,16 @@
 "     parameters also accept these environment variables wrapped by 
 "     "$(...)", and "$(VIM_FILEDIR)" will be expanded as file directory
 "
+" There can be some options before [cmd]:
+"     -mode=0/1/2  - start mode: 0(async,default), 1(makeprg), 2(!)
+"     -cwd=?       - initial directory, (use current directory if unset)
+"     -save=0/1    - non-zero to save unsaved files before executing
+"     -program=?   - set to 'make' to use '&makeprg'
+"
+"     All options must start with a minus and position **before** `[cmd]`.
+"     Since no shell command starts with a minus. So they can be 
+"     distinguished from shell command easily without any ambiguity.
+"
 " Stop the running job by signal TERM:
 "     :AsyncStop{!}
 "
@@ -53,6 +63,7 @@
 "     g:asyncrun_exit - script will be executed after finished
 "     g:asyncrun_bell - non-zero to ring a bell after finished
 "     g:asyncrun_mode - 0:async(require vim 7.4.1829) 1:sync 2:shell
+"     g:asyncrun_encs - shell program output encoding
 "
 " Variables:
 "     g:asyncrun_code - exit code
@@ -97,10 +108,6 @@ if !exists('g:asyncrun_last')
 	let g:asyncrun_last = 0
 endif
 
-if !exists('g:asyncrun_save')
-	let g:asyncrun_save = 0
-endif
-
 if !exists('g:asyncrun_timer')
 	let g:asyncrun_timer = 100
 endif
@@ -111,6 +118,10 @@ endif
 
 if !exists('g:asyncrun_status')
 	let g:asyncrun_status = 'stop'
+endif
+
+if !exists('g:asyncrun_encs')
+	let g:asyncrun_encs = ''
 endif
 
 
@@ -160,18 +171,6 @@ endfunc
 function! s:MakeRestore()
 	let &l:makeprg = s:make_save
 	let &l:errorformat = s:match_save
-endfunc
-
-" save file
-function! s:CheckSave()
-	if bufname('%') == '' || getbufvar('%', '&modifiable') == 0
-		return
-	endif
-	if g:asyncrun_save == 1
-		silent exec "update"
-	elseif g:asyncrun_save == 2
-		silent exec "wa"
-	endif
 endfunc
 
 
@@ -247,12 +246,20 @@ endfunc
 
 " invoked on timer or finished
 function! s:AsyncRun_Job_Update(count)
+	let l:iconv = (g:asyncrun_encs != "")? 1 : 0
 	let l:count = 0
 	let l:total = 0
 	let l:check = s:AsyncRun_Job_CheckScroll()
+	if g:asyncrun_encs == &encoding | let l:iconv = 0 | endif
 	while s:async_tail < s:async_head
 		let l:text = s:async_output[s:async_tail]
 		if l:text != '' 
+			if l:iconv != 0
+				try
+					let l:text = iconv(l:text, g:asyncrun_encs, &encoding)
+				catch /.*/
+				endtry
+			endif
 			caddexpr l:text
 			let l:total += 1
 		endif
@@ -322,11 +329,13 @@ function! s:AsyncRun_Job_OnFinish(what)
 	let l:last = l:current - s:async_start
 	let l:check = s:AsyncRun_Job_CheckScroll()
 	if s:async_code == 0
-		caddexpr "[Finished in ".l:last." seconds]"
+		let l:text = "[Finished in ".l:last." seconds]"
+		call setqflist([{'text':l:text}], 'a')
 		let g:asyncrun_status = "success"
 	else
 		let l:text = 'with code '.s:async_code
-		caddexpr "[Finished in ".l:last." seconds ".l:text."]"
+		let l:text = "[Finished in ".l:last." seconds ".l:text."]"
+		call setqflist([{'text':l:text}], 'a')
 		let g:asyncrun_status = "failure"
 	endif
 	let s:async_state = 0
@@ -394,16 +403,18 @@ function! g:AsyncRun_Job_Start(cmd)
 		call s:ErrorMsg("background job is still running")
 		return -2
 	elseif l:empty == 0
-		let l:args = []
+		let l:args = [&shell, &shellcmdflag]
 		let l:name = []
-		if has('win32') || has('win64') || has('win16') || has('win95')
-			let l:args = [&shell, &shellcmdflag]
-		else
-			let l:args = [&shell, &shellcmdflag]
-		endif
 		if type(a:cmd) == 1
-			let l:args += [a:cmd]
 			let l:name = a:cmd
+			if s:asyncrun_windows == 0
+				let l:args += [a:cmd]
+			else
+				let l:tmp = fnamemodify(tempname(), ':h') . '\asyncrun.cmd'
+				let l:run = ['@echo off', a:cmd]
+				call writefile(l:run, l:tmp)
+				let l:args += [shellescape(l:tmp)]
+			endif
 		elseif type(a:cmd) == 3
 			if s:asyncrun_windows == 0
 				let l:temp = []
@@ -441,12 +452,10 @@ function! g:AsyncRun_Job_Start(cmd)
 			let s:async_output = {}
 			let s:async_head = 0
 			let s:async_tail = 0
-			if type(a:cmd) == 1
-				exec "cexpr \'[".fnameescape(l:name)."]\'"
-			else
-				let l:arguments = l:name
-				exec "cexpr \'[\'.l:arguments.\']\'"
-			endif
+			let l:arguments = "[".l:name."]"
+			let l:title = ':AsyncRun '.l:name
+			call setqflist([], ' ', {'title':l:title})
+			call setqflist([{'text':l:arguments}], 'a')
 			let s:async_start = float2nr(reltimefloat(reltime()))
 			if g:asyncrun_timer > 0
 				let l:options = {'repeat':-1}
@@ -498,26 +507,56 @@ function! g:AsyncRun_Job_Status()
 endfunc
 
 
+
+"----------------------------------------------------------------------
+" Replace string
+"----------------------------------------------------------------------
+function! s:StringReplace(text, old, new)
+	let l:data = split(a:text, a:old, 1)
+	return join(l:data, a:new)
+endfunc
+
+
+"----------------------------------------------------------------------
+" extract options from command
+"----------------------------------------------------------------------
+function! s:ExtractOpt(command) 
+	let cmd = a:command
+	let opts = {}
+	while cmd =~# '^-\%(\w\+\)\%([= ]\|$\)'
+		let opt = matchstr(cmd, '^-\zs\w\+')
+		if cmd =~ '^-\w\+='
+			let val = matchstr(cmd, '^-\w\+=\zs\%(\\.\|\S\)*')
+		else
+			let val = (opt == 'cwd')? '' : 1
+		endif
+		if opt == 'cwd'
+			let opts.cwd = fnamemodify(expand(val), ':p:s?[^:]\zs[\\/]$??')
+		elseif index(['mode', 'program', 'save'], opt) >= 0
+			let opts[opt] = substitute(val, '\\\(\s\)', '\1', 'g')
+		endif
+		let cmd = substitute(cmd, '^-\w\+\%(=\%(\\.\|\S\)*\)\=\s*', '', '')
+	endwhile
+	let opts.cwd = get(opts, 'cwd', '')
+	let opts.mode = get(opts, 'mode', '')
+	let opts.save = get(opts, 'save', '')
+	let opts.program = get(opts, 'program', '')
+	if 0
+		echom 'cwd:'. opts.cwd
+		echom 'mode:'. opts.mode
+		echom 'save:'. opts.save
+		echom 'program:'. opts.program
+		echom 'command:'. cmd
+	endif
+	return [cmd, opts]
+endfunc
+
+
 "----------------------------------------------------------------------
 " AsyncRun
 "----------------------------------------------------------------------
-function! s:AsyncRun(bang, mods, ...)
-	let $VIM_FILEPATH = expand("%:p")
-	let $VIM_FILENAME = expand("%:t")
-	let $VIM_FILEDIR = expand("%:p:h")
-	let $VIM_FILENOEXT = expand("%:t:r")
-	let $VIM_FILEEXT = "." . expand("%:e")
-	let $VIM_CWD = getcwd()
-	let $VIM_RELDIR = expand("%:h:.")
-	let $VIM_RELNAME = expand("%:p:.")
-	let $VIM_CWORD = expand("<cword>")
-	let $VIM_CFILE = expand("<cfile>")
-	let $VIM_VERSION = ''.v:version
-	let $VIM_GUI = '0'
-	let $VIM_SVRNAME = v:servername
-	let $VIM_COLUMNS = &columns
-	let $VIM_LINES = &lines
-	let l:macros = { 'VIM_GUI' : '0' }
+function! s:AsyncRun(bang, mods, args)
+	let l:macros = {}
 	let l:macros['VIM_FILEPATH'] = expand("%:p")
 	let l:macros['VIM_FILENAME'] = expand("%:t")
 	let l:macros['VIM_FILEDIR'] = expand("%:p:h")
@@ -532,64 +571,95 @@ function! s:AsyncRun(bang, mods, ...)
 	let l:macros['VIM_SVRNAME'] = v:servername
 	let l:macros['VIM_COLUMNS'] = ''.&columns
 	let l:macros['VIM_LINES'] = ''.&lines
-	let l:text = ''
-	if has("gui_running")
-		let $VIM_GUI = '1'
-		let l:macros['VIM_GUI'] = '1'
+	let l:macros['VIM_GUI'] = has('gui_running')? 1 : 0
+	let l:macros['<cwd>'] = getcwd()
+	let l:command = a:args
+	let cd = haslocaldir()? 'lcd ' : 'cd '
+
+	" string trim
+	let l:command = substitute(l:command, '^\s*\(.\{-}\)\s*$', '\1', '')
+
+	" extract options
+	let [l:command, l:opts] = s:ExtractOpt(l:command)
+
+	" replace macros and setup environment variables
+	for [l:key, l:val] in items(l:macros)
+		let l:replace = (l:key[0] != '<')? '$('.l:key.')' : l:key
+		if l:key[0] != '<'
+			exec 'let $'.l:key.' = l:val'
+		endif
+		let l:command = s:StringReplace(l:command, l:replace, l:val)
+		let l:opts.cwd = s:StringReplace(l:opts.cwd, l:replace, l:val)
+	endfor
+
+	" check if need to save
+	if get(l:opts, 'save', '')
+		try
+			silent update
+		catch /.*/
+		endtry
 	endif
-	let l:cmd = []
-	if a:0 == 0
-		echohl ErrorMsg
-		echom "E471: Argument required"
-		echohl NONE
-		return
-	endif
-	call s:CheckSave()
+
 	if a:bang == '!'
 		let s:async_scroll = 0
 	else
 		let s:async_scroll = 1
 	endif
+
+	" check mode
 	let l:mode = g:asyncrun_mode
-	if a:mods == 'verbose'
-		let l:mode = 2
+
+	if l:opts.mode != ''
+		let l:mode = l:opts.mode
 	endif
-	for l:index in range(a:0)
-		let l:item = a:{l:index + 1}
-		let l:name = l:item
-		if l:item == '<exe>'
-			let l:mode = 2
-			continue
-		elseif index(['%', '%<', '#', '#<'], l:item) >= 0
-			let l:name = expand(l:item)
-		elseif index(['%:', '#:'], l:item[:1]) >= 0
-			let l:name = expand(l:item)
-		elseif l:item == '<cwd>'
-			let l:name = getcwd()
-		elseif (l:item[0] == '<') && (l:item[-1:] == '>')
-			let l:name = expand(l:item)
+
+	" process makeprg/grepprg in -program=?
+	let l:program = ""
+
+	if l:opts.program == 'make'
+		let l:program = &makeprg
+	elseif l:opts.program == 'grep'
+		let l:program = &grepprg
+	endif
+
+	if l:program != ''
+		if l:program =~# '\$\*'
+			let l:command = s:StringReplace(l:program, '\$\*', l:command)
+		elseif l:command != ''
+			let l:command = l:program . ' ' . l:command
+		else
+			let l:command = l:program
 		endif
-		for [l:key, l:val] in items(l:macros)
-			let l:replace = "$(" . l:key . ")"
-			let l:data = split(l:name, l:replace, 1)
-			let l:name = join(l:data, l:val)
-		endfor
-		let l:cmd += [l:name]
-	endfor
-	let l:part = []
-	for l:item in l:cmd
-		let l:part += [shellescape(l:item)]
-	endfor
-	let l:command = join(l:part, ' ')
+	endif
+
+	if l:command =~ '^\s*$'
+		echohl ErrorMsg
+		echom "E471: Command required"
+		echohl NONE
+		return
+	endif
+
+	if l:opts.cwd != ''
+		let l:opts.savecwd = getcwd()
+		try
+			exec cd . fnameescape(l:opts.cwd)
+		catch /.*/
+			echohl ErrorMsg
+			echom "E344: Can't find directory \"".l:opts.cwd."\" in -cwd"
+			echohl NONE
+			return
+		endtry
+	endif
+
 	if l:mode == 0 && s:asyncrun_support != 0
-		call g:AsyncRun_Job_Start(l:cmd)
+		call g:AsyncRun_Job_Start(l:command)
 	elseif l:mode <= 1 && has('quickfix')
 		call s:MakeSave()
 		let &l:makeprg = l:command
 		exec "make!"
 		call s:MakeRestore()
-	else
-		if s:asyncrun_windows != 0
+	elseif l:mode <= 3
+		if s:asyncrun_windows != 0 && has('gui_running')
 			let l:tmp = fnamemodify(tempname(), ':h') . '\asyncrun.cmd'
 			let l:run = ['@echo off', l:command, 'pause']
 			if v:version >= 700
@@ -615,6 +685,16 @@ function! s:AsyncRun(bang, mods, ...)
 				call system(l:command . ' &')
 			endif
 		endif
+	elseif l:mode == 4
+		exec '!'. l:command
+	elseif l:mode == 5
+		if s:asyncrun_windows != 0
+		else
+		endif
+	endif
+
+	if l:opts.cwd != ''
+		exec cd fnameescape(l:opts.savecwd)
 	endif
 endfunc
 
@@ -634,14 +714,8 @@ endfunc
 "----------------------------------------------------------------------
 " Commands
 "----------------------------------------------------------------------
-if has('patch-7.4.1900')
-	command! -bang -nargs=+ -complete=file AsyncRun 
-		\ call s:AsyncRun('<bang>', <q-mods>, <f-args>)
-else
-	command! -bang -nargs=+ -complete=file AsyncRun 
-		\ call s:AsyncRun('<bang>', '', <f-args>)
-endif
-
+command! -bang -nargs=+ -complete=file AsyncRun 
+	\ call s:AsyncRun('<bang>', '', <q-args>)
 
 command! -bang -nargs=0 AsyncStop call s:AsyncStop('<bang>')
 
@@ -650,7 +724,7 @@ command! -bang -nargs=0 AsyncStop call s:AsyncStop('<bang>')
 "----------------------------------------------------------------------
 " Fast command to toggle quickfix
 "----------------------------------------------------------------------
-function! asyncrun#quickfix_toggle(size)
+function! asyncrun#quickfix_toggle(size, ...)
 	function! s:WindowCheck(mode)
 		if getbufvar('%', '&buftype') == 'quickfix'
 			let s:quickfix_open = 1
@@ -665,11 +739,22 @@ function! asyncrun#quickfix_toggle(size)
 	let s:quickfix_open = 0
 	let l:winnr = winnr()			
 	windo call s:WindowCheck(0)
-	if s:quickfix_open == 0
-		exec 'botright copen '.a:size
-		wincmd k
+	if a:0 == 0
+		if s:quickfix_open == 0
+			exec 'botright copen '. ((a:size > 0)? a:size : ' ')
+			wincmd k
+		else
+			cclose
+		endif
+	elseif a:1 == 0
+		if s:quickfix_open != 0
+			cclose
+		endif
 	else
-		cclose
+		if s:quickfix_open == 0
+			exec 'botright copen '. ((a:size > 0)? a:size : ' ')
+			wincmd k
+		endif
 	endif
 	windo call s:WindowCheck(1)
 	try
