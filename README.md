@@ -104,7 +104,8 @@ There can be some options before your `[cmd]`:
 
 All options must start with a minus and position **before** `[cmd]`. Since no shell command  string starts with a minus. So they can be distinguished from shell command easily without any ambiguity. 
 
-If you really have a shell command starting with '-', you can put a placeholder `@` before your command to tell asyncrun explicitly: "stop parsing options now, the following string is all my command".
+Don't worry if you do have a shell command starting with '-', Just put a placeholder `@` before your command to tell asyncrun explicitly: "stop parsing options now, the following string is all my command".
+
 
 #### AsyncStop - Stop the running job
 
