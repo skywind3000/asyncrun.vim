@@ -1,5 +1,5 @@
 ## Preface
-This plugin takes the advantage of new apis in Vim 8 to enable you to run shell commands in background and read output in the quickfix window in realtime:
+This plugin takes the advantage of new apis in Vim 8 (and NeoVim) to enable you to run shell commands in background and read output in the quickfix window in realtime:
 
 - Easy to use, just start your background command by `:AsyncRun` (just like old "!" cmd).
 - Command is done in the background, no need to wait for the entire process to finish.
@@ -7,10 +7,14 @@ This plugin takes the advantage of new apis in Vim 8 to enable you to run shell 
 - You can explore the error output immediately or keep working in vim while executing.
 - Ring the bell or play a sound to notify you job finished while you're focusing on editing.
 - Fast and lightweight, just a single self-contained `asyncrun.vim` source file.  
-
-`asyncrun.vim` can cooperate with `vim-fugitive`, see the bottom of the README.
+- Provide corresponding user experience in terminal-vim / gvim / macvim / neovim.
 
 If that doesn't excite you, then perhaps this GIF screen capture below will change your mind.
+
+## News
+
+- 2016/10/17 Glad to announce that `asyncrun.vim` supports NeoVim now.
+- 2016/10/15 `asyncrun.vim` can cooperate with `vim-fugitive`, see the bottom of the README.
 
 ## Install
 Copy `asyncrun.vim` to your `~/.vim/plugin` or use Vundle to install it from `skywind3000/asyncrun.vim` .
@@ -120,7 +124,7 @@ stop the running job, when "!" is included, job will be stopped by signal KILL
 - g:asyncrun_exit - script will be executed after finished
 - g:asyncrun_bell - non-zero to ring a bell after finished
 - g:asyncrun_mode - 0:async(require vim 7.4.1829) 1:sync 2:shell
-- g:asyncrun_encs - set when shell encoding is different with `&encoding`
+- g:asyncrun_encs - set shell encoding if it's different from `&encoding`, see [here](https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-encoding-problem-when-using-Chinese-or-Japanese)
 
 #### Variables:
 - g:asyncrun_code - exit code
@@ -151,6 +155,7 @@ asyncrun.vim can cooperate with `vim-fugitive`, see [here](https://github.com/sk
 
 ## History
 
+- 1.3.0 (2016-10-17): support neovim
 - 1.2.0 (2016-10-16): refactor, correct arguments parsing, cmd options and &makeprg supports
 - 1.1.1 (2016-10-13): use the vim native &shell and &shellcmdflag config to execute commands.
 - 1.1.0 (2016-10-12): quickfix window scroll only if cursor is on the last line
