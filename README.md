@@ -7,7 +7,7 @@ This plugin takes the advantage of new apis in Vim 8 (and NeoVim) to enable you 
 - You can explore the error output immediately or keep working in vim while executing.
 - Ring the bell or play a sound to notify you job finished while you're focusing on editing.
 - Fast and lightweight, just a single self-contained `asyncrun.vim` source file.  
-- Provide corresponding user experience in terminal-vim / gvim / macvim / neovim.
+- Provide corresponding user experience vim, neovim, gvim and macvim.
 
 If that doesn't excite you, then perhaps this GIF screen capture below will change your mind.
 
