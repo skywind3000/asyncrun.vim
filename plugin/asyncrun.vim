@@ -124,6 +124,18 @@ if !exists('g:asyncrun_encs')
 	let g:asyncrun_encs = ''
 endif
 
+if !exists('g:asyncrun_trim')
+	let g:asyncrun_trim = 1
+endif
+
+if !exists('g:asyncrun_shell')
+	let g:asyncrun_shell = &shell
+endif
+
+if !exists('g:asyncrun_shellcmdflag')
+	let g:asyncrun_shellcmdflag = &shellcmdflag
+endif
+
 
 "----------------------------------------------------------------------
 "- Internal Functions
@@ -154,8 +166,11 @@ if has('win32') || has('win64') || has('win95') || has('win16')
 endif
 
 " check has advanced mode
-if v:version >= 800 || has('patch-7.4.1829')
+if v:version >= 800 || has('patch-7.4.1829') || has('nvim')
 	if has('job') && has('channel') && has('timers') && has('reltime') 
+		let s:asyncrun_support = 1
+		let g:asyncrun_support = 1
+	elseif has('nvim')
 		let s:asyncrun_support = 1
 		let g:asyncrun_support = 1
 	endif
@@ -186,9 +201,10 @@ let s:async_start = 0.0
 let s:async_debug = 0
 let s:async_quick = 0
 let s:async_scroll = 0
+let s:async_neovim = has('nvim')? 1 : 0
 
 " check :cbottom available
-if has('patch-7.4.1997')
+if has('patch-7.4.1997') && (!has('nvim'))
 	let s:async_quick = 1
 endif
 
@@ -202,6 +218,9 @@ endfunc
 " quickfix window cursor check
 function! s:AsyncRun_Job_Cursor()
 	if &buftype == 'quickfix'
+		if s:async_neovim != 0
+			let w:async_qfview = winsaveview()
+		endif
 		if line('.') != line('$')
 			let s:async_check_last = 0
 		endif
@@ -219,10 +238,34 @@ function! s:AsyncRun_Job_AutoScroll()
 	endif
 endfunc
 
+" restore view in neovim
+function! s:AsyncRun_Job_NeoReset()
+	if &buftype == 'quickfix'
+		if exists('w:async_qfview')
+			call winrestview(w:async_qfview)
+			unlet w:async_qfview
+		endif
+	endif
+endfunc
+
+" neoview will reset cursor when caddexpr is invoked
+function! s:AsyncRun_Job_NeoRestore()
+	if &buftype == 'quickfix'
+		call s:AsyncRun_Job_NeoReset()
+	else
+		let l:winnr = winnr()
+		windo call s:AsyncRun_Job_NeoReset()
+		silent exec ''.l:winnr.'wincmd w'
+	endif
+endfunc
+
 " check if quickfix window can scroll now
 function! s:AsyncRun_Job_CheckScroll()
 	if g:asyncrun_last == 0
 		if &buftype == 'quickfix'
+			if s:async_neovim != 0
+				let w:async_qfview = winsaveview()
+			endif
 			return (line('.') == line('$'))
 		else
 			return 1
@@ -237,6 +280,9 @@ function! s:AsyncRun_Job_CheckScroll()
 		return 1
 	else
 		if &buftype == 'quickfix'
+			if s:async_neovim != 0
+				let w:async_qfview = winsaveview()
+			endif
 			return (line('.') == line('$'))
 		else
 			return (!pumvisible())
@@ -250,19 +296,23 @@ function! s:AsyncRun_Job_Update(count)
 	let l:count = 0
 	let l:total = 0
 	let l:check = s:AsyncRun_Job_CheckScroll()
-	if g:asyncrun_encs == &encoding | let l:iconv = 0 | endif
+	if g:asyncrun_encs == &encoding
+		let l:iconv = 0 
+	endif
 	while s:async_tail < s:async_head
 		let l:text = s:async_output[s:async_tail]
-		if l:text != '' 
-			if l:iconv != 0
-				try
-					let l:text = iconv(l:text, g:asyncrun_encs, &encoding)
-				catch /.*/
-				endtry
-			endif
-			caddexpr l:text
-			let l:total += 1
+		if l:iconv != 0
+			try
+				let l:text = iconv(l:text, g:asyncrun_encs, &encoding)
+			catch /.*/
+			endtry
 		endif
+		if l:text != ''
+			caddexpr l:text
+		elseif g:asyncrun_trim == 0
+			caddexpr "\n"
+		endif
+		let l:total += 1
 		unlet s:async_output[s:async_tail]
 		let s:async_tail += 1
 		let l:count += 1
@@ -272,6 +322,8 @@ function! s:AsyncRun_Job_Update(count)
 	endwhile
 	if s:async_scroll != 0 && l:total > 0 && l:check != 0
 		call s:AsyncRun_Job_AutoScroll()
+	elseif s:async_neovim != 0 
+		call s:AsyncRun_Job_NeoRestore()
 	endif
 	return l:count
 endfunc
@@ -292,9 +344,6 @@ function! g:AsyncRun_Job_OnCallback(channel, text)
 	if type(a:text) != 1
 		return
 	endif
-	if a:text == ''
-		return
-	endif
 	let s:async_output[s:async_head] = a:text
 	let s:async_head += 1
 	if g:asyncrun_timer <= 0
@@ -311,8 +360,10 @@ function! s:AsyncRun_Job_OnFinish(what)
 	endif
 	if a:what == 0
 		let s:async_state = or(s:async_state, 2)
-	else
+	elseif a:what == 1
 		let s:async_state = or(s:async_state, 4)
+	else
+		let s:async_state = 7
 	endif
 	if and(s:async_state, 7) != 7
 		return -2
@@ -341,6 +392,8 @@ function! s:AsyncRun_Job_OnFinish(what)
 	let s:async_state = 0
 	if s:async_scroll != 0 && l:check != 0
 		call s:AsyncRun_Job_AutoScroll()
+	elseif has('nvim')
+		call s:AsyncRun_Job_NeoRestore()
 	endif
 	let g:asyncrun_code = s:async_code
 	if g:asyncrun_bell != 0
@@ -381,6 +434,22 @@ function! g:AsyncRun_Job_OnExit(job, message)
 	call s:AsyncRun_Job_OnFinish(0)
 endfunc
 
+" invoked on neovim when stderr/stdout/exit
+function! g:AsyncRun_Job_NeoVim(job_id, data, event)
+	if a:event == 'stdout' || a:event == 'stderr'
+		let l:index = 0
+		let l:size = len(a:data)
+		while l:index < l:size
+			let s:async_output[s:async_head] = a:data[l:index]
+			let s:async_head += 1
+			let l:index += 1
+		endwhile
+		call s:AsyncRun_Job_Update(-1)
+	elseif a:event == 'exit'
+		call s:AsyncRun_Job_OnFinish(2)
+	endif
+endfunc
+
 " start background build
 function! g:AsyncRun_Job_Start(cmd)
 	let l:running = 0
@@ -390,8 +459,14 @@ function! g:AsyncRun_Job_Start(cmd)
 		return -1
 	endif
 	if exists('s:async_job')
-		if job_status(s:async_job) == 'run'
-			let l:running = 1
+		if !has('nvim')
+			if job_status(s:async_job) == 'run'
+				let l:running = 1
+			endif
+		else
+			if s:async_job > 0
+				let l:running = 1
+			endif
 		endif
 	endif
 	if type(a:cmd) == 1
@@ -402,39 +477,44 @@ function! g:AsyncRun_Job_Start(cmd)
 	if s:async_state != 0 || l:running != 0
 		call s:ErrorMsg("background job is still running")
 		return -2
-	elseif l:empty == 0
-		let l:args = [&shell, &shellcmdflag]
-		let l:name = []
-		if type(a:cmd) == 1
-			let l:name = a:cmd
-			if s:asyncrun_windows == 0
-				let l:args += [a:cmd]
-			else
-				let l:tmp = fnamemodify(tempname(), ':h') . '\asyncrun.cmd'
-				let l:run = ['@echo off', a:cmd]
-				call writefile(l:run, l:tmp)
-				let l:args += [shellescape(l:tmp)]
-			endif
-		elseif type(a:cmd) == 3
-			if s:asyncrun_windows == 0
-				let l:temp = []
-				for l:item in a:cmd
-					if index(['|', '`'], l:item) < 0
-						let l:temp += [fnameescape(l:item)]
-					else
-						let l:temp += ['|']
-					endif
-				endfor
-				let l:args += [join(l:temp, ' ')]
-			else
-				let l:args += a:cmd
-			endif
-			let l:vector = []
-			for l:x in a:cmd
-				let l:vector += ['"'.l:x.'"']
-			endfor
-			let l:name = join(l:vector, ', ')
+	endif
+	if l:empty != 0
+		call s:ErrorMsg("empty arguments")
+		return -3
+	endif
+	let l:args = [g:asyncrun_shell, g:asyncrun_shellcmdflag]
+	let l:name = []
+	if type(a:cmd) == 1
+		let l:name = a:cmd
+		if s:asyncrun_windows == 0
+			let l:args += [a:cmd]
+		else
+			let l:tmp = fnamemodify(tempname(), ':h') . '\asyncrun.cmd'
+			let l:run = ['@echo off', a:cmd]
+			call writefile(l:run, l:tmp)
+			let l:args += [shellescape(l:tmp)]
 		endif
+	elseif type(a:cmd) == 3
+		if s:asyncrun_windows == 0
+			let l:temp = []
+			for l:item in a:cmd
+				if index(['|', '`'], l:item) < 0
+					let l:temp += [fnameescape(l:item)]
+				else
+					let l:temp += ['|']
+				endif
+			endfor
+			let l:args += [join(l:temp, ' ')]
+		else
+			let l:args += a:cmd
+		endif
+		let l:vector = []
+		for l:x in a:cmd
+			let l:vector += ['"'.l:x.'"']
+		endfor
+		let l:name = join(l:vector, ', ')
+	endif
+	if s:async_neovim == 0
 		let l:options = {}
 		let l:options['callback'] = 'g:AsyncRun_Job_OnCallback'
 		let l:options['close_cb'] = 'g:AsyncRun_Job_OnClose'
@@ -448,30 +528,43 @@ function! g:AsyncRun_Job_Start(cmd)
 			let l:options['stoponexit'] = g:asyncrun_stop
 		endif
 		let s:async_job = job_start(l:args, l:options)
-		if job_status(s:async_job) != 'fail'
-			let s:async_output = {}
-			let s:async_head = 0
-			let s:async_tail = 0
-			let l:arguments = "[".l:name."]"
-			let l:title = ':AsyncRun '.l:name
-			call setqflist([], ' ', {'title':l:title})
-			call setqflist([{'text':l:arguments}], 'a')
-			let s:async_start = float2nr(reltimefloat(reltime()))
-			if g:asyncrun_timer > 0
-				let l:options = {'repeat':-1}
-				let l:name = 'g:AsyncRun_Job_OnTimer'
-				let s:async_timer = timer_start(100, l:name, l:options)
-			endif
-			let s:async_state = 1
-			let g:asyncrun_status = "running"
-			redrawstatus!
-		else
-			unlet s:async_job
-			call s:ErrorMsg("Background job start failed '".a:cmd."'")
-			return -3
-		endif
+		let l:success = (job_status(s:async_job) != 'fail')? 1 : 0
 	else
-		call s:ErrorMsg("empty arguments")
+		let l:callbacks = {'shell': 'AsyncRun'}
+		let l:callbacks['on_stdout'] = function('g:AsyncRun_Job_NeoVim')
+		let l:callbacks['on_stderr'] = function('g:AsyncRun_Job_NeoVim')
+		let l:callbacks['on_exit'] = function('g:AsyncRun_Job_NeoVim')
+		let s:async_job = jobstart(l:args, l:callbacks)
+		let l:success = (s:async_job > 0)? 1 : 0
+	endif
+	if l:success != 0
+		let s:async_output = {}
+		let s:async_head = 0
+		let s:async_tail = 0
+		let l:arguments = "[".l:name."]"
+		let l:title = ':AsyncRun '.l:name
+		if s:async_neovim == 0
+			if has('patch-7.4.2210')
+				call setqflist([], ' ', {'title':l:title})
+			else
+				call setqflist([], '')
+			endif
+		else
+			call setqflist([], ' ', l:title)
+		endif
+		call setqflist([{'text':l:arguments}], 'a')
+		let s:async_start = float2nr(reltimefloat(reltime()))
+		if g:asyncrun_timer > 0 && s:async_neovim == 0
+			let l:options = {'repeat':-1}
+			let l:name = 'g:AsyncRun_Job_OnTimer'
+			let s:async_timer = timer_start(100, l:name, l:options)
+		endif
+		let s:async_state = 1
+		let g:asyncrun_status = "running"
+		redrawstatus!
+	else
+		unlet s:async_job
+		call s:ErrorMsg("Background job start failed '".a:cmd."'")
 		return -4
 	endif
 	return 0
@@ -486,10 +579,16 @@ function! g:AsyncRun_Job_Stop(how)
 	endif
 	if l:how == '' | let l:how = 'term' | endif
 	if exists('s:async_job')
-		if job_status(s:async_job) == 'run'
-			call job_stop(s:async_job, l:how)
+		if s:async_neovim == 0
+			if job_status(s:async_job) == 'run'
+				call job_stop(s:async_job, l:how)
+			else
+				return -2
+			endif
 		else
-			return -2
+			if s:async_job > 0
+				call jobstop(s:async_job)
+			endif
 		endif
 	else
 		return -3
@@ -500,7 +599,11 @@ endfunc
 " get job status
 function! g:AsyncRun_Job_Status()
 	if exists('s:async_job')
-		return job_status(s:async_job)
+		if s:async_neovim == 0
+			return job_status(s:async_job)
+		else
+			return 'run'
+		endif
 	else
 		return 'none'
 	endif
@@ -552,7 +655,6 @@ function! s:ExtractOpt(command)
 	let opts.save = get(opts, 'save', '')
 	let opts.program = get(opts, 'program', '')
 	if 0
-		messages clear
 		echom 'cwd:'. opts.cwd
 		echom 'mode:'. opts.mode
 		echom 'save:'. opts.save
