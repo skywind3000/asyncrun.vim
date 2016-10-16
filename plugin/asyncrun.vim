@@ -125,7 +125,7 @@ if !exists('g:asyncrun_encs')
 endif
 
 if !exists('g:asyncrun_trim')
-	let g:asyncrun_trim = 1
+	let g:asyncrun_trim = 0
 endif
 
 if !exists('g:asyncrun_shell')
