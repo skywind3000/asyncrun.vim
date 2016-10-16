@@ -518,6 +518,14 @@ endfunc
 
 
 "----------------------------------------------------------------------
+" Trim leading and tailing spaces
+"----------------------------------------------------------------------
+function! s:StringStrip(text)
+	return substitute(a:text, '^\s*\(.\{-}\)\s*$', '\1', '')
+endfunc
+
+
+"----------------------------------------------------------------------
 " extract options from command
 "----------------------------------------------------------------------
 function! s:ExtractOpt(command) 
@@ -537,11 +545,14 @@ function! s:ExtractOpt(command)
 		endif
 		let cmd = substitute(cmd, '^-\w\+\%(=\%(\\.\|\S\)*\)\=\s*', '', '')
 	endwhile
+	let cmd = substitute(cmd, '^\s*\(.\{-}\)\s*$', '\1', '')
+	let cmd = substitute(cmd, '^@\s*', '', '')
 	let opts.cwd = get(opts, 'cwd', '')
 	let opts.mode = get(opts, 'mode', '')
 	let opts.save = get(opts, 'save', '')
 	let opts.program = get(opts, 'program', '')
 	if 0
+		messages clear
 		echom 'cwd:'. opts.cwd
 		echom 'mode:'. opts.mode
 		echom 'save:'. opts.save
@@ -573,11 +584,8 @@ function! s:AsyncRun(bang, mods, args)
 	let l:macros['VIM_LINES'] = ''.&lines
 	let l:macros['VIM_GUI'] = has('gui_running')? 1 : 0
 	let l:macros['<cwd>'] = getcwd()
-	let l:command = a:args
+	let l:command = s:StringStrip(a:args)
 	let cd = haslocaldir()? 'lcd ' : 'cd '
-
-	" string trim
-	let l:command = substitute(l:command, '^\s*\(.\{-}\)\s*$', '\1', '')
 
 	" extract options
 	let [l:command, l:opts] = s:ExtractOpt(l:command)
@@ -630,6 +638,7 @@ function! s:AsyncRun(bang, mods, args)
 		else
 			let l:command = l:program
 		endif
+		let l:command = s:StringStrip(l:command)
 	endif
 
 	if l:command =~ '^\s*$'

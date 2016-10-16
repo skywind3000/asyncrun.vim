@@ -22,7 +22,7 @@ Copy `asyncrun.vim` to your `~/.vim/plugin` or use Vundle to install it from `sk
 ## Tutorials
 
 #### Async run gcc to compile current file
-	:AsyncRun gcc "%" -o "%<"
+	:AsyncRun gcc % -o %<
 	:AsyncRun g++ -O3 "%" -o "%<" -lpthread 
 This command will run gcc in the background and output to the quickfix window in realtime. Macro '`%`' stands for filename and '`%>`' represents filename without extension.
 
@@ -32,7 +32,7 @@ This command will run gcc in the background and output to the quickfix window in
 
 #### Grep key word 
     :AsyncRun! grep -R word . 
-    :AsyncRun! grep -R "<cword>" . 
+    :AsyncRun! grep -R <cword> . 
 when `!` is included, auto-scroll in quickfix will be disabled. `<cword>` represents current word under cursor.
 
 #### Compile go project
@@ -40,7 +40,7 @@ when `!` is included, auto-scroll in quickfix will be disabled. `<cword>` repres
 Macro '`%:p:h`' stands for current file dir. 
 
 #### Lookup man page
-    :AsyncRun! man -S 3:2:1 "<cword>"
+    :AsyncRun! man -S 3:2:1 <cword>
 
 #### Git push
     :AsyncRun git push origin master
