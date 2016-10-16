@@ -157,7 +157,7 @@ asyncrun.vim can cooperate with `vim-fugitive`, see [here](https://github.com/sk
 
 ## History
 
-- 1.3.0 (2016-10-17): support neovim
+- 1.3.0 (2016-10-17): add support to neovim, better CJK characters handling.
 - 1.2.0 (2016-10-16): refactor, correct arguments parsing, cmd options and &makeprg supports
 - 1.1.1 (2016-10-13): use the vim native &shell and &shellcmdflag config to execute commands.
 - 1.1.0 (2016-10-12): quickfix window scroll only if cursor is on the last line
