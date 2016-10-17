@@ -6,7 +6,7 @@
 " Last change: 2016.10.16
 "
 " Run shell command in background and output to quickfix:
-"     :AsyncRun{!} {options} [cmd] ...
+"     :AsyncRun[!] [options] {cmd} ...
 "
 "     when "!" is included, auto-scroll in quickfix will be disabled
 "     parameters are splited by space, if a parameter contains space,
@@ -55,7 +55,7 @@
 "     distinguished from shell command easily without any ambiguity.
 "
 " Stop the running job by signal TERM:
-"     :AsyncStop{!}
+"     :AsyncStop[!]
 "
 "     when "!" is included, job will be stopped by signal KILL
 "

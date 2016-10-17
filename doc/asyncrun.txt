@@ -1,0 +1,32 @@
+*asyncrun.txt* Run Async Shell Commands and Output to Quickfix Window 
+
+author: skywind3000 (https://twitter.com/skywind3000)
+Repo: https://github.com/skywind3000/asyncrun.vim
+License: MIT
+
+
+INTRODUCTION                                *asyncrun*
+
+
+This plugin takes the advantage of new apis in Vim 8 (and NeoVim) to enable
+you to run shell commands in background and read output in the quickfix window
+in realtime.
+
+
+COMMANDS                                    *asyncrun-commands*
+
+
+                                            *asyncrun-:AsyncRun*
+:AsyncRun[!] [opts] {cmd} ...  Run shell cmd with parameters in background 
+                               and output to quickfix. when "!" is included,
+                               auto-scroll in quickfix will be disabled. 
+
+                               Parameters are splited by space, if a 
+                               parameter contains space, it should be quoted
+                               or escaped as backslash + space (unix only).
+
+                                            *asyncrun-:AsyncStop*
+:AsyncStop[!]                  Stop the running job, when "!" is included, job
+                               will be stopped by signal KILL.
+
+ vim:tw=78:et:ft=help:norl:

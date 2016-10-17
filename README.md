@@ -61,7 +61,7 @@ There are two vim commands: `:AsyncRun` and `:AsyncStop` to control async jobs.
 #### AsyncRun - Run shell command
 
 ```VimL
-:AsyncRun{!} {options} [cmd] ...
+:AsyncRun[!] [options] {cmd} ...
 ```
 
 run shell command in background and output to quickfix. when `!` is included, auto-scroll in quickfix will be disabled. Parameters are splited by space, if a parameter contains space, it should be **quoted** or escaped as backslash + space (unix only).
@@ -115,7 +115,7 @@ Don't worry if you do have a shell command starting with '-', Just put a placeho
 #### AsyncStop - Stop the running job
 
 ```VimL
-:AsyncStop{!}
+:AsyncStop[!]
 ```
 
 stop the running job, when "!" is included, job will be stopped by signal KILL
