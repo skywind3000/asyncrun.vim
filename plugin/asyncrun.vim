@@ -128,13 +128,6 @@ if !exists('g:asyncrun_trim')
 	let g:asyncrun_trim = 0
 endif
 
-if !exists('g:asyncrun_shell')
-	let g:asyncrun_shell = &shell
-endif
-
-if !exists('g:asyncrun_shellcmdflag')
-	let g:asyncrun_shellcmdflag = &shellcmdflag
-endif
 
 
 "----------------------------------------------------------------------
@@ -482,7 +475,12 @@ function! g:AsyncRun_Job_Start(cmd)
 		call s:ErrorMsg("empty arguments")
 		return -3
 	endif
-	let l:args = [g:asyncrun_shell, g:asyncrun_shellcmdflag]
+	if !filereadable(&shell)
+		let l:text = "invalid config in &shell and &shellcmdflag"
+		call s:ErrorMsg(l:text . ", &shell must be an executable.")
+		return -4
+	endif
+	let l:args = [&shell, &shellcmdflag]
 	let l:name = []
 	if type(a:cmd) == 1
 		let l:name = a:cmd
@@ -565,7 +563,7 @@ function! g:AsyncRun_Job_Start(cmd)
 	else
 		unlet s:async_job
 		call s:ErrorMsg("Background job start failed '".a:cmd."'")
-		return -4
+		return -5
 	endif
 	return 0
 endfunc
