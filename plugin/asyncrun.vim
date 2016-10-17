@@ -117,7 +117,7 @@ if !exists('g:asyncrun_code')
 endif
 
 if !exists('g:asyncrun_status')
-	let g:asyncrun_status = 'stop'
+	let g:asyncrun_status = ''
 endif
 
 if !exists('g:asyncrun_encs')
