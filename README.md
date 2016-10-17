@@ -52,6 +52,7 @@ Macro '`%:p:h`' stands for current file dir.
 #### Setup `<F7>` to compile file
     :noremap <F7> :AsyncRun gcc "%" -o "%<" <cr> 
 
+File name may contain spaces, therefore, it's safe to quote them.
 
 ## Manual
 
