@@ -439,6 +439,9 @@ function! g:AsyncRun_Job_NeoVim(job_id, data, event)
 		endwhile
 		call s:AsyncRun_Job_Update(-1)
 	elseif a:event == 'exit'
+		if type(a:data) == type(1)
+			let s:async_code = a:data
+		endif
 		call s:AsyncRun_Job_OnFinish(2)
 	endif
 endfunc
