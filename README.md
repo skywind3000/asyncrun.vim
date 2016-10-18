@@ -102,10 +102,11 @@ These environment variables wrapped by `$(...)` (eg. `$(VIM_FILENAME)`) will als
 
 There can be some options before your `[cmd]`:
 
-    -mode=0/1/2 - start mode: 0(async, default), 1(makeprg), 2(!)
+    -mode=0/1/2 - start mode: 0(async, default), 1(:make), 2(:!)
     -cwd=?      - initial directory, (use current directory if unset)
     -save=0/1   - non-zero to save unsaved files before executing
     -program=?  - set to `make` to use `&makeprg`, `grep` to use `&grepprg` 
+	-post=?     - vimscript to exec after this job finished, don't quote, escape ' ' -> '\ '
 
 All options must start with a minus and position **before** `[cmd]`. Since no shell command  string starts with a minus. So they can be distinguished from shell command easily without any ambiguity. 
 
@@ -126,6 +127,7 @@ stop the running job, when "!" is included, job will be stopped by signal KILL
 - g:asyncrun_bell - non-zero to ring a bell after finished
 - g:asyncrun_mode - 0:async(require vim 7.4.1829) 1:sync 2:shell
 - g:asyncrun_encs - set shell encoding if it's different from `&encoding`, see [here](https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-encoding-problem-when-using-Chinese-or-Japanese)
+- g:asyncrun_quickfix - non-zero to open quickfix window automatically, and it indicates the  window size
 
 #### Variables:
 - g:asyncrun_code - exit code
@@ -158,6 +160,8 @@ asyncrun.vim can cooperate with `vim-fugitive`, see [here](https://github.com/sk
 
 ## History
 
+- 1.3.2 (2016-10-19): new "-post" option to run a vimscript after the job finished
+- 1.3.1 (2016-10-18): fixed few issues of arguments passing in different modes
 - 1.3.0 (2016-10-17): add support to neovim, better CJK characters handling.
 - 1.2.0 (2016-10-16): refactor, correct arguments parsing, cmd options and &makeprg supports
 - 1.1.1 (2016-10-13): use the vim native &shell and &shellcmdflag config to execute commands.
