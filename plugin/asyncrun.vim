@@ -128,6 +128,10 @@ if !exists('g:asyncrun_trim')
 	let g:asyncrun_trim = 0
 endif
 
+if !exists('g:asyncrun_text')
+	let g:asyncrun_text = ''
+endif
+
 
 
 "----------------------------------------------------------------------
@@ -143,8 +147,8 @@ endfunc
 
 " show not support message
 function! s:NotSupport()
-	let l:msg = "required: +timers +channel +job +reltime and vim >= 7.4.1829"
-	call s:ErrorMsg(l:msg)
+	let msg = "required: +timers +channel +job +reltime and vim >= 7.4.1829"
+	call s:ErrorMsg(msg)
 endfunc
 
 let s:asyncrun_windows = 0
@@ -169,22 +173,12 @@ elseif has('nvim')
 	let g:asyncrun_support = 1
 endif
 
-" backup local makeprg and errorformat
-function! s:MakeSave()
-	let s:make_save = &l:makeprg
-	let s:match_save = &l:errorformat
-endfunc
-
-" restore local makeprg and errorformat
-function! s:MakeRestore()
-	let &l:makeprg = s:make_save
-	let &l:errorformat = s:match_save
-endfunc
-
 
 "----------------------------------------------------------------------
 "- build in background
 "----------------------------------------------------------------------
+let s:async_nvim = has('nvim')? 1 : 0
+let s:async_info = { 'text':"", 'post':'', 'postsave':'' }
 let s:async_output = {}
 let s:async_head = 0
 let s:async_tail = 0
@@ -194,7 +188,6 @@ let s:async_start = 0.0
 let s:async_debug = 0
 let s:async_quick = 0
 let s:async_scroll = 0
-let s:async_nvim = has('nvim')? 1 : 0
 let s:async_hold = 0
 
 " check :cbottom available, cursor in quick need to hold ?
@@ -336,7 +329,7 @@ function! g:AsyncRun_Job_OnTimer(id)
 endfunc
 
 " invoked on "callback" when job output
-function! g:AsyncRun_Job_OnCallback(channel, text)
+function! s:AsyncRun_Job_OnCallback(channel, text)
 	if !exists("s:async_job")
 		return
 	endif
@@ -400,13 +393,17 @@ function! s:AsyncRun_Job_OnFinish(what)
 	endif
 	redrawstatus!
 	redraw
+	if s:async_info.post != ''
+		exec s:async_info.post
+		let s:async_info.post = ''
+	endif
 	if g:asyncrun_exit != ""
 		exec g:asyncrun_exit
 	endif
 endfunc
 
 " invoked on "close_cb" when channel closed
-function! g:AsyncRun_Job_OnClose(channel)
+function! s:AsyncRun_Job_OnClose(channel)
 	" caddexpr "[close]"
 	let s:async_debug = 1
 	let l:limit = 512
@@ -427,14 +424,14 @@ function! g:AsyncRun_Job_OnClose(channel)
 endfunc
 
 " invoked on "exit_cb" when job exited
-function! g:AsyncRun_Job_OnExit(job, message)
+function! s:AsyncRun_Job_OnExit(job, message)
 	" caddexpr "[exit]: ".a:message." ".type(a:message)
 	let s:async_code = a:message
 	call s:AsyncRun_Job_OnFinish(0)
 endfunc
 
 " invoked on neovim when stderr/stdout/exit
-function! g:AsyncRun_Job_NeoVim(job_id, data, event)
+function! s:AsyncRun_Job_NeoVim(job_id, data, event)
 	if a:event == 'stdout' || a:event == 'stderr'
 		let l:index = 0
 		let l:size = len(a:data)
@@ -489,7 +486,7 @@ function! s:AsyncRun_Job_Start(cmd)
 		call s:ErrorMsg("empty arguments")
 		return -3
 	endif
-	if !filereadable(&shell)
+	if !executable(&shell)
 		let l:text = "invalid config in &shell and &shellcmdflag"
 		call s:ErrorMsg(l:text . ", &shell must be an executable.")
 		return -4
@@ -528,9 +525,9 @@ function! s:AsyncRun_Job_Start(cmd)
 	endif
 	if s:async_nvim == 0
 		let l:options = {}
-		let l:options['callback'] = 'g:AsyncRun_Job_OnCallback'
-		let l:options['close_cb'] = 'g:AsyncRun_Job_OnClose'
-		let l:options['exit_cb'] = 'g:AsyncRun_Job_OnExit'
+		let l:options['callback'] = function('s:AsyncRun_Job_OnCallback')
+		let l:options['close_cb'] = function('s:AsyncRun_Job_OnClose')
+		let l:options['exit_cb'] = function('s:AsyncRun_Job_OnExit')
 		let l:options['out_io'] = 'pipe'
 		let l:options['err_io'] = 'out'
 		let l:options['out_mode'] = 'nl'
@@ -543,9 +540,9 @@ function! s:AsyncRun_Job_Start(cmd)
 		let l:success = (job_status(s:async_job) != 'fail')? 1 : 0
 	else
 		let l:callbacks = {'shell': 'AsyncRun'}
-		let l:callbacks['on_stdout'] = function('g:AsyncRun_Job_NeoVim')
-		let l:callbacks['on_stderr'] = function('g:AsyncRun_Job_NeoVim')
-		let l:callbacks['on_exit'] = function('g:AsyncRun_Job_NeoVim')
+		let l:callbacks['on_stdout'] = function('s:AsyncRun_Job_NeoVim')
+		let l:callbacks['on_stderr'] = function('s:AsyncRun_Job_NeoVim')
+		let l:callbacks['on_exit'] = function('s:AsyncRun_Job_NeoVim')
 		let s:async_job = jobstart(l:args, l:callbacks)
 		let l:success = (s:async_job > 0)? 1 : 0
 	endif
@@ -574,6 +571,9 @@ function! s:AsyncRun_Job_Start(cmd)
 		let s:async_state = 1
 		let g:asyncrun_status = "running"
 		redrawstatus!
+		let s:async_info.post = s:async_info.postsave
+		let s:async_info.postsave = ''
+		let g:asyncrun_text = s:async_info.text
 	else
 		unlet s:async_job
 		call s:ErrorMsg("Background job start failed '".a:cmd."'")
@@ -656,7 +656,7 @@ function! s:ExtractOpt(command)
 		endif
 		if opt == 'cwd'
 			let opts.cwd = fnamemodify(expand(val), ':p:s?[^:]\zs[\\/]$??')
-		elseif index(['mode', 'program', 'save'], opt) >= 0
+		else
 			let opts[opt] = substitute(val, '\\\(\s\)', '\1', 'g')
 		endif
 		let cmd = substitute(cmd, '^-\w\+\%(=\%(\\.\|\S\)*\)\=\s*', '', '')
@@ -667,6 +667,8 @@ function! s:ExtractOpt(command)
 	let opts.mode = get(opts, 'mode', '')
 	let opts.save = get(opts, 'save', '')
 	let opts.program = get(opts, 'program', '')
+	let opts.post = get(opts, 'post', '')
+	let opts.text = get(opts, 'text', '')
 	if 0
 		echom 'cwd:'. opts.cwd
 		echom 'mode:'. opts.mode
@@ -675,6 +677,37 @@ function! s:ExtractOpt(command)
 		echom 'command:'. cmd
 	endif
 	return [cmd, opts]
+endfunc
+
+" write script to a file and return filename
+function! s:ScriptWrite(command, pause)
+	let l:tmp = fnamemodify(tempname(), ':h') . '\asyncrun.cmd'
+	if s:asyncrun_windows != 0
+		let l:line = ['@echo off', 'call '.a:command]
+		if a:pause != 0
+			let l:line += ['pause']
+		endif
+	else
+		let l:line = ['#! '.&shell]
+		let l:line += [a:command]
+		if a:pause != 0
+			let l:line += ['read -n1 -rsp "press any key to confinue ..."']
+		endif
+		let l:tmp = tempname()
+	endif
+	if v:version >= 700
+		call writefile(l:line, l:tmp)
+	else
+		exe 'redir ! > '.fnameescape(l:tmp)
+		for l:index in range(len(l:line))
+			silent echo l:line[l:index]
+		endfor
+		redir END
+	endif
+	if s:asyncrun_windows == 0
+		try | call setfperm(l:tmp, 'rwx------') | catch | endtry
+	endif
+	return l:tmp
 endfunc
 
 
@@ -701,6 +734,7 @@ function! asyncrun#run(bang, mode, args)
 	let l:macros['<cwd>'] = getcwd()
 	let l:command = s:StringStrip(a:args)
 	let cd = haslocaldir()? 'lcd ' : 'cd '
+	let l:retval = ''
 
 	" extract options
 	let [l:command, l:opts] = s:ExtractOpt(l:command)
@@ -713,14 +747,12 @@ function! asyncrun#run(bang, mode, args)
 		endif
 		let l:command = s:StringReplace(l:command, l:replace, l:val)
 		let l:opts.cwd = s:StringReplace(l:opts.cwd, l:replace, l:val)
+		let l:opts.text = s:StringReplace(l:opts.text, l:replace, l:val)
 	endfor
 
 	" check if need to save
 	if get(l:opts, 'save', '')
-		try
-			silent update
-		catch /.*/
-		endtry
+		try | silent update | catch | endtry
 	endif
 
 	if a:bang == '!'
@@ -766,7 +798,7 @@ function! asyncrun#run(bang, mode, args)
 	if l:opts.cwd != ''
 		let l:opts.savecwd = getcwd()
 		try
-			exec cd . fnameescape(l:opts.cwd)
+			silent exec cd . fnameescape(l:opts.cwd)
 		catch /.*/
 			echohl ErrorMsg
 			echom "E344: Can't find directory \"".l:opts.cwd."\" in -cwd"
@@ -776,50 +808,82 @@ function! asyncrun#run(bang, mode, args)
 	endif
 
 	if l:mode == 0 && s:asyncrun_support != 0
+		let s:async_info.postsave = opts.post
+		let s:async_info.text = opts.text
 		call s:AsyncRun_Job_Start(l:command)
-	elseif l:mode <= 1 && has('quickfix')
-		call s:MakeSave()
-		let &l:makeprg = l:command
+	elseif l:mode == 1 && has('quickfix')
+		let l:makesave = &l:makeprg
+		let l:script = s:ScriptWrite(l:command, 0)
+		if s:asyncrun_windows != 0
+			let &l:makeprg = shellescape(l:script)
+		else
+			let &l:makeprg = 'source '. shellescape(l:script)
+		endif
 		exec "make!"
-		call s:MakeRestore()
-	elseif l:mode <= 3
+		let &l:makeprg = l:makesave
+		if s:asyncrun_windows == 0
+			try | call delete(l:script) | catch | endtry
+		endif
+		let g:asyncrun_text = opts.text
+		if opts.post != ''
+			exec opts.post
+		endif
+	elseif l:mode == 2
+		exec '!'. l:command
+		let g:asyncrun_text = opts.text
+		if opts.post != ''
+			exec opts.post
+		endif
+	elseif l:mode == 3
+		if s:asyncrun_windows != 0 && has('python')
+			let l:script = s:ScriptWrite(l:command, 0)
+			python import vim, subprocess
+			python x = [vim.eval('l:script')]
+			python m = subprocess.PIPE
+			python n = subprocess.STDOUT
+			python s = True
+			python p = subprocess.Popen(x, shell = s, stdout = m, stderr = n)
+			python t = p.stdout.read()
+			python p.stdout.close()
+			python p.wait()
+			python t = t.replace('\\', '\\\\').replace('"', '\\"')
+			python t = t.replace('\n', '\\n').replace('\r', '\\r')
+			python vim.command('let l:text = "%s"'%t)
+			let l:retval = l:text
+		else
+			let l:retval = system(l:command)
+		endif
+		let g:asyncrun_text = opts.text
+		if opts.post != ''
+			exec opts.post
+		endif
+	elseif l:mode <= 5
 		if s:asyncrun_windows != 0 && has('gui_running')
-			let l:tmp = fnamemodify(tempname(), ':h') . '\asyncrun.cmd'
-			let l:run = ['@echo off', l:command, 'pause']
-			if v:version >= 700
-				call writefile(l:run, l:tmp)
-			else
-				exe 'redir ! > '.fnameescape(l:tmp)
-				silent echo "@echo off"
-				silent echo l:cmd
-				silent echo "pause"
-				redir END
-			endif
-			let l:ccc = shellescape(l:tmp)
-			if l:mode == 2
+			let l:ccc = shellescape(s:ScriptWrite(l:command, 1))
+			if l:mode == 4
 				silent exec '!start cmd /C '. l:ccc
 			else
 				silent exec '!start /b cmd /C '. l:ccc
 			endif
 			redraw
 		else
-			if l:mode == 2
+			if l:mode == 4
 				exec '!' . l:command
 			else
 				call system(l:command . ' &')
 			endif
 		endif
-	elseif l:mode == 4
-		exec '!'. l:command
-	elseif l:mode == 5
-		if s:asyncrun_windows != 0
-		else
+		let g:asyncrun_text = opts.text
+		if opts.post != ''
+			exec opts.post
 		endif
 	endif
 
 	if l:opts.cwd != ''
-		exec cd fnameescape(l:opts.savecwd)
+		silent exec cd fnameescape(l:opts.savecwd)
 	endif
+
+	return l:retval
 endfunc
 
 
