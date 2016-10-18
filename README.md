@@ -106,7 +106,7 @@ There can be some options before your `[cmd]`:
     -cwd=?      - initial directory, (use current directory if unset)
     -save=0/1   - non-zero to save unsaved files before executing
     -program=?  - set to `make` to use `&makeprg`, `grep` to use `&grepprg` 
-	-post=?     - vimscript to exec after this job finished, don't quote, escape ' ' -> '\ '
+	-post=?     - vimscript to exec after this job finished, spaces **must** be escaped to '\ '
 
 All options must start with a minus and position **before** `[cmd]`. Since no shell command  string starts with a minus. So they can be distinguished from shell command easily without any ambiguity. 
 
