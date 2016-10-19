@@ -108,10 +108,6 @@ if !exists('g:asyncrun_last')
 	let g:asyncrun_last = 0
 endif
 
-if !exists('g:asyncrun_quickfix')
-	let g:asyncrun_quickfix = 0
-endif
-
 if !exists('g:asyncrun_timer')
 	let g:asyncrun_timer = 100
 endif
@@ -711,46 +707,6 @@ function! s:ScriptWrite(command, pause)
 	return l:tmp
 endfunc
 
-" toggle quickfix: mode=0/close, 1/open, 2/toggle
-function! s:QuickfixToggle(mode, size)
-	function! s:WindowCheck(mode)
-		if getbufvar('%', '&buftype') == 'quickfix'
-			let s:quickfix_open = 1
-			return
-		endif
-		if a:mode == 0
-			let w:quickfix_save = winsaveview()
-		else
-			call winrestview(w:quickfix_save)
-		endif
-	endfunc
-	let s:quickfix_open = 0
-	let l:winnr = winnr()			
-	windo call s:WindowCheck(0)
-	if a:mode == 0
-		if s:quickfix_open != 0
-			cclose
-		endif
-	elseif a:mode == 1
-		if s:quickfix_open == 0
-			exec 'botright copen '. ((a:size > 0)? a:size : ' ')
-			wincmd k
-		endif
-	elseif a:mode == 2
-		if s:quickfix_open == 0
-			exec 'botright copen '. ((a:size > 0)? a:size : ' ')
-			wincmd k
-		else
-			cclose
-		endif
-	endif
-	windo call s:WindowCheck(1)
-	try
-		silent exec ''.l:winnr.'wincmd w'
-	catch /.*/
-	endtry
-endfunc
-
 
 "----------------------------------------------------------------------
 " asyncrun - run
@@ -851,9 +807,6 @@ function! asyncrun#run(bang, mode, args)
 	if l:mode == 0 && s:asyncrun_support != 0
 		let s:async_info.postsave = opts.post
 		let s:async_info.text = opts.text
-		if g:asyncrun_quickfix != 0
-			call s:QuickfixToggle(1, g:asyncrun_quickfix)
-		endif
 		call s:AsyncRun_Job_Start(l:command)
 	elseif l:mode <= 1 && has('quickfix')
 		let l:makesave = &l:makeprg
@@ -867,9 +820,6 @@ function! asyncrun#run(bang, mode, args)
 		let &l:makeprg = l:makesave
 		if s:asyncrun_windows == 0
 			try | call delete(l:script) | catch | endtry
-		endif
-		if g:asyncrun_quickfix != 0
-			call s:QuickfixToggle(1, g:asyncrun_quickfix)
 		endif
 		let g:asyncrun_text = opts.text
 		if opts.post != ''
@@ -979,7 +929,42 @@ command! -bang -nargs=0 AsyncStop call asyncrun#stop('<bang>')
 "----------------------------------------------------------------------
 function! asyncrun#quickfix_toggle(size, ...)
 	let l:mode = (a:0 == 0)? 2 : (a:1)
-	call s:QuickfixToggle(l:mode, a:size)
+	function! s:WindowCheck(mode)
+		if getbufvar('%', '&buftype') == 'quickfix'
+			let s:quickfix_open = 1
+			return
+		endif
+		if a:mode == 0
+			let w:quickfix_save = winsaveview()
+		else
+			call winrestview(w:quickfix_save)
+		endif
+	endfunc
+	let s:quickfix_open = 0
+	let l:winnr = winnr()			
+	windo call s:WindowCheck(0)
+	if l:mode == 0
+		if s:quickfix_open != 0
+			cclose
+		endif
+	elseif l:mode == 1
+		if s:quickfix_open == 0
+			exec 'botright copen '. ((a:size > 0)? a:size : ' ')
+			wincmd k
+		endif
+	elseif l:mode == 2
+		if s:quickfix_open == 0
+			exec 'botright copen '. ((a:size > 0)? a:size : ' ')
+			wincmd k
+		else
+			cclose
+		endif
+	endif
+	windo call s:WindowCheck(1)
+	try
+		silent exec ''.l:winnr.'wincmd w'
+	catch /.*/
+	endtry
 endfunc
 
 
