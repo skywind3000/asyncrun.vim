@@ -501,7 +501,7 @@ function! s:AsyncRun_Job_Start(cmd)
 			let l:tmp = fnamemodify(tempname(), ':h') . '\asyncrun.cmd'
 			let l:run = ['@echo off', a:cmd]
 			call writefile(l:run, l:tmp)
-			let l:args += [shellescape(l:tmp)]
+			let l:args += [l:tmp]
 		endif
 	elseif type(a:cmd) == 3
 		if s:asyncrun_windows == 0
