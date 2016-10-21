@@ -406,14 +406,15 @@ endfunc
 function! s:AsyncRun_Job_OnClose(channel)
 	" caddexpr "[close]"
 	let s:async_debug = 1
-	let l:limit = 512
+	let l:limit = 128
 	while ch_status(a:channel) == 'buffered'
 		let l:text = ch_read(a:channel)
 		if l:text == '' " important when child process is killed
 			let l:limit -= 1
 			if l:limit < 0 | break | endif
+		else
+			call s:AsyncRun_Job_OnCallback(a:channel, l:text)
 		endif
-		call s:AsyncRun_Job_OnCallback(a:channel, l:text)
 	endwhile
 	let s:async_debug = 0
 	call s:AsyncRun_Job_Update(-1)
