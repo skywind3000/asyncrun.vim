@@ -656,11 +656,7 @@ function! s:ExtractOpt(command)
 		else
 			let val = (opt == 'cwd')? '' : 1
 		endif
-		if opt == 'cwd'
-			let opts.cwd = fnamemodify(expand(val), ':p:s?[^:]\zs[\\/]$??')
-		else
-			let opts[opt] = substitute(val, '\\\(\s\)', '\1', 'g')
-		endif
+		let opts[opt] = substitute(val, '\\\(\s\)', '\1', 'g')
 		let cmd = substitute(cmd, '^-\w\+\%(=\%(\\.\|\S\)*\)\=\s*', '', '')
 	endwhile
 	let cmd = substitute(cmd, '^\s*\(.\{-}\)\s*$', '\1', '')
