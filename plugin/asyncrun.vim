@@ -413,7 +413,7 @@ function! s:AsyncRun_Job_OnClose(channel)
 			let l:limit -= 1
 			if l:limit < 0 | break | endif
 		endif
-		call g:AsyncRun_Job_OnCallback(a:channel, l:text)
+		call s:AsyncRun_Job_OnCallback(a:channel, l:text)
 	endwhile
 	let s:async_debug = 0
 	call s:AsyncRun_Job_Update(-1)
