@@ -155,6 +155,10 @@ asyncrun.vim can cooperate with `vim-fugitive`, see [here](https://github.com/sk
 - [Cooperate with vim-fugitive](https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-vim-fugitive)
 - [Replace old ':make' command with asyncrun](https://github.com/skywind3000/asyncrun.vim/wiki/Replace-old-make-command-with-AsyncRun)
 - [Quickfix encoding problem when using Chinese or Japanese](https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-encoding-problem-when-using-Chinese-or-Japanese)
+- [Example for updating and adding cscope files](https://github.com/skywind3000/asyncrun.vim/wiki/Example-for-updating-and-adding-cscope)
+
+## Experiment
+- [Experiment: get netrw using asyncrun to save remote files](https://github.com/skywind3000/asyncrun.vim/wiki/Get-netrw-using-asyncrun-to-save-remote-files)
 
 
 ## History
