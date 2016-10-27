@@ -132,6 +132,9 @@ if !exists('g:asyncrun_text')
 	let g:asyncrun_text = ''
 endif
 
+if !exists('g:asyncrun_local')
+	let g:asyncrun_local = 1
+endif
 
 
 "----------------------------------------------------------------------
@@ -189,6 +192,7 @@ let s:async_debug = 0
 let s:async_quick = 0
 let s:async_scroll = 0
 let s:async_hold = 0
+let s:async_efm = &errorformat
 
 " check :cbottom available, cursor in quick need to hold ?
 if s:async_nvim == 0
@@ -288,9 +292,16 @@ function! s:AsyncRun_Job_Update(count)
 	let l:total = 0
 	let l:empty = [{'text':''}]
 	let l:check = s:AsyncRun_Job_CheckScroll()
+	let l:efm1 = &g:efm
+	let l:efm2 = &l:efm
 	if g:asyncrun_encs == &encoding
 		let l:iconv = 0 
 	endif
+	if &g:efm != s:async_efm && g:asyncrun_local != 0
+		let &l:efm = s:async_efm
+		let &g:efm = s:async_efm
+	endif
+	let l:raw = (s:async_efm == '')? 1 : 0
 	while s:async_tail < s:async_head
 		let l:text = s:async_output[s:async_tail]
 		if l:iconv != 0
@@ -300,7 +311,11 @@ function! s:AsyncRun_Job_Update(count)
 			endtry
 		endif
 		if l:text != ''
-			caddexpr l:text
+			if l:raw == 0
+				caddexpr l:text
+			else
+				call setqflist([{'text':l:text}], 'a')
+			endif
 		elseif g:asyncrun_trim == 0
 			call setqflist(l:empty, 'a')
 		endif
@@ -312,6 +327,10 @@ function! s:AsyncRun_Job_Update(count)
 			break
 		endif
 	endwhile
+	if g:asyncrun_local != 0
+		if l:efm1 != &g:efm | let &g:efm = l:efm1 | endif
+		if l:efm2 != &l:efm | let &l:efm = l:efm2 | endif
+	endif
 	if s:async_scroll != 0 && l:total > 0 && l:check != 0
 		call s:AsyncRun_Job_AutoScroll()
 	elseif s:async_hold != 0 
@@ -524,6 +543,7 @@ function! s:AsyncRun_Job_Start(cmd)
 		endfor
 		let l:name = join(l:vector, ', ')
 	endif
+	let s:async_efm = &errorformat
 	if s:async_nvim == 0
 		let l:options = {}
 		let l:options['callback'] = function('s:AsyncRun_Job_OnCallback')
