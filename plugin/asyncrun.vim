@@ -729,7 +729,7 @@ endfunc
 "----------------------------------------------------------------------
 " asyncrun - run
 "----------------------------------------------------------------------
-function! asyncrun#run(bang, mode, args)
+function! asyncrun#run(bang, opts, args)
 	let l:macros = {}
 	let l:macros['VIM_FILEPATH'] = expand("%:p")
 	let l:macros['VIM_FILENAME'] = expand("%:t")
@@ -764,6 +764,13 @@ function! asyncrun#run(bang, mode, args)
 		let l:opts.cwd = s:StringReplace(l:opts.cwd, l:replace, l:val)
 		let l:opts.text = s:StringReplace(l:opts.text, l:replace, l:val)
 	endfor
+
+	" combine options
+	if type(a:opts) == type({})
+		for [l:key, l:val] in items(a:opts)
+			let l:opts[l:key] = l:val
+		endfor
+	endif
 
 	" check if need to save
 	if get(l:opts, 'save', '')
