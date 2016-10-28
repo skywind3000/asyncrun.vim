@@ -157,7 +157,9 @@ asyncrun.vim can cooperate with `vim-fugitive`, see [here](https://github.com/sk
 - [Quickfix encoding problem when using Chinese or Japanese](https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-encoding-problem-when-using-Chinese-or-Japanese)
 - [Example for updating and adding cscope files](https://github.com/skywind3000/asyncrun.vim/wiki/Example-for-updating-and-adding-cscope)
 
-## Experiment
+Don't forget to read the [Frequently Asked Questions](https://github.com/skywind3000/asyncrun.vim/wiki/FAQ).
+
+## Further
 - [Experiment: get netrw using asyncrun to save remote files](https://github.com/skywind3000/asyncrun.vim/wiki/Get-netrw-using-asyncrun-to-save-remote-files)
 
 
