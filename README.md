@@ -127,6 +127,7 @@ stop the running job, when "!" is included, job will be stopped by signal KILL
 - g:asyncrun_bell - non-zero to ring a bell after finished
 - g:asyncrun_mode - 0:async(require vim 7.4.1829) 1:sync 2:shell
 - g:asyncrun_encs - set shell encoding if it's different from `&encoding`, see [here](https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-encoding-problem-when-using-Chinese-or-Japanese)
+- g:asyncrun_trim - non-zero to trim the empty lines in the quickfix window.
 
 #### Variables:
 - g:asyncrun_code - exit code
@@ -182,6 +183,8 @@ Don't forget to read the [Frequently Asked Questions](https://github.com/skywind
 - 0.0.0 (2016-08-24): initial version
 
 ## Credits
+Trying best to provide the most simply and convenience experience in the asynchronous-jobs. 
+
 Author: skywind3000
 Please vote it if you like it: 
 http://www.vim.org/scripts/script.php?script_id=5431
