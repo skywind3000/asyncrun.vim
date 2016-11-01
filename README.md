@@ -13,6 +13,7 @@ If that doesn't excite you, then perhaps this GIF screen capture below will chan
 
 ## News
 
+- 2016/11/01 `asyncrun.vim` can now cooperate with `errormarker` now.
 - 2016/10/17 Glad to announce that `asyncrun.vim` supports NeoVim now.
 - 2016/10/15 `asyncrun.vim` can cooperate with `vim-fugitive`, see the bottom of the README.
 
@@ -126,8 +127,9 @@ stop the running job, when "!" is included, job will be stopped by signal KILL
 - g:asyncrun_exit - script will be executed after finished
 - g:asyncrun_bell - non-zero to ring a bell after finished
 - g:asyncrun_mode - 0:async(require vim 7.4.1829) 1:sync 2:shell
-- g:asyncrun_encs - set shell encoding if it's different from `&encoding`, see [here](https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-encoding-problem-when-using-Chinese-or-Japanese)
+- g:asyncrun_encs - set shell encoding if it's different from `&encoding`, see [encoding](https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-encoding-problem-when-using-Chinese-or-Japanese)
 - g:asyncrun_trim - non-zero to trim the empty lines in the quickfix window.
+- g:asyncrun_auto - event name to trigger QuickFixCmdPre/QuickFixCmdPost, see [FAQ](https://github.com/skywind3000/asyncrun.vim/wiki/FAQ#can-asyncrunvim-trigger-an-autocommand-quickfixcmdpost-to-get-some-plugin-like-errormaker-processing-the-content-in-quickfix-)
 
 #### Variables:
 - g:asyncrun_code - exit code
@@ -160,13 +162,21 @@ asyncrun.vim can cooperate with `vim-fugitive`, see [here](https://github.com/sk
 
 Don't forget to read the [Frequently Asked Questions](https://github.com/skywind3000/asyncrun.vim/wiki/FAQ).
 
-## Further
-- [Experiment: get netrw using asyncrun to save remote files](https://github.com/skywind3000/asyncrun.vim/wiki/Get-netrw-using-asyncrun-to-save-remote-files)
+## Cooperate with other Plugins
 
+| Name | Description |
+|------|-------------|
+| [vim-fugitive](https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-vim-fugitive)  | works very well with asyncrun |
+| [errormarker](https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-famous-plugins) | works very well with asyncrun |
+| [netrw](https://github.com/skywind3000/asyncrun.vim/wiki/Get-netrw-using-asyncrun-to-save-remote-files) | Experimental, take your own risk |  |
+
+See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-famous-plugins)
 
 ## History
 
-- 1.3.3 (2016-10-28): prevent job who reads stdin from getting hanging, fixed an issue in fast exiting jobs.
+- 1.3.5 (2016-11-02): new option "g:asyncrun_auto" to trigger QuickFixCmdPre/QuickFixCmdPost.
+- 1.3.4 (2016-10-28): new option "g:asyncrun_local" to use local value of errorformat rather the global value. 
+- 1.3.3 (2016-10-21): prevent job who reads stdin from getting hanging, fixed an issue in fast exiting jobs.
 - 1.3.2 (2016-10-19): new "-post" option to run a vimscript after the job finished
 - 1.3.1 (2016-10-18): fixed few issues of arguments passing in different modes
 - 1.3.0 (2016-10-17): add support to neovim, better CJK characters handling.
