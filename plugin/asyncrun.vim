@@ -343,6 +343,20 @@ function! s:AsyncRun_Job_Update(count)
 	return l:count
 endfunc
 
+" trigger autocmd
+function! s:AsyncRun_Job_AutoCmd(mode, auto)
+	if !has('autocmd') | return | endif
+	let name = (a:auto == '')? g:asyncrun_auto : a:auto
+	if name !~ '^\w\+' || name == 'NONE' || name == '<NONE>'
+		return
+	endif
+	if a:mode == 0
+		exec 'silent doautocmd QuickFixCmdPre '. name
+	else
+		exec 'silent doautocmd QuickFixCmdPost '. name
+	endif
+endfunc
+
 " invoked on timer
 function! g:AsyncRun_Job_OnTimer(id)
 	if exists('s:async_job')
@@ -423,9 +437,7 @@ function! s:AsyncRun_Job_OnFinish(what)
 	if g:asyncrun_exit != ""
 		exec g:asyncrun_exit
 	endif
-	if g:asyncrun_auto != '' && has('autocmd')
-		exec 'silent doautocmd QuickFixCmdPost '. g:asyncrun_auto
-	endif
+	call s:AsyncRun_Job_AutoCmd(1, s:async_info.auto)
 endfunc
 
 " invoked on "close_cb" when channel closed
@@ -600,12 +612,12 @@ function! s:AsyncRun_Job_Start(cmd)
 		let s:async_state = 1
 		let g:asyncrun_status = "running"
 		let s:async_info.post = s:async_info.postsave
+		let s:async_info.auto = s:async_info.autosave
 		let s:async_info.postsave = ''
+		let s:async_info.autosave = ''
 		let g:asyncrun_text = s:async_info.text
 		redrawstatus!
-		if g:asyncrun_auto != '' && has('autocmd')
-			exec 'silent doautocmd QuickFixCmdPre '. g:asyncrun_auto
-		endif
+		call s:AsyncRun_Job_AutoCmd(0, s:async_info.auto)
 	else
 		unlet s:async_job
 		call s:ErrorMsg("Background job start failed '".a:cmd."'")
@@ -697,6 +709,7 @@ function! s:ExtractOpt(command)
 	let opts.program = get(opts, 'program', '')
 	let opts.post = get(opts, 'post', '')
 	let opts.text = get(opts, 'text', '')
+	let opts.auto = get(opts, 'auto', '')
 	if 0
 		echom 'cwd:'. opts.cwd
 		echom 'mode:'. opts.mode
@@ -841,6 +854,7 @@ function! asyncrun#run(bang, opts, args)
 
 	if l:mode == 0 && s:asyncrun_support != 0
 		let s:async_info.postsave = opts.post
+		let s:async_info.autosave = opts.auto
 		let s:async_info.text = opts.text
 		call s:AsyncRun_Job_Start(l:command)
 	elseif l:mode <= 1 && has('quickfix')
@@ -851,7 +865,13 @@ function! asyncrun#run(bang, opts, args)
 		else
 			let &l:makeprg = 'source '. shellescape(l:script)
 		endif
-		exec "make!"
+		if has('autocmd')
+			call s:AsyncRun_Job_AutoCmd(0, opts.auto)
+			exec "noautocmd make!"
+			call s:AsyncRun_Job_AutoCmd(1, opts.auto)
+		else
+			exec "make!"
+		endif
 		let &l:makeprg = l:makesave
 		if s:asyncrun_windows == 0
 			try | call delete(l:script) | catch | endtry
