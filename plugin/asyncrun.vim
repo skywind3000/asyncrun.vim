@@ -426,7 +426,7 @@ function! s:AsyncRun_Job_OnFinish(what)
 	endif
 	let g:asyncrun_code = s:async_code
 	if g:asyncrun_bell != 0
-		exec 'norm! \<esc>'
+		exec "norm! \<esc>"
 	endif
 	redrawstatus!
 	redraw
