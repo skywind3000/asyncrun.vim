@@ -846,6 +846,7 @@ function! asyncrun#run(bang, opts, args)
 
 	if l:mode >= 10 
 		let l:opts.cmd = l:command
+		let l:opts.mode = l:mode
 		if g:asyncrun_hook != ''
 			exec 'call '. g:asyncrun_hook .'(l:opts)'
 		endif
