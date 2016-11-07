@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last change: 2016.11.2
+" Last change: 2016.11.8
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -102,6 +102,10 @@ endif
 
 if !exists('g:asyncrun_mode')
 	let g:asyncrun_mode = 0
+endif
+
+if !exists('g:asyncrun_hook')
+	let g:asyncrun_hook = ''
 endif
 
 if !exists('g:asyncrun_last')
@@ -837,6 +841,14 @@ function! asyncrun#run(bang, opts, args)
 		echohl ErrorMsg
 		echom "E471: Command required"
 		echohl NONE
+		return
+	endif
+
+	if l:mode >= 10 
+		let l:opts.cmd = l:command
+		if g:asyncrun_hook != ''
+			exec 'call '. g:asyncrun_hook .'(l:opts)'
+		endif
 		return
 	endif
 
