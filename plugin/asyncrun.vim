@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last change: 2016.11.8
+" Last change: 2016.11.13
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -449,8 +449,9 @@ function! s:AsyncRun_Job_OnClose(channel)
 	" caddexpr "[close]"
 	let s:async_debug = 1
 	let l:limit = 128
+	let l:options = {'timeout':0}
 	while ch_status(a:channel) == 'buffered'
-		let l:text = ch_read(a:channel)
+		let l:text = ch_read(a:channel, l:options)
 		if l:text == '' " important when child process is killed
 			let l:limit -= 1
 			if l:limit < 0 | break | endif
@@ -894,7 +895,7 @@ function! asyncrun#run(bang, opts, args)
 			exec opts.post
 		endif
 	elseif l:mode <= 2
-		exec '!'. l:command
+		exec '!'. escape(l:command, '%#')
 		let g:asyncrun_text = opts.text
 		if opts.post != ''
 			exec opts.post
@@ -933,7 +934,7 @@ function! asyncrun#run(bang, opts, args)
 			redraw
 		else
 			if l:mode == 4
-				exec '!' . l:command
+				exec '!' . escape(l:command, '%#')
 			else
 				call system(l:command . ' &')
 			endif
