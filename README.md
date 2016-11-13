@@ -131,6 +131,7 @@ stop the running job, when "!" is included, job will be stopped by signal KILL
 - g:asyncrun_encs - set shell encoding if it's different from `&encoding`, see [encoding](https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-encoding-problem-when-using-Chinese-or-Japanese)
 - g:asyncrun_trim - non-zero to trim the empty lines in the quickfix window.
 - g:asyncrun_auto - event name to trigger QuickFixCmdPre/QuickFixCmdPost, see [FAQ](https://github.com/skywind3000/asyncrun.vim/wiki/FAQ#can-asyncrunvim-trigger-an-autocommand-quickfixcmdpost-to-get-some-plugin-like-errormaker-processing-the-content-in-quickfix-)
+- g:asyncrun_timer - how many messages should be inserted into quickfix every 100ms interval.
 
 #### Variables:
 - g:asyncrun_code - exit code
@@ -176,6 +177,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 1.3.7 (2016-11-13): new option 'g:asyncrun_timer' to prevent gui freeze by massive output.
 - 1.3.6 (2016-11-08): improve performance in quickfix_toggle, fixed small issue in bell ringing.
 - 1.3.5 (2016-11-02): new option "g:asyncrun_auto" to trigger QuickFixCmdPre/QuickFixCmdPost.
 - 1.3.4 (2016-10-28): new option "g:asyncrun_local" to use local value of errorformat rather the global value. 
