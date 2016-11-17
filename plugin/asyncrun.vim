@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last change: 2016.11.13
+" Last change: 2016.11.17
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -88,6 +88,10 @@
 "----------------------------------------------------------------------
 "- Global Settings & Variables
 "----------------------------------------------------------------------
+if !exists('g:asyncrun_start')
+	let g:asyncrun_start = ''
+endif
+
 if !exists('g:asyncrun_exit')
 	let g:asyncrun_exit = ''
 endif
@@ -351,13 +355,16 @@ endfunc
 function! s:AsyncRun_Job_AutoCmd(mode, auto)
 	if !has('autocmd') | return | endif
 	let name = (a:auto == '')? g:asyncrun_auto : a:auto
-	if name !~ '^\w\+' || name == 'NONE' || name == '<NONE>'
-		return
-	endif
 	if a:mode == 0
-		exec 'silent doautocmd QuickFixCmdPre '. name
+		doautocmd User AsyncRunStart
+		if name =~ '^\w\+' && name != 'NONE' && name != '<NONE>'
+			silent exec 'doautocmd QuickFixCmdPre '. name
+		endif
 	else
-		exec 'silent doautocmd QuickFixCmdPost '. name
+		if name =~ '^\w\+' && name != 'NONE' && name != '<NONE>'
+			silent exec 'doautocmd QuickFixCmdPost '. name
+		endif
+		doautocmd User AsyncRunExit
 	endif
 endfunc
 
@@ -611,8 +618,11 @@ function! s:AsyncRun_Job_Start(cmd)
 		let s:async_info.postsave = ''
 		let s:async_info.autosave = ''
 		let g:asyncrun_text = s:async_info.text
-		redrawstatus!
 		call s:AsyncRun_Job_AutoCmd(0, s:async_info.auto)
+		if g:asyncrun_start != ''
+			exec g:asyncrun_start
+		endif
+		redrawstatus!
 	else
 		unlet s:async_job
 		call s:ErrorMsg("Background job start failed '".a:cmd."'")
