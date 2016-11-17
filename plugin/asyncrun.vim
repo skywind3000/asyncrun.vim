@@ -371,6 +371,10 @@ endfunc
 " invoked on timer
 function! g:AsyncRun_Job_OnTimer(id)
 	let limit = (g:asyncrun_timer < 10)? 10 : g:asyncrun_timer
+	" check on command line window
+	if &ft == 'vim' && &buftype == 'nofile'
+		return
+	endif
 	if s:async_nvim == 0
 		if exists('s:async_job')
 			call job_status(s:async_job)
