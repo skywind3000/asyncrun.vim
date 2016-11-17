@@ -137,6 +137,18 @@ stop the running job, when "!" is included, job will be stopped by signal KILL
 - g:asyncrun_code - exit code
 - g:asyncrun_status - 'running', 'success' or 'failure'
 
+#### Autocmd:
+
+```VimL
+autocmd User AsyncRunPre   - triggered before executing
+autocmd User AsyncRunStart - triggered after starting successfully
+autocmd User AsyncRunStop  - triggered when job finished
+```
+
+Note, `AsyncRunPre` is always likely to be invoked, but `AsyncRunStart` and `AsyncRunStop` will only be invoked if the job starts successfully. 
+
+When previous job is still running or vim job slot is full, AsyncRun may fail. In this circumstance, `AsyncRunPre` will be invoked but `AsyncRunStart` and `AsyncRunStop` will have no chance to trigger.
+
 #### Requirements:
 Vim 7.4.1829 is minimal version to support async mode. If you are use older versions, `g:asyncrun_mode` will fall back from `0/async` to `1/sync`. NeoVim 0.1.4 or later is also supported. 
 
