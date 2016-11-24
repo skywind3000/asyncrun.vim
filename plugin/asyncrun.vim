@@ -920,19 +920,38 @@ function! asyncrun#run(bang, opts, args)
 	elseif l:mode == 3
 		if s:asyncrun_windows != 0 && has('python')
 			let l:script = s:ScriptWrite(l:command, 0)
-			python import vim, subprocess
-			python x = [vim.eval('l:script')]
-			python m = subprocess.PIPE
-			python n = subprocess.STDOUT
-			python s = True
-			python p = subprocess.Popen(x, shell = s, stdout = m, stderr = n)
-			python t = p.stdout.read()
-			python p.stdout.close()
-			python p.wait()
-			python t = t.replace('\\', '\\\\').replace('"', '\\"')
-			python t = t.replace('\n', '\\n').replace('\r', '\\r')
-			python vim.command('let l:text = "%s"'%t)
-			let l:retval = l:text
+			py import subprocess, vim
+			py argv = {'args': vim.eval('l:script'), 'shell': True}
+			py argv['stdout'] = subprocess.PIPE
+			py argv['stderr'] = subprocess.STDOUT
+			py p = subprocess.Popen(**argv)
+			py text = p.stdout.read()
+			py p.stdout.close()
+			py p.wait()
+			if has('patch-7.4.145')
+				let l:retval = pyeval('text')
+			else
+				py text = text.replace('\\', '\\\\').replace('"', '\\"')
+				py text = text.replace('\n', '\\n').replace('\r', '\\r')
+				py vim.command('let l:retval = "%s"'%text)
+			endif
+		elseif s:asyncrun_windows != 0 && has('python3')
+			let l:script = s:ScriptWrite(l:command, 0)
+			py3 import subprocess, vim
+			py3 argv = {'args': vim.eval('l:script'), 'shell': True}
+			py3 argv['stdout'] = subprocess.PIPE
+			py3 argv['stderr'] = subprocess.STDOUT
+			py3 p = subprocess.Popen(**argv)
+			py3 text = p.stdout.read()
+			py3 p.stdout.close()
+			py3 p.wait()
+			if has('patch-7.4.145')
+				let l:retval = py3eval('text')
+			else
+				py3 text = text.replace('\\', '\\\\').replace('"', '\\"')
+				py3 text = text.replace('\n', '\\n').replace('\r', '\\r')
+				py3 vim.command('let l:retval = "%s"'%text)
+			endif
 		else
 			let l:retval = system(l:command)
 		endif
