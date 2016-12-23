@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last change: 2016.11.17
+" Last change: 2016.12.23
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -144,6 +144,15 @@ if !exists('g:asyncrun_auto')
 	let g:asyncrun_auto = ''
 endif
 
+if !exists('g:asyncrun_shell')
+	let g:asyncrun_shell = ''
+endif
+
+if !exists('g:asyncrun_shellflag')
+	let g:asyncrun_shellflag = ''
+endif
+
+
 
 "----------------------------------------------------------------------
 "- Internal Functions
@@ -207,6 +216,7 @@ let s:async_debug = 0
 let s:async_quick = 0
 let s:async_scroll = 0
 let s:async_hold = 0
+let s:async_congest = 0
 let s:async_efm = &errorformat
 
 " check :cbottom available, cursor in quick need to hold ?
@@ -216,6 +226,12 @@ if s:async_nvim == 0
 else
 	let s:async_quick = 0
 	let s:async_hold = 1
+endif
+
+" check if we have vim 8.0.100
+if s:async_nvim == 0 && v:version >= 800
+	let s:async_congest = has('patch-8.0.100')? 1 : 0
+	let s:async_congest = 0
 endif
 
 " scroll quickfix down
@@ -398,6 +414,9 @@ function! s:AsyncRun_Job_OnCallback(channel, text)
 	endif
 	let s:async_output[s:async_head] = a:text
 	let s:async_head += 1
+	if s:async_congest != 0 
+		call s:AsyncRun_Job_Update(-1)
+	endif
 endfunc
 
 " because exit_cb and close_cb are disorder, we need OnFinish to guarantee
@@ -535,12 +554,21 @@ function! s:AsyncRun_Job_Start(cmd)
 		call s:ErrorMsg("empty arguments")
 		return -3
 	endif
-	if !executable(&shell)
-		let l:text = "invalid config in &shell and &shellcmdflag"
-		call s:ErrorMsg(l:text . ", &shell must be an executable.")
-		return -4
+	if g:asyncrun_shell == ''
+		if !executable(&shell)
+			let l:text = "invalid config in &shell and &shellcmdflag"
+			call s:ErrorMsg(l:text . ", &shell must be an executable.")
+			return -4
+		endif
+		let l:args = [&shell, &shellcmdflag]
+	else
+		if !executable(g:asyncrun_shell)
+			let l:text = "invalid config in g:asyncrun_shell"
+			call s:ErrorMsg(l:text . ", it must be an executable.")
+			return -4
+		endif
+		let l:args = [g:asyncrun_shell, g:asyncrun_shellflag]
 	endif
-	let l:args = [&shell, &shellcmdflag]
 	let l:name = []
 	if type(a:cmd) == 1
 		let l:name = a:cmd
