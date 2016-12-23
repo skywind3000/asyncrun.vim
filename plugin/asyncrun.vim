@@ -257,8 +257,8 @@ endfunc
 function! s:AsyncRun_Job_AutoScroll()
 	if s:async_quick == 0
 		let l:winnr = winnr()			
-		windo call s:AsyncRun_Job_Scroll()
-		silent exec ''.l:winnr.'wincmd w'
+		noautocmd windo call s:AsyncRun_Job_Scroll()
+		noautocmd silent exec ''.l:winnr.'wincmd w'
 	else
 		cbottom
 	endif
@@ -280,8 +280,8 @@ function! s:AsyncRun_Job_QuickReset()
 		call s:AsyncRun_Job_ViewReset()
 	else
 		let l:winnr = winnr()
-		windo call s:AsyncRun_Job_ViewReset()
-		silent exec ''.l:winnr.'wincmd w'
+		noautocmd windo call s:AsyncRun_Job_ViewReset()
+		noautocmd silent! exec ''.l:winnr.'wincmd w'
 	endif
 endfunc
 
@@ -299,8 +299,8 @@ function! s:AsyncRun_Job_CheckScroll()
 	elseif g:asyncrun_last == 1
 		let s:async_check_last = 1
 		let l:winnr = winnr()
-		windo call s:AsyncRun_Job_Cursor()
-		silent exec ''.l:winnr.'wincmd w'
+		noautocmd windo call s:AsyncRun_Job_Cursor()
+		noautocmd silent! exec ''.l:winnr.'wincmd w'
 		return s:async_check_last
 	elseif g:asyncrun_last == 2
 		return 1

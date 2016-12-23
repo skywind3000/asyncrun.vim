@@ -189,7 +189,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
-- 1.3.9 (2016-12-23): minor bugs fixed, improve compatibility.
+- 1.3.9 (2016-12-23): minor bugs fixed, improve performance and compatibility.
 - 1.3.8 (2016-11-17): new autocmd AsyncRunPre/AsyncRunStart/AsyncRunStop, fixed cmd line window conflict. 
 - 1.3.7 (2016-11-13): new option 'g:asyncrun_timer' to prevent gui freeze by massive output.
 - 1.3.6 (2016-11-08): improve performance in quickfix_toggle, fixed small issue in bell ringing.
