@@ -29,7 +29,7 @@ Copy `asyncrun.vim` to your `~/.vim/plugin` or use Vundle to install it from `sk
 #### Async run gcc to compile current file
 	:AsyncRun gcc % -o %<
 	:AsyncRun g++ -O3 "%" -o "%<" -lpthread 
-This command will run gcc in the background and output to the quickfix window in realtime. Macro '`%`' stands for filename and '`%>`' represents filename without extension.
+This command will run gcc in the background and output to the quickfix window in realtime. Macro '`%`' stands for filename and '`%<`' represents filename without extension.
 
 #### Async run make
     :AsyncRun make
