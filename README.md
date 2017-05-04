@@ -190,6 +190,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 1.3.10 (2017-05-04): remove trailing `^M` in NeoVim 2.0 on windows 
 - 1.3.9 (2016-12-23): minor bugs fixed, improve performance and compatibility.
 - 1.3.8 (2016-11-17): new autocmd AsyncRunPre/AsyncRunStart/AsyncRunStop, fixed cmd line window conflict. 
 - 1.3.7 (2016-11-13): new option 'g:asyncrun_timer' to prevent gui freeze by massive output.
