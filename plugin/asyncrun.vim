@@ -842,8 +842,16 @@ function! asyncrun#run(bang, opts, args)
 	endif
 
 	" check if need to save
-	if get(l:opts, 'save', '')
-		try | silent update | catch | endtry
+	let l:save = get(l:opts, 'save', '')
+	if l:save
+		try
+			if l:save == '1'
+				silent! update 
+			else
+				silent! wall
+			endif
+		catch /.*/
+		endtry
 	endif
 
 	if a:bang == '!'

@@ -105,7 +105,7 @@ There can be some options before your `[cmd]`:
 
     -mode=0/1/2 - start mode: 0(async, default), 1(:make), 2(:!)
     -cwd=?      - initial directory, (use current directory if unset)
-    -save=0/1   - non-zero to save unsaved files before executing
+    -save=0/1/2 - non-zero to save current(1) or all(2) modified buffer(s) before executing.
     -program=?  - set to `make` to use `&makeprg`, `grep` to use `&grepprg` 
 	-post=?     - vimscript to exec after this job finished, spaces **must** be escaped to '\ '
 	-auto=?     - event name to trigger "QuickFixCmdPre/QuickFixCmdPost [name]" autocmd
@@ -190,6 +190,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 1.3.11 (2017-05-19): new option (-save=2) to save all modified files.
 - 1.3.10 (2017-05-04): remove trailing `^M` in NeoVim 2.0 on windows 
 - 1.3.9 (2016-12-23): minor bugs fixed, improve performance and compatibility.
 - 1.3.8 (2016-11-17): new autocmd AsyncRunPre/AsyncRunStart/AsyncRunStop, fixed cmd line window conflict. 
