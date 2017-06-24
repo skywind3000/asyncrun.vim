@@ -834,12 +834,25 @@ function! s:path_join(home, name)
     if l:size == 0 | return a:name | endif
     let l:last = strpart(a:home, l:size - 1, 1)
     if has("win32") || has("win64") || has("win16") || has('win95')
+		let l:first = strpart(a:name, 0, 1)
+		if l:first == "/" || l:first == "\\"
+			let head = strpart(a:home, 1, 2)
+			if index([":\\", ":/"], head) >= 0
+				return strpart(a:home, 0, 2) . a:name
+			endif
+			return a:name
+		elseif index([":\\", ":/"], strpart(a:name, 1, 2)) >= 0
+			return a:name
+		endif
         if l:last == "/" || l:last == "\\"
             return a:home . a:name
         else
             return a:home . '/' . a:name
         endif
     else
+		if strpart(a:name, 0, 1) == "/"
+			return a:name
+		endif
         if l:last == "/"
             return a:home . a:name
         else
@@ -1074,7 +1087,7 @@ function! asyncrun#run(bang, opts, args)
 	let l:macros['VIM_FILEEXT'] = "." . expand("%:e")
 	let l:macros['VIM_CWD'] = getcwd()
 	let l:macros['VIM_RELDIR'] = expand("%:h:.")
-	let l:macros['VIM_RENAME'] = expand("%:p:.")
+	let l:macros['VIM_RELNAME'] = expand("%:p:.")
 	let l:macros['VIM_CWORD'] = expand("<cword>")
 	let l:macros['VIM_CFILE'] = expand("<cfile>")
 	let l:macros['VIM_VERSION'] = ''.v:version
@@ -1108,7 +1121,7 @@ function! asyncrun#run(bang, opts, args)
 		silent! exec cd . fnameescape(l:opts.cwd)
 		let l:macros['VIM_CWD'] = getcwd()
 		let l:macros['VIM_RELDIR'] = expand("%:h:.")
-		let l:macros['VIM_RENAME'] = expand("%:p:.")
+		let l:macros['VIM_RELNAME'] = expand("%:p:.")
 		let l:macros['VIM_CFILE'] = expand("<cfile>")
 		let l:macros['<cwd>'] = l:macros['VIM_CWD']
 	endif

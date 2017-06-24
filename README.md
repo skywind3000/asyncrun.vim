@@ -80,6 +80,7 @@ Parameters accept macros start with '`%`', '`#`' or '`<`' :
     <cwd>   - Current directory
     <cword> - Current word under cursor
     <cfile> - Current file name under cursor
+	<root>  - Project root directory
 
 Environment variables are set before executing:
 
@@ -91,6 +92,7 @@ Environment variables are set before executing:
     $VIM_CWD       - Current directory
     $VIM_RELDIR    - File path relativize to current directory
     $VIM_RELNAME   - File name relativize to current directory 
+	$VIM_ROOT      - Project root directory
     $VIM_CWORD     - Current word under cursor
     $VIM_CFILE     - Current filename under cursor
     $VIM_GUI       - Is running under gui ?
@@ -190,6 +192,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 1.3.12 (2017-06-25): new macro `<root>` or $(VIM_ROOT) to indicate project root directory.
 - 1.3.11 (2017-05-19): new option (-save=2) to save all modified files.
 - 1.3.10 (2017-05-04): remove trailing `^M` in NeoVim 2.0 on windows 
 - 1.3.9 (2016-12-23): minor bugs fixed, improve performance and compatibility.
