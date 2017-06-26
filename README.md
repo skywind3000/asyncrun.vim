@@ -154,7 +154,9 @@ When previous job is still running or vim job slot is full, AsyncRun may fail. I
 
 #### Project Root
 
-Macro `<root>` or `$(VIM_ROOT)` (new in version `1.3.12`) will be expanded as the **Project Root Directory** of the current file in the command line or in the `-cwd` option:
+Vim is lack of project management, as files usually belong to projects, you can do nothing to the project if you don't have any information about where the project locates. Inspired by CtrlP, this feature (new in version 1.3.12) is very useful when you've something to do with the whole project. 
+
+Macro `<root>` or `$(VIM_ROOT)` in the command line or in the `-cwd` option will be expanded as the **Project Root Directory** of the current file:
 
 ```VimL
 :AsyncRun make
@@ -163,7 +165,7 @@ Macro `<root>` or `$(VIM_ROOT)` (new in version `1.3.12`) will be expanded as th
 
 The first `make` will run in the vim's current directory (which `:pwd` returns), while the second one will run in the project root directory of current file. This feature is very useful when you have something (make / grep) to do with the whole project.
 
-Inspired by CtrlP, the project root is the nearest ancestor directory of the current file which contains one of these directories or files: `.svn`, `.git`, `.hg`, `.root` or `.project`. If none of the parent directories contains these root markers, the directory of the current file is used as the project root. The root markers can also be configurated, see [Project Root](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root).
+The project root is the nearest ancestor directory of the current file which contains one of these directories or files: `.svn`, `.git`, `.hg`, `.root` or `.project`. If none of the parent directories contains these root markers, the directory of the current file is used as the project root. The root markers can also be configurated, see [Project Root](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root).
 
 #### Requirements:
 Vim 7.4.1829 is minimal version to support async mode. If you are use older versions, `g:asyncrun_mode` will fall back from `0/async` to `1/sync`. NeoVim 0.1.4 or later is also supported. 
