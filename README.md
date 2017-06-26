@@ -102,7 +102,7 @@ Environment variables are set before executing:
     $VIM_LINES     - How many lines in vim's screen
 	$VIM_SVRNAME   - Value of v:servername for +clientserver usage 
 
-These environment variables wrapped by `$(...)` (eg. `$(VIM_FILENAME)`) will also be expanded in the parameters. Macro `$(VIM_ROOT)` and `<root>` indicate the **project root directory** of the current file, see here. 
+These environment variables wrapped by `$(...)` (eg. `$(VIM_FILENAME)`) will also be expanded in the parameters. Macro `$(VIM_ROOT)` and `<root>` (new in version 1.3.12) indicate the [Project Root](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root) of the current file. 
 
 There can be some options before your `[cmd]`:
 
@@ -152,6 +152,20 @@ Note, `AsyncRunPre` is always likely to be invoked, but `AsyncRunStart` and `Asy
 
 When previous job is still running or vim job slot is full, AsyncRun may fail. In this circumstance, `AsyncRunPre` will be invoked but `AsyncRunStart` and `AsyncRunStop` will have no chance to trigger.
 
+#### Project Root
+
+Macro `<root>` or `$(VIM_ROOT)` (new in version `1.3.12`) will be expanded as the **Project Root Directory** of the current file in the command line or in the `-cwd` option:
+
+```VimL
+:AsyncRun make
+:AsyncRun -cwd=<root> make
+:AsyncRun make -f $(VIM_ROOT)/Makefile
+```
+
+The first `make` will run in the vim's current directory (which `:pwd` returns), while the second one will run in the project root directory of current file. Macro `<root>` is very useful when you have something to do (`make` / `grep`) with the whole project.
+
+Inspired by CtrlP, the project root is the nearest ancestor directory of the current file which contains one of these directories or files: `.svn`, `.git`, `.hg`, `.root` and `.project`. If none of the parent directories contains these root markers, the directory of the current file is used as the project root. The root markers can also be configurated, see [Project Root](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root).
+
 #### Requirements:
 Vim 7.4.1829 is minimal version to support async mode. If you are use older versions, `g:asyncrun_mode` will fall back from `0/async` to `1/sync`. NeoVim 0.1.4 or later is also supported. 
 
@@ -163,33 +177,6 @@ asyncrun.vim can cooperate with `vim-fugitive`, see [here](https://github.com/sk
 
 ![](https://raw.githubusercontent.com/skywind3000/asyncrun.vim/master/doc/cooperate_with_fugitive.gif)
 
-## Project Root
-
-New macro `<root>` or `$(VIM_ROOT)` (from version `1.3.12`) will be expanded as the **Project Root Directory** of the current file in the command line or in the `-cwd` option:
-
-```VimL
-:AsyncRun make
-:AsyncRun -cwd=<root> make
-```
-
-The first command will run `make` in the current directory of vim (which `:pwd` returns), while the second one will run `make` in the project root directory of current file.
-
-```VimL
-:AsyncRun -cwd=<root> grep -n -R sendto .
-:AsyncRun -cwd=<root> grep -n -R --include=*.c --include=*.cpp --include=*.h sendto .
-```
-
-These commands above will change the working directory to the project root of the current file, and grep the keyword `sendto` in the given ext-names.
-
-The **Project Root** is the nearest ancestor directory of the current file which contains one of these directories or files: 
-
-	.svn .git .hg .root .project
-
-If none of the parent directories contains these **root markers**, the directory of the current file is used as the project root. And the default root markers can also be changed by option `g:asyncrun_rootmarkers`:
-
-	:let g:asyncrun_rootmarkers = ['.svn', '.git', '.root', '.bzr', '_darcs', 'build.xml'] 
-
-When you are using `--cwd=<root>`, remember to use `$(VIM_XXX)` macros instead of `%` macros because `%` macros will be expanded by vim itself **before** changing directory while `$(VIM_XXX)` will be expanded **after** changing directory.
 
 ## More
 
@@ -201,6 +188,7 @@ When you are using `--cwd=<root>`, remember to use `$(VIM_XXX)` macros instead o
 - [Replace old ':make' command with asyncrun](https://github.com/skywind3000/asyncrun.vim/wiki/Replace-old-make-command-with-AsyncRun)
 - [Quickfix encoding problem when using Chinese or Japanese](https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-encoding-problem-when-using-Chinese-or-Japanese)
 - [Example for updating and adding cscope files](https://github.com/skywind3000/asyncrun.vim/wiki/Example-for-updating-and-adding-cscope)
+- [The project root directory of the current file](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root)
 
 Don't forget to read the [Frequently Asked Questions](https://github.com/skywind3000/asyncrun.vim/wiki/FAQ).
 
