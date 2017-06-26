@@ -185,7 +185,7 @@ The **Project Root** is the nearest ancestor directory of the current file which
 
 	.svn .git .hg .root .project
 
-If none of the parent directories contains these **root markers** the directory of the current file is used as the project root. And the default root markers can also be changed by option `g:asyncrun_rootmarkers`:
+If none of the parent directories contains these **root markers**, the directory of the current file is used as the project root. And the default root markers can also be changed by option `g:asyncrun_rootmarkers`:
 
 	:let g:asyncrun_rootmarkers = ['.svn', '.git', '.root', '.bzr', '_darcs', 'build.xml'] 
 
