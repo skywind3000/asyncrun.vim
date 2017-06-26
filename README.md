@@ -159,7 +159,6 @@ Macro `<root>` or `$(VIM_ROOT)` (new in version `1.3.12`) will be expanded as th
 ```VimL
 :AsyncRun make
 :AsyncRun -cwd=<root> make
-:AsyncRun make -f $(VIM_ROOT)/Makefile
 ```
 
 The first `make` will run in the vim's current directory (which `:pwd` returns), while the second one will run in the project root directory of current file. This feature is very useful when you have something (make / grep) to do with the whole project.
