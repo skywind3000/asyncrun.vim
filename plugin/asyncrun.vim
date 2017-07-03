@@ -158,6 +158,9 @@ if !exists('g:asyncrun_ftrun')
 	let g:asyncrun_ftrun = {}
 endif
 
+if !exists('g:asyncrun_silent')
+	let g:asyncrun_silent = 1
+endif
 
 
 "----------------------------------------------------------------------
@@ -180,7 +183,11 @@ endfunc
 " run autocmd
 function! s:AutoCmd(name)
 	if has('autocmd')
-		exec 'silent doautocmd User AsyncRun'.a:name
+		if g:asyncrun_silent
+			exec 'silent doautocmd User AsyncRun'.a:name
+		else
+			exec 'doautocmd User AsyncRun'.a:name
+		endif
 	endif
 endfunc
 
@@ -384,9 +391,17 @@ function! s:AsyncRun_Job_AutoCmd(mode, auto)
 		return
 	endif
 	if a:mode == 0
-		silent exec 'doautocmd QuickFixCmdPre '. name
+		if g:asyncrun_silent
+			silent exec 'doautocmd QuickFixCmdPre '. name
+		else
+			exec 'doautocmd QuickFixCmdPre '. name
+		endif
 	else
-		silent exec 'doautocmd QuickFixCmdPost '. name
+		if g:asyncrun_silent
+			silent exec 'doautocmd QuickFixCmdPost '. name
+		else
+			exec 'doautocmd QuickFixCmdPost '. name
+		endif
 	endif
 endfunc
 
