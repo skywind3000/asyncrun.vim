@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last change: 2017.6.25
+" Last change: 2017.7.12
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -51,6 +51,7 @@
 "     -cwd=?       - initial directory, (use current directory if unset)
 "     -save=0/1/2  - non-zero to save current/1 or all/2 modified buffer(s)
 "     -program=?   - set to 'make' to use '&makeprg'
+"     -raw=1       - use raw output (not match with the errorformat)
 "
 "     All options must start with a minus and position **before** `[cmd]`.
 "     Since no shell command starts with a minus. So they can be 
@@ -346,6 +347,9 @@ function! s:AsyncRun_Job_Update(count)
 		let &g:efm = s:async_efm
 	endif
 	let l:raw = (s:async_efm == '')? 1 : 0
+	if s:async_info.raw == 1
+		let l:raw = 1
+	endif
 	while s:async_tail < s:async_head
 		let l:text = s:async_output[s:async_tail]
 		if l:iconv != 0
@@ -777,6 +781,7 @@ function! s:ExtractOpt(command)
 	let opts.post = get(opts, 'post', '')
 	let opts.text = get(opts, 'text', '')
 	let opts.auto = get(opts, 'auto', '')
+	let opts.raw = get(opts, 'raw', '')
 	if 0
 		echom 'cwd:'. opts.cwd
 		echom 'mode:'. opts.mode
@@ -984,6 +989,7 @@ function! s:run(opts)
 		let s:async_info.postsave = opts.post
 		let s:async_info.autosave = opts.auto
 		let s:async_info.text = opts.text
+		let s:async_info.raw = opts.raw
 		if s:AsyncRun_Job_Start(l:command) != 0
 			call s:AutoCmd('Error')
 		endif
