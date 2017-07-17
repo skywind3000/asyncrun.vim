@@ -57,6 +57,11 @@ Macro '`%:p:h`' stands for current file dir.
 
 File name may contain spaces, therefore, it's safe to quote them.
 
+#### Run a python script
+    :AsyncRun -raw python %
+
+New option `-raw` will display the raw output (without matching to errorformat), you need the latest AsyncRun (after 1.3.13) to use this option. 
+
 ## Manual
 
 There are two vim commands: `:AsyncRun` and `:AsyncStop` to control async jobs.
