@@ -215,6 +215,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 1.3.15 (2017-07-30): fixed: remove trailing new line in neovim.
 - 1.3.14 (2017-07-27): improve asyncrun#get_root(), allow user indicate the rootmarkers
 - 1.3.13 (2017-07-12): new option (-raw) to use raw output (not match with the errorformat).
 - 1.3.12 (2017-06-25): new macro `<root>` or $(VIM_ROOT) to indicate project root directory.

@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last change: 2017/07/27 18:41:45
+" Last change: 2017/07/31 03:21:31
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -531,6 +531,10 @@ function! s:AsyncRun_Job_NeoVim(job_id, data, event)
 		let l:size = len(a:data)
 		while l:index < l:size
 			let s:text = a:data[l:index]
+			if s:text == '' && l:index == l:size - 1
+				let l:index += 1
+				continue
+			endif
 			if s:asyncrun_windows != 0
 				let s:text = substitute(s:text, '\r$', '', 'g')
 			endif
