@@ -1352,9 +1352,9 @@ function! s:execute(mode)
 		endif
 	elseif a:mode == 4
 		let ext = tolower(expand("%:e"))
-		if index(['c', 'cc', 'cpp', 'h', 'mak', 'em', 'emk'], ext) >= 0
+		if index(['c', 'cc', 'cpp', 'h', 'mak', 'em', 'emk', 'm'], ext) >= 0
 			call s:execute(2)
-		elseif index(['py', 'pyw', 'cxx', 'java', 'pyx', 'go'], ext) >= 0
+		elseif index(['mm', 'py', 'pyw', 'cxx', 'java', 'pyx'], ext) >= 0
 			call s:execute(2)
 		elseif index(['c', 'cpp', 'python', 'java', 'go'], &ft) >= 0
 			call s:execute(2)
