@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last change: 2017/07/31 03:21:31
+" Last change: 2017/08/01 16:20:25
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1324,7 +1324,45 @@ function! s:execute(mode)
 		else
 			exec '!emake -e ' . l:fname
 		endif
-	else
+	elseif a:mode == 3
+		let l:makeprg = get(g:, 'asyncrun_mp_run', '')
+		let l:fname = shellescape(expand("%"))
+		if l:makeprg == ''
+			if executable('make')
+				let l:makeprg = 'make run -f'
+			elseif executable('mingw32-make')
+				let l:makeprg = 'mingw32-make run -f'
+			elseif executable('mingw64-make')
+				let l:makeprg = 'mingw64-make run -f'
+			else
+				redraw 
+				call s:ErrorMsg('cannot find make/mingw32-make')
+				return
+			endif
+		endif
+		if (has('gui_running') || has('nvim')) && (s:asyncrun_windows != 0)
+			let l:cmdline = l:makeprg. ' '.l:fname 
+			if !has('nvim')
+				silent exec '!start cmd /C '.l:cmdline . ' & pause'
+			else
+				call asyncrun#run('', {'mode':4}, l:cmdline)
+			endif
+		else
+			exec '!'.l:makeprg.' '.l:fname
+		endif
+	elseif a:mode == 4
+		let ext = tolower(expand("%:e"))
+		if index(['c', 'cc', 'cpp', 'h', 'mak', 'em', 'emk'], ext) >= 0
+			call s:execute(2)
+		elseif index(['py', 'pyw', 'cxx', 'java', 'pyx', 'go'], ext) >= 0
+			call s:execute(2)
+		elseif index(['c', 'cpp', 'python', 'java', 'go'], &ft) >= 0
+			call s:execute(2)
+		elseif index(['javascript'], &ft) >= 0
+			call s:execute(2)
+		else
+			call s:execute(3)
+		endif
 	endif
 endfunc
 
@@ -1347,18 +1385,26 @@ function! asyncrun#execute(mode, cwd, save)
 	if l:dest != ''
 		silent! exec cd . fnameescape(l:dest)
 	endif
-	if a:mode == '0'
+	if a:mode == '0' || a:mode == 'filename' || a:mode == 'file'
 		call s:execute(0)
-	elseif a:mode == '1'
+	elseif a:mode == '1' || a:mode == 'main' || a:mode == 'exe'
 		call s:execute(1)
-	elseif a:mode == '2'
+	elseif a:mode == '2' || a:mode == 'emake'
 		call s:execute(2)
+	elseif a:mode == '3' || a:mode == 'make'
+		call s:execute(3)
+	elseif a:mode == '4' || a:mode == 'auto' || a:mode == 'automake'
+		call s:execute(4)
 	elseif &ft == 'cpp' || &ft == 'c'
 		call s:execute(1)
 	elseif index(['c', 'cpp', 'cc', 'm', 'mm', 'cxx'], l:ext) >= 0
 		call s:execute(1)
 	elseif index(['h', 'hh', 'hpp'], l:ext) >= 0
 		call s:execute(1)
+	elseif index(['mak', 'emake', 'em', 'emk'], l:ext) >= 0
+		call s:execute(2)
+	elseif l:ext == 'mk'
+		call s:execute(3)
 	elseif &ft == 'vim'
 		exec 'source '. fnameescape(expand('%'))
 	elseif (has('gui_running') || has('nvim')) && s:asyncrun_windows != 0
