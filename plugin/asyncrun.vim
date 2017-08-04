@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last change: 2017/08/01 16:20:25
+" Last change: 2017/08/05 04:29:33
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -87,6 +87,9 @@
 "     first by using :copen (see :help copen/cclose). Or use
 "     ':call asyncrun#quickfix_toggle(8)' to open/close it rapidly.
 "
+
+" vim: set et fenc=utf-8 ff=unix sts=4 sw=4 ts=4 :
+
 
 "----------------------------------------------------------------------
 "- Global Settings & Variables
@@ -957,7 +960,6 @@ endfunc
 " run command
 "----------------------------------------------------------------------
 function! s:run(opts)
-
 	let l:opts = a:opts
 	let l:command = a:opts.cmd
 	let l:retval = ''
@@ -1471,6 +1473,7 @@ function! asyncrun#execute(mode, cwd, save)
 		silent! exec cd . fnameescape(savecwd)
 	endif
 endfunc
+
 
 
 
