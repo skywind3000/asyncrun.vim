@@ -957,10 +957,15 @@ endfunc
 " run command
 "----------------------------------------------------------------------
 function! s:run(opts)
+
 	let l:opts = a:opts
-	let l:mode = a:opts.mode
 	let l:command = a:opts.cmd
 	let l:retval = ''
+	let l:mode = g:asyncrun_mode
+
+	if a:opts.mode != ''
+		let l:mode = a:opts.mode
+	endif
 
 	" process makeprg/grepprg in -program=?
 	let l:program = ""
