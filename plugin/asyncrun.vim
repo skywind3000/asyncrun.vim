@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last change: 2017/08/05 04:29:33
+" Last change: 2017/08/06 10:04:49
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1096,14 +1096,16 @@ function! s:run(opts)
 		endif
 	elseif l:mode <= 5
 		if s:asyncrun_windows != 0 && (has('gui_running') || has('nvim'))
-			let l:ccc = shellescape(s:ScriptWrite(l:command, 1))
 			if l:mode == 4
+				let l:ccc = shellescape(s:ScriptWrite(l:command, 1))
 				silent exec '!start cmd /C '. l:ccc
 			else
+				let l:ccc = shellescape(s:ScriptWrite(l:command, 0))
 				silent exec '!start /b cmd /C '. l:ccc
 			endif
 			redraw
 		else
+			let l:ccc = shellescape(s:ScriptWrite(l:command, 0))
 			if l:mode == 4
 				exec '!' . escape(l:command, '%#')
 			else

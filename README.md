@@ -215,6 +215,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 1.3.17 (2017-08-06): fixed: process hang when mode is 5.
 - 1.3.16 (2017-08-05): fixed: g:asyncrun_mode issue (Joel Taylor)
 - 1.3.15 (2017-07-30): fixed: remove trailing new line in neovim.
 - 1.3.14 (2017-07-27): improve asyncrun#get_root(), allow user indicate the rootmarkers
