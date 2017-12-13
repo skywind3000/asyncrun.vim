@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last change: 2017/12/12 10:04:49
+" Last change: 2017/12/13 15:31:05
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -166,6 +166,10 @@ if !exists('g:asyncrun_silent')
 	let g:asyncrun_silent = 1
 endif
 
+if !exists('g:asyncrun_skip')
+	let g:asyncrun_skip = 0
+endif
+
 
 "----------------------------------------------------------------------
 "- Internal Functions
@@ -186,7 +190,7 @@ endfunc
 
 " run autocmd
 function! s:AutoCmd(name)
-	if has('autocmd')
+	if has('autocmd') && and(g:asyncrun_skip, 2) == 0
 		if g:asyncrun_silent
 			exec 'silent doautocmd User AsyncRun'.a:name
 		else
@@ -323,7 +327,11 @@ function! s:AsyncRun_Job_Update(count)
 		endif
 		if l:text != ''
 			if l:raw == 0
-				caddexpr l:text
+				if and(g:asyncrun_skip, 1) == 0
+					caddexpr l:text
+				else
+					noautocmd caddexpr l:text
+				endif
 			else
 				call setqflist([{'text':l:text}], 'a')
 			endif
@@ -354,6 +362,9 @@ function! s:AsyncRun_Job_AutoCmd(mode, auto)
 	let name = (a:auto == '')? g:asyncrun_auto : a:auto
 	if name !~ '^\w\+$' || name == 'NONE' || name == '<NONE>'
 		return
+	endif
+	if and(g:asyncrun_skip, 4) != 0
+		return 0
 	endif
 	if a:mode == 0
 		if g:asyncrun_silent
