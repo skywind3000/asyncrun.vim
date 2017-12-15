@@ -283,7 +283,7 @@ function! s:AsyncRun_Job_CheckScroll()
 	elseif g:asyncrun_last == 1
 		let s:async_check_last = 1
 		let l:winnr = winnr()
-		noautocmd windo call s:AsyncRun_Job_Cursor()
+		noautocmd exec '' . l:winnr . 'windo call s:AsyncRun_Job_Cursor()'
 		noautocmd silent! exec ''.l:winnr.'wincmd w'
 		return s:async_check_last
 	elseif g:asyncrun_last == 2
