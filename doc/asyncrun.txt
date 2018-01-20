@@ -97,10 +97,10 @@ Tutorials ~
 Async run gcc to compile current file ~
 >
   :AsyncRun gcc % -o %<
-  :AsyncRun g++ -O3 "%" -o "%<" -lpthread 
+  :AsyncRun g++ -O3 "%" -o "%<" -lpthread
 <
 This command will run gcc in the background and output to the quickfix window
-in realtime. Macro ''%'' stands for filename and ''%>'' represents filename
+in realtime. Macro ''%'' stands for filename and ''%<'' represents filename
 without extension.
 
 -------------------------------------------------------------------------------
@@ -114,8 +114,8 @@ Async run make ~
                                                     *asyncrun-51-grep-key-word*
 Grep key word ~
 >
-  :AsyncRun! grep -R word . 
-  :AsyncRun! grep -R <cword> . 
+  :AsyncRun! grep -R word .
+  :AsyncRun! grep -R <cword> .
 <
 when '!' is included, auto-scroll in quickfix will be disabled. '<cword>'
 represents current word under cursor.
@@ -143,7 +143,7 @@ Git push ~
 -------------------------------------------------------------------------------
 Setup '<*F7*>' to compile file
 >
-  :noremap <F7> :AsyncRun gcc "%" -o "%<" <cr> 
+  :noremap <F7> :AsyncRun gcc "%" -o "%<" <cr>
 <
 File name may contain spaces, therefore, it's safe to quote them.
 
@@ -186,14 +186,14 @@ Environment variables are set before executing:
   $VIM_FILENOEXT - File name of current buffer without path and extension
   $VIM_CWD       - Current directory
   $VIM_RELDIR    - File path relativize to current directory
-  $VIM_RELNAME   - File name relativize to current directory 
+  $VIM_RELNAME   - File name relativize to current directory
   $VIM_CWORD     - Current word under cursor
   $VIM_CFILE     - Current filename under cursor
   $VIM_GUI       - Is running under gui ?
   $VIM_VERSION   - Value of v:version
   $VIM_COLUMNS   - How many columns in vim's screen
   $VIM_LINES     - How many lines in vim's screen
-  $VIM_SVRNAME   - Value of v:servername for +clientserver usage 
+  $VIM_SVRNAME   - Value of v:servername for +clientserver usage
 <
 These environment variables wrapped by '$(...)' (eg. '$(VIM_FILENAME)') will
 also be expanded in the parameters.
@@ -203,7 +203,7 @@ There can be some options before your '[cmd]':
   -mode=0/1/2 - start mode: 0(async, default), 1(:make), 2(:!)
   -cwd=?      - initial directory, (use current directory if unset)
   -save=0/1   - non-zero to save unsaved files before executing
-  -program=?  - set to `make` to use `&makeprg`, `grep` to use `&grepprg` 
+  -program=?  - set to `make` to use `&makeprg`, `grep` to use `&grepprg`
   -post=?     - vimscript to exec after this job finished, spaces **must** be escaped to '\ '
 <
 All options must start with a minus and position **before** '[cmd]'. Since no
