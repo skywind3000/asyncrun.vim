@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last change: 2017/12/13 15:31:05
+" Last change: 2018/02/08 15:29
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -607,7 +607,16 @@ function! s:AsyncRun_Job_Start(cmd)
 		endfor
 		let l:name = join(l:vector, ', ')
 	endif
+	let s:async_state = 0
+	let s:async_output = {}
+	let s:async_head = 0
+	let s:async_tail = 0
 	let s:async_efm = &errorformat
+	let s:async_info.post = s:async_info.postsave
+	let s:async_info.auto = s:async_info.autosave
+	let s:async_info.postsave = ''
+	let s:async_info.autosave = ''
+	let g:asyncrun_text = s:async_info.text
 	call s:AutoCmd('Pre')
 	if s:async_nvim == 0
 		let l:options = {}
@@ -634,31 +643,23 @@ function! s:AsyncRun_Job_Start(cmd)
 		let l:success = (s:async_job > 0)? 1 : 0
 	endif
 	if l:success != 0
-		let s:async_output = {}
-		let s:async_head = 0
-		let s:async_tail = 0
+		let s:async_state = or(s:async_state, 1)
+		let g:asyncrun_status = "running"
+		let s:async_start = float2nr(reltimefloat(reltime()))
 		let l:arguments = "[".l:name."]"
 		let l:title = ':AsyncRun '.l:name
 		if s:async_nvim == 0
 			if v:version >= 800 || has('patch-7.4.2210')
 				call setqflist([], ' ', {'title':l:title})
 			else
-				call setqflist([], '')
+				call setqflist([], ' ')
 			endif
 		else
 			call setqflist([], ' ', l:title)
 		endif
 		call setqflist([{'text':l:arguments}], 'a')
-		let s:async_start = float2nr(reltimefloat(reltime()))
 		let l:name = 'g:AsyncRun_Job_OnTimer'
 		let s:async_timer = timer_start(100, l:name, {'repeat':-1})
-		let s:async_state = or(s:async_state, 1)
-		let g:asyncrun_status = "running"
-		let s:async_info.post = s:async_info.postsave
-		let s:async_info.auto = s:async_info.autosave
-		let s:async_info.postsave = ''
-		let s:async_info.autosave = ''
-		let g:asyncrun_text = s:async_info.text
 		call s:AsyncRun_Job_AutoCmd(0, s:async_info.auto)
 		call s:AutoCmd('Start')
 		redrawstatus!
@@ -1207,7 +1208,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '1.3.12'
+	return '1.3.20'
 endfunc
 
 

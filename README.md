@@ -215,6 +215,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 1.3.20 (2018-02-08): fixed: [Incorrect background job status](https://github.com/skywind3000/asyncrun.vim/issues/25) (@antoinemadec)
 - 1.3.19 (2017-12-13): new option `g:asyncrun_skip` to skip specific autocmd.
 - 1.3.18 (2017-12-12): fixed: windo breaks commands (especially in neovim).
 - 1.3.17 (2017-08-06): fixed: process hang when mode is 5.
