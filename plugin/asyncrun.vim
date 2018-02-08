@@ -652,7 +652,7 @@ function! s:AsyncRun_Job_Start(cmd)
 		let s:async_start = float2nr(reltimefloat(reltime()))
 		let l:name = 'g:AsyncRun_Job_OnTimer'
 		let s:async_timer = timer_start(100, l:name, {'repeat':-1})
-		let s:async_state = 1
+		let s:async_state = or(s:async_state, 1)
 		let g:asyncrun_status = "running"
 		let s:async_info.post = s:async_info.postsave
 		let s:async_info.auto = s:async_info.autosave
