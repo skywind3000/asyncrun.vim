@@ -1,9 +1,9 @@
 " asyncrun.vim - Run shell commands in background and output to quickfix
 "
-" Maintainer: skywind3000 (at) gmail.com
+" Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last change: 2018/02/08 15:29
+" Last Modified: 2018/03/02 10:51
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -184,7 +184,7 @@ endfunc
 
 " show not support message
 function! s:NotSupport()
-	let msg = "required: +timers +channel +job +reltime and vim >= 7.4.1829"
+	let msg = "required: +timers +channel +job and vim >= 7.4.1829"
 	call s:ErrorMsg(msg)
 endfunc
 
@@ -212,7 +212,7 @@ endif
 
 " check has advanced mode
 if (v:version >= 800 || has('patch-7.4.1829')) && (!has('nvim'))
-	if has('job') && has('channel') && has('timers') && has('reltime') 
+	if has('job') && has('channel') && has('timers')
 		let s:asyncrun_support = 1
 		let g:asyncrun_support = 1
 	endif
@@ -232,7 +232,7 @@ let s:async_head = 0
 let s:async_tail = 0
 let s:async_code = 0
 let s:async_state = 0
-let s:async_start = 0.0
+let s:async_start = 0
 let s:async_debug = 0
 let s:async_quick = 0
 let s:async_scroll = 0
@@ -435,7 +435,7 @@ function! s:AsyncRun_Job_OnFinish()
 		unlet s:async_timer
 	endif
 	call s:AsyncRun_Job_Update(-1)
-	let l:current = float2nr(reltimefloat(reltime()))
+	let l:current = localtime()
 	let l:last = l:current - s:async_start
 	let l:check = s:AsyncRun_Job_CheckScroll()
 	if s:async_code == 0
@@ -645,7 +645,7 @@ function! s:AsyncRun_Job_Start(cmd)
 	if l:success != 0
 		let s:async_state = or(s:async_state, 1)
 		let g:asyncrun_status = "running"
-		let s:async_start = float2nr(reltimefloat(reltime()))
+		let s:async_start = localtime()
 		let l:arguments = "[".l:name."]"
 		let l:title = ':AsyncRun '.l:name
 		if s:async_nvim == 0
@@ -1208,7 +1208,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '1.3.20'
+	return '1.3.21'
 endfunc
 
 
