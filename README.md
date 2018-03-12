@@ -37,8 +37,6 @@ This command will run gcc in the background and output to the quickfix window in
 #### Async run make
     :AsyncRun make
 	:AsyncRun make -f makefile
-	:AsyncRun -cwd=<root> make
-Option `-cwd=<root>` will change the current directory to the [Project Root](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root) before executing command (This will not change the vim's pwd).
 
 #### Grep key word 
     :AsyncRun! grep -R word . 

@@ -109,7 +109,6 @@ Async run make ~
 >
   :AsyncRun make
   :AsyncRun make -f makefile
-  :AsyncRun -cwd=<root> make
 <
 Option `-cwd=<root>` will change the current directory to the Project Root 
 before executing command (This will not change the vim's pwd).
