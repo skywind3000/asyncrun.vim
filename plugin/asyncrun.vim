@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2018/03/02 10:51
+" Last Modified: 2018/03/12 21:11
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -67,6 +67,7 @@
 "     g:asyncrun_bell - non-zero to ring a bell after finished
 "     g:asyncrun_mode - 0:async(require vim 7.4.1829) 1:sync 2:shell
 "     g:asyncrun_encs - shell program output encoding
+"     g:asyncrun_open - open quickfix window at given height
 "
 " Variables:
 "     g:asyncrun_code - exit code
@@ -77,7 +78,9 @@
 "
 " Examples:
 "     :AsyncRun gcc % -o %<
-"     :AsyncRun make -f Mymakefile
+"     :AsyncRun make 
+"     :AsyncRun -raw python $(VIM_FILEPATH)
+"     :AsyncRun -cwd=<root> make
 "     :AsyncRun! grep -R <cword> .
 "     :noremap <F7> :AsyncRun gcc % -o %< <cr>
 "
@@ -1208,7 +1211,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '1.3.21'
+	return '1.3.22'
 endfunc
 
 
@@ -1454,6 +1457,20 @@ function! asyncrun#execute(mode, cwd, save)
 	endif
 endfunc
 
+
+" auto open quickfix window
+if has("autocmd")
+	function! s:check_quickfix()
+		let height = get(g:, "asyncrun_open", 0)
+		if height > 0
+			call asyncrun#quickfix_toggle(height, 1)
+		endif
+	endfunc
+	augroup asyncrun_augroup
+		au!
+		au User AsyncRunStart call s:check_quickfix()
+	augroup END
+endif
 
 
 

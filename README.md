@@ -13,6 +13,7 @@ If that doesn't excite you, then perhaps this GIF screen capture below will chan
 
 ## News
 
+- 2018/03/11 new option `g:asyncrun_open` to open quickfix window after job started
 - 2017/07/12 new option `-raw=1` to use raw output (not match with the errorformat)
 - 2017/06/26 new option `-cwd=<root>` to change working directory to project root, see [here]() 
 - 2016/11/01 `asyncrun.vim` can now cooperate with `errormarker` now.
@@ -36,6 +37,8 @@ This command will run gcc in the background and output to the quickfix window in
 #### Async run make
     :AsyncRun make
 	:AsyncRun make -f makefile
+	:AsyncRun -cwd=<root> make
+Option `-cwd=<root>` will change the current directory to the [Project Root](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root) before executing command (This will not change the vim's pwd).
 
 #### Grep key word 
     :AsyncRun! grep -R word . 
@@ -61,6 +64,11 @@ File name may contain spaces, therefore, it's safe to quote them.
     :AsyncRun -raw python %
 
 New option `-raw` will display the raw output (without matching to errorformat), you need the latest AsyncRun (after 1.3.13) to use this option. 
+
+#### Open quickfix window automatically
+    :let g:asyncrun_open = 8
+
+AsyncRun displays its output in quickfix window, so if you don't use `:copen {height}` to open quickfix window, you won't see any output. Setting `g:asyncrun_open` to 8 will open quickfix window automatically at 8 lines height after command starts
 
 ## Manual
 
@@ -141,6 +149,7 @@ stop the running job, when "!" is included, job will be stopped by signal KILL
 - g:asyncrun_encs - set shell encoding if it's different from `&encoding`, see [encoding](https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-encoding-problem-when-using-Chinese-or-Japanese)
 - g:asyncrun_trim - non-zero to trim the empty lines in the quickfix window.
 - g:asyncrun_auto - event name to trigger QuickFixCmdPre/QuickFixCmdPost, see [FAQ](https://github.com/skywind3000/asyncrun.vim/wiki/FAQ#can-asyncrunvim-trigger-an-autocommand-quickfixcmdpost-to-get-some-plugin-like-errormaker-processing-the-content-in-quickfix-)
+- g:asyncrun_open - above zero to open quickfix window at given height after command starts
 - g:asyncrun_timer - how many messages should be inserted into quickfix every 100ms interval.
 
 #### Variables:
@@ -215,6 +224,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 1.3.22 (2018-03-11): new option `g:asyncrun_open` to open quickfix window automatically at given height.
 - 1.3.21 (2018-03-02): fixed: float point reltime issues
 - 1.3.20 (2018-02-08): fixed: [Incorrect background job status](https://github.com/skywind3000/asyncrun.vim/issues/25) (@antoinemadec)
 - 1.3.19 (2017-12-13): new option `g:asyncrun_skip` to skip specific autocmd.

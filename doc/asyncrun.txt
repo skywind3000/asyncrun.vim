@@ -109,7 +109,11 @@ Async run make ~
 >
   :AsyncRun make
   :AsyncRun make -f makefile
+  :AsyncRun -cwd=<root> make
 <
+Option `-cwd=<root>` will change the current directory to the Project Root 
+before executing command (This will not change the vim's pwd).
+
 -------------------------------------------------------------------------------
                                                     *asyncrun-51-grep-key-word*
 Grep key word ~
@@ -187,6 +191,7 @@ Environment variables are set before executing:
   $VIM_CWD       - Current directory
   $VIM_RELDIR    - File path relativize to current directory
   $VIM_RELNAME   - File name relativize to current directory
+  $VIM_ROOT      - Project root directory
   $VIM_CWORD     - Current word under cursor
   $VIM_CFILE     - Current filename under cursor
   $VIM_GUI       - Is running under gui ?
@@ -205,6 +210,8 @@ There can be some options before your '[cmd]':
   -save=0/1   - non-zero to save unsaved files before executing
   -program=?  - set to `make` to use `&makeprg`, `grep` to use `&grepprg`
   -post=?     - vimscript to exec after this job finished, spaces **must** be escaped to '\ '
+  -auto=?     - event name to trigger "QuickFixCmdPre/QuickFixCmdPost [name]" autocmd
+  -raw=1      - use raw output (output will not match with the errorformat) 
 <
 All options must start with a minus and position **before** '[cmd]'. Since no
 shell command string starts with a minus. So they can be distinguished from
@@ -232,6 +239,8 @@ Settings: ~
 - g:asyncrun_encs - set shell encoding if it's different from '&encoding',
   see here [60]
 - g:asyncrun_trim - non-zero to trim the empty lines in the quickfix window.
+- g:asyncrun_open - above zero to open quickfix window at given height after command starts
+- g:asyncrun_timer - how many messages should be inserted into quickfix every 100ms interval.
 
 -------------------------------------------------------------------------------
                                                         *asyncrun-61-variables*
