@@ -13,7 +13,7 @@ If that doesn't excite you, then perhaps this GIF screen capture below will chan
 
 ## News
 
-- 2018/03/11 new option `g:asyncrun_open` to open quickfix window after job starts.
+- 2018/03/11 new option [g:asyncrun_open](#quickfix-window) to open quickfix window after job starts.
 - 2017/07/12 new option `-raw=1` to use raw output (not match with the errorformat)
 - 2017/06/26 new option `-cwd=<root>` to change working directory to project root, see [here]() 
 - 2016/11/01 `asyncrun.vim` can now cooperate with `errormarker` now.
