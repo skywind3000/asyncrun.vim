@@ -13,7 +13,7 @@ If that doesn't excite you, then perhaps this GIF screen capture below will chan
 
 ## News
 
-- 2018/03/11 new option `g:asyncrun_open` to open quickfix window after job started
+- 2018/03/11 new option `g:asyncrun_open` to open quickfix window after job starts.
 - 2017/07/12 new option `-raw=1` to use raw output (not match with the errorformat)
 - 2017/06/26 new option `-cwd=<root>` to change working directory to project root, see [here]() 
 - 2016/11/01 `asyncrun.vim` can now cooperate with `errormarker` now.
@@ -63,10 +63,6 @@ File name may contain spaces, therefore, it's safe to quote them.
 
 New option `-raw` will display the raw output (without matching to errorformat), you need the latest AsyncRun (after 1.3.13) to use this option. 
 
-#### Open quickfix window automatically
-    :let g:asyncrun_open = 8
-
-AsyncRun displays its output in quickfix window, so if you don't use `:copen {height}` to open quickfix window, you won't see any output. Setting `g:asyncrun_open` to 8 will open quickfix window automatically at 8 lines height after command starts
 
 ## Manual
 
@@ -180,6 +176,13 @@ Macro `<root>` or `$(VIM_ROOT)` in the command line or in the `-cwd` option will
 The first `make` will run in the vim's current directory (which `:pwd` returns), while the second one will run in the project root directory of current file. This feature is very useful when you have something (make / grep) to do with the whole project.
 
 The project root is the nearest ancestor directory of the current file which contains one of these directories or files: `.svn`, `.git`, `.hg`, `.root` or `.project`. If none of the parent directories contains these root markers, the directory of the current file is used as the project root. The root markers can also be configurated, see [Project Root](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root).
+
+#### Quickfix window
+AsyncRun displays its output in quickfix window, so if you don't use `:copen {height}` to open quickfix window, you won't see any output. For convenience there is an option `g:asyncrun_open` for you:
+
+    :let g:asyncrun_open = 8
+
+Setting `g:asyncrun_open` to 8 will open quickfix window automatically at 8 lines height after command starts.
 
 #### Requirements:
 Vim 7.4.1829 is minimal version to support async mode. If you are use older versions, `g:asyncrun_mode` will fall back from `0/async` to `1/sync`. NeoVim 0.1.4 or later is also supported. 
