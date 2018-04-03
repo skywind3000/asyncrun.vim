@@ -226,6 +226,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 1.3.23 (2018-04-03): back compatible to vim 7.3, can fall back to mode 1 in old vim.
 - 1.3.22 (2018-03-11): new option `g:asyncrun_open` to open quickfix window automatically at given height.
 - 1.3.21 (2018-03-02): fixed: float point reltime issues
 - 1.3.20 (2018-02-08): fixed: [Incorrect background job status](https://github.com/skywind3000/asyncrun.vim/issues/25) (@antoinemadec)
