@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2018/04/03 18:30
+" Last Modified: 2018/04/13 16:42
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -332,6 +332,7 @@ function! s:AsyncRun_Job_Update(count)
 			catch /.*/
 			endtry
 		endif
+		let l:text = substitute(l:text, '\r$', '', 'g')
 		if l:text != ''
 			if l:raw == 0
 				if and(g:asyncrun_skip, 1) == 0
@@ -1211,7 +1212,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '1.3.23'
+	return '1.3.24'
 endfunc
 
 

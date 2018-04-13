@@ -226,6 +226,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 1.3.24 (2018-04-13): remove trailing ^M on windows.
 - 1.3.23 (2018-04-03): back compatible to vim 7.3, can fall back to mode 1 in old vim.
 - 1.3.22 (2018-03-11): new option `g:asyncrun_open` to open quickfix window automatically at given height.
 - 1.3.21 (2018-03-02): fixed: float point reltime issues
