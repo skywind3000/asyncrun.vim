@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2018/04/16 19:24
+" Last Modified: 2018/04/16 21:23
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -171,6 +171,10 @@ endif
 
 if !exists('g:asyncrun_skip')
 	let g:asyncrun_skip = 0
+endif
+
+if !exists('g:asyncrun_info')
+	let g:asyncrun_info = ''
 endif
 
 
@@ -1148,6 +1152,9 @@ function! asyncrun#run(bang, opts, args, ...)
 		let s:async_program_cmd = l:command
 		return s:async_program_cmd
 	endif
+
+	" update info (current running command text)
+	let g:asyncrun_info = l:command
 
 	" check cwd
 	if l:opts.cwd != ''
