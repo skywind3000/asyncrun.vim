@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2018/04/16 16:12
+" Last Modified: 2018/04/16 19:24
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -975,6 +975,12 @@ function! s:run(opts)
 		return
 	endif
 
+	let l:wrapper = get(g:, 'asyncrun_wrapper', '')
+
+	if l:wrapper != ''
+		let l:command = l:wrapper . ' ' . l:command
+	endif
+
 	if l:mode >= 10 
 		let l:opts.cmd = l:command
 		if g:asyncrun_hook != ''
@@ -1104,7 +1110,7 @@ endfunc
 "----------------------------------------------------------------------
 " asyncrun - run
 "----------------------------------------------------------------------
-function! asyncrun#run(bang, opts, args)
+function! asyncrun#run(bang, opts, args, ...)
 	let l:macros = {}
 	let l:macros['VIM_FILEPATH'] = expand("%:p")
 	let l:macros['VIM_FILENAME'] = expand("%:t")
@@ -1221,7 +1227,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '1.3.25'
+	return '1.3.26'
 endfunc
 
 

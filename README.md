@@ -146,6 +146,7 @@ stop the running job, when "!" is included, job will be stopped by signal KILL
 - g:asyncrun_auto - event name to trigger QuickFixCmdPre/QuickFixCmdPost, see [FAQ](https://github.com/skywind3000/asyncrun.vim/wiki/FAQ#can-asyncrunvim-trigger-an-autocommand-quickfixcmdpost-to-get-some-plugin-like-errormaker-processing-the-content-in-quickfix-)
 - g:asyncrun_open - above zero to open quickfix window at given height after command starts
 - g:asyncrun_timer - how many messages should be inserted into quickfix every 100ms interval.
+- g:asyncrun_wrapper - enable to setup a command prefix.
 
 #### Variables:
 - g:asyncrun_code - exit code
@@ -226,6 +227,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 1.3.26 (2018-04-16): new option `g:asyncrun_wrapper` to enable setup a command prefix
 - 1.3.25 (2018-04-16): handle makeprg/grepprg correctly, accept `%` and `$*` macros. close [#96](https://github.com/skywind3000/asyncrun.vim/issues/96) [#84](https://github.com/skywind3000/asyncrun.vim/issues/84) and [#35](https://github.com/skywind3000/asyncrun.vim/issues/35)
 - 1.3.24 (2018-04-13): remove trailing ^M on windows.
 - 1.3.23 (2018-04-03): back compatible to vim 7.3, can fall back to mode 1 in old vim.
