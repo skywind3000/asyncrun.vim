@@ -1154,7 +1154,7 @@ function! asyncrun#run(bang, opts, args, ...)
 	endif
 
 	" update info (current running command text)
-	let g:asyncrun_info = l:command
+	let g:asyncrun_info = a:args
 
 	" check cwd
 	if l:opts.cwd != ''
