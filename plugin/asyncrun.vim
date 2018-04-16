@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2018/04/13 16:42
+" Last Modified: 2018/04/16 16:12
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -963,6 +963,9 @@ function! s:run(opts)
 			let l:command = l:program
 		endif
 		let l:command = s:StringStrip(l:command)
+		let s:async_program_cmd = ''
+		silent exec 'AsyncRun -program=parse @ '. l:command
+		let l:command = s:async_program_cmd
 	endif
 
 	if l:command =~ '^\s*$'
@@ -1134,6 +1137,12 @@ function! asyncrun#run(bang, opts, args)
 		endfor
 	endif
 
+	" parse makeprg/grepprg and return
+	if l:opts.program == 'parse'
+		let s:async_program_cmd = l:command
+		return s:async_program_cmd
+	endif
+
 	" check cwd
 	if l:opts.cwd != ''
 		for [l:key, l:val] in items(l:macros)
@@ -1212,7 +1221,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '1.3.24'
+	return '1.3.25'
 endfunc
 
 
