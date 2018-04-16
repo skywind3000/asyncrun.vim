@@ -226,7 +226,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
-- 1.3.25 (2018-04-16): handle makeprg/grepprg correctly, accept `%` and `$*` macros.
+- 1.3.25 (2018-04-16): handle makeprg/grepprg correctly, accept `%` and `$*` macros. close [#96](https://github.com/skywind3000/asyncrun.vim/issues/96) [#84](https://github.com/skywind3000/asyncrun.vim/issues/84) and [#35](https://github.com/skywind3000/asyncrun.vim/issues/35)
 - 1.3.24 (2018-04-13): remove trailing ^M on windows.
 - 1.3.23 (2018-04-03): back compatible to vim 7.3, can fall back to mode 1 in old vim.
 - 1.3.22 (2018-03-11): new option `g:asyncrun_open` to open quickfix window automatically at given height.
