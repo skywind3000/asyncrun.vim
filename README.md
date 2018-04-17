@@ -190,7 +190,7 @@ Setting `g:asyncrun_open` to 8 will open quickfix window automatically at 8 line
 
 #### Range support
 
-AsyncRun can take a range of lines in the current buffer as command's stdin of the after version `1.3.27`. You can try:
+AsyncRun can take a range of lines in the current buffer as command's stdin after version `1.3.27`. You can try:
 
 ```VimL
 :%AsyncRun cat
