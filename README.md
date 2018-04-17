@@ -200,13 +200,13 @@ the whole buffer will be the input of command `cat`. and:
 
 
 ```VimL
-:10,20AsyncRun cat
+:10,20AsyncRun python
 ```
 
 text between line 10-20 will be taken as stdin.
 
 ```VimL
-:'<,'>AsyncRun cat
+:'<,'>AsyncRun perl
 ```
 
 The visual selection (line-wise) will be taken as stdin.
