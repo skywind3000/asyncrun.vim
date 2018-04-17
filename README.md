@@ -196,17 +196,17 @@ AsyncRun can take a range of lines in the current buffer as command's stdin afte
 :%AsyncRun cat
 ```
 
-the whole buffer will be the input of command `cat`. and:
+the whole buffer will be the input of command `cat`. you will see the content of your current buffer will be output to the quickfix window.
 
 
 ```VimL
 :10,20AsyncRun python
 ```
 
-text between line 10-20 will be taken as stdin.
+text between line 10-20 will be taken as the stdin of python. code in that range will be executed by python and the output will display in the quickfix window.
 
 ```VimL
-:'<,'>AsyncRun perl
+:'<,'>AsyncRun -raw perl
 ```
 
 The visual selection (line-wise) will be taken as stdin.
