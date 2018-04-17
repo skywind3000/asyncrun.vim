@@ -13,6 +13,8 @@ If that doesn't excite you, then perhaps this GIF screen capture below will chan
 
 ## News
 
+- 2018/04/17 AsyncRun now supports command range, try: `:%AsyncRun cat`.
+- 2018/04/16 better makeprg/grepprg handling, accepts `%` and `$*` macros now.
 - 2018/03/11 new option [g:asyncrun_open](#quickfix-window) to open quickfix window after job starts.
 - 2017/07/12 new option `-raw=1` to use raw output (not match with the errorformat)
 - 2017/06/26 new option `-cwd=<root>` to change working directory to project root, see [here]() 
@@ -227,6 +229,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 1.3.27 (2018-04-17): AsyncRun now supports range, try: `:%AsyncRun cat`
 - 1.3.26 (2018-04-16): new option `g:asyncrun_wrapper` to enable setup a command prefix
 - 1.3.25 (2018-04-16): handle makeprg/grepprg correctly, accept `%` and `$*` macros. close [#96](https://github.com/skywind3000/asyncrun.vim/issues/96) [#84](https://github.com/skywind3000/asyncrun.vim/issues/84) and [#35](https://github.com/skywind3000/asyncrun.vim/issues/35)
 - 1.3.24 (2018-04-13): remove trailing ^M on windows.
