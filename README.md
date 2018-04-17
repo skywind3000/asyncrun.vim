@@ -188,6 +188,30 @@ AsyncRun displays its output in quickfix window, so if you don't use `:copen {he
 
 Setting `g:asyncrun_open` to 8 will open quickfix window automatically at 8 lines height after command starts.
 
+#### Range support
+
+AsyncRun can take a range of lines in the current buffer as command's stdin of the after version `1.3.27`. You can try:
+
+```VimL
+:%AsyncRun cat
+```
+
+the whole buffer will be the input of command `cat`. and:
+
+
+```VimL
+:10,20AsyncRun cat
+```
+
+text between line 10-20 will be taken as stdin.
+
+```VimL
+:'<,'>AsyncRun cat
+```
+
+The visual selection (line-wise) will be taken as stdin.
+
+
 #### Requirements:
 Vim 7.4.1829 is minimal version to support async mode. If you are use older versions, `g:asyncrun_mode` will fall back from `0/async` to `1/sync`. NeoVim 0.1.4 or later is also supported. 
 
