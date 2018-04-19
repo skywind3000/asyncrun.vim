@@ -1,5 +1,9 @@
 *asyncrun.txt*  asyncrun.vim: Run Async Shell Commands in Vim 8.0 and Output to Quickfix Window
 
+IMPORTANT: This file hasn't been updated for a long time, for latest documentation, visit:
+
+https://github.com/skywind3000/asyncrun.vim
+
 ===============================================================================
 Contents ~
 

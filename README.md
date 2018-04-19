@@ -150,6 +150,9 @@ stop the running job, when "!" is included, job will be stopped by signal KILL
 - g:asyncrun_timer - how many messages should be inserted into quickfix every 100ms interval.
 - g:asyncrun_wrapper - enable to setup a command prefix.
 
+For more information of above options, please visit **[option details](https://github.com/skywind3000/asyncrun.vim/wiki/Options)**.
+
+
 #### Variables:
 - g:asyncrun_code - exit code
 - g:asyncrun_status - 'running', 'success' or 'failure'
