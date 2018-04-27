@@ -256,6 +256,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 2.0.0 (2018-04-27): improve neovim compatability, handle `tcd` command in neovim.
 - 1.3.27 (2018-04-17): AsyncRun now supports range, try: `:%AsyncRun cat`
 - 1.3.26 (2018-04-16): new option `g:asyncrun_wrapper` to enable setup a command prefix
 - 1.3.25 (2018-04-16): handle makeprg/grepprg correctly, accept `%` and `$*` macros. close [#96](https://github.com/skywind3000/asyncrun.vim/issues/96) [#84](https://github.com/skywind3000/asyncrun.vim/issues/84) and [#35](https://github.com/skywind3000/asyncrun.vim/issues/35)

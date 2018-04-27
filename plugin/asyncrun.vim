@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2018/04/17 18:13
+" Last Modified: 2018/04/27 14:55
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -205,6 +205,17 @@ function! s:AutoCmd(name)
 		endif
 	endif
 endfunc
+
+" change directory with right command
+function! s:chdir(path)
+	if has('nvim')
+		let cmd = haslocaldir()? 'lcd' : (haslocaldir(-1, 0)? 'tcd' : 'cd')
+	else
+		let cmd = haslocaldir()? 'lcd' : 'cd'
+	endif
+	silent execute cmd . ' '. fnameescape(a:path)
+endfunc
+
 
 let s:asyncrun_windows = 0
 let g:asyncrun_windows = 0
@@ -1174,7 +1185,6 @@ function! asyncrun#run(bang, opts, args, ...)
 	let l:macros['VIM_ROOT'] = asyncrun#get_root('%')
 	let l:macros['<cwd>'] = l:macros['VIM_CWD']
 	let l:macros['<root>'] = l:macros['VIM_ROOT']
-	let cd = haslocaldir()? 'lcd ' : 'cd '
 	let l:retval = ''
 
 	" extract options
@@ -1218,7 +1228,7 @@ function! asyncrun#run(bang, opts, args, ...)
 			let l:opts.cwd = s:StringReplace(l:opts.cwd, l:replace, l:val)
 		endfor
 		let l:opts.savecwd = getcwd()
-		silent! exec cd . fnameescape(l:opts.cwd)
+		silent! call s:chdir(l:opts.cwd)
 		let l:macros['VIM_CWD'] = getcwd()
 		let l:macros['VIM_RELDIR'] = expand("%:h:.")
 		let l:macros['VIM_RELNAME'] = expand("%:p:.")
@@ -1256,7 +1266,7 @@ function! asyncrun#run(bang, opts, args, ...)
 
 	" restore cwd
 	if l:opts.cwd != ''
-		silent! exec cd fnameescape(l:opts.savecwd)
+		silent! call s:chdir(l:opts.savecwd)
 	endif
 
 	return l:retval
@@ -1289,7 +1299,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '1.3.27'
+	return '2.0.0'
 endfunc
 
 
@@ -1433,7 +1443,6 @@ endfunc
 " asyncrun - execute
 "----------------------------------------------------------------------
 function! asyncrun#execute(mode, cwd, save)
-	let cd = haslocaldir()? 'lcd ' : 'cd '
 	let savecwd = getcwd()
 	let l:ext = tolower(expand("%:e"))
 	if a:save | silent! wall | endif
@@ -1445,7 +1454,7 @@ function! asyncrun#execute(mode, cwd, save)
 		let l:dest = asyncrun#get_root('%')
 	endif
 	if l:dest != ''
-		silent! exec cd . fnameescape(l:dest)
+		silent! call s:chdir(l:dest)
 	endif
 	if a:mode == '0' || a:mode == 'filename' || a:mode == 'file'
 		call s:execute(0)
@@ -1531,7 +1540,7 @@ function! asyncrun#execute(mode, cwd, save)
 		endif
 	endif
 	if l:dest != ''
-		silent! exec cd . fnameescape(savecwd)
+		call s:chdir(savecwd)
 	endif
 endfunc
 
