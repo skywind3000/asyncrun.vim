@@ -227,6 +227,10 @@ asyncrun.vim can cooperate with `vim-fugitive`, see [here](https://github.com/sk
 ![](https://raw.githubusercontent.com/skywind3000/asyncrun.vim/master/doc/cooperate_with_fugitive.gif)
 
 
+## Language Tips
+
+- [Better way for C/C++ developing with AsyncRun](https://github.com/skywind3000/asyncrun.vim/wiki/Better-way-for-C-and-Cpp-development-in-Vim-8)
+
 ## More
 
 - [Additional examples (background ctags updating, pdf conversion, ...)](https://github.com/skywind3000/asyncrun.vim/wiki/Additional-Examples)
