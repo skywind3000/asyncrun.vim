@@ -147,6 +147,7 @@ stop the running job, when "!" is included, job will be stopped by signal KILL
 - g:asyncrun_trim - non-zero to trim the empty lines in the quickfix window.
 - g:asyncrun_auto - event name to trigger QuickFixCmdPre/QuickFixCmdPost, see [FAQ](https://github.com/skywind3000/asyncrun.vim/wiki/FAQ#can-asyncrunvim-trigger-an-autocommand-quickfixcmdpost-to-get-some-plugin-like-errormaker-processing-the-content-in-quickfix-)
 - g:asyncrun_open - above zero to open quickfix window at given height after command starts
+- g:asyncrun_save - non-zero to save current(1) or all(2) modified buffer(s) before executing
 - g:asyncrun_timer - how many messages should be inserted into quickfix every 100ms interval.
 - g:asyncrun_wrapper - enable to setup a command prefix.
 
@@ -260,6 +261,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 2.0.1 (2018-04-29): new option `g:asyncrun_save` to save files.
 - 2.0.0 (2018-04-27): improve neovim compatability, handle `tcd` command in neovim.
 - 1.3.27 (2018-04-17): AsyncRun now supports range, try: `:%AsyncRun cat`
 - 1.3.26 (2018-04-16): new option `g:asyncrun_wrapper` to enable setup a command prefix

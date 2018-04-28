@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2018/04/27 14:55
+" Last Modified: 2018/04/29 05:23
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -175,6 +175,10 @@ endif
 
 if !exists('g:asyncrun_info')
 	let g:asyncrun_info = ''
+endif
+
+if !exists('g:asyncrun_save')
+	let g:asyncrun_save = 0
 endif
 
 
@@ -1255,6 +1259,10 @@ function! asyncrun#run(bang, opts, args, ...)
 	" check if need to save
 	let l:save = get(l:opts, 'save', '')
 
+	if l:save == ''
+		let l:save = ''. g:asyncrun_save
+	endif
+
 	if l:save == '1'
 		silent! update 
 	elseif l:save
@@ -1299,7 +1307,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.0.0'
+	return '2.0.1'
 endfunc
 
 
