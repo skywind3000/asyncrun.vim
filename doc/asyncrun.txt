@@ -1,47 +1,46 @@
-*asyncrun.txt*  asyncrun.vim: Run Async Shell Commands in Vim 8.0 and Output to Quickfix Window
-
-IMPORTANT: This file hasn't been updated for a long time, for latest documentation, visit:
-
-https://github.com/skywind3000/asyncrun.vim
+*asyncrun.txt*  Run Async Shell Commands in Vim 8 / NeoVim and Output to Quickfix Window
 
 ===============================================================================
 Contents ~
 
  1. Introduction                                        |asyncrun-introduction|
- 2. Preface                                               |asyncrun-43-preface|
- 3. News                                                     |asyncrun-44-news|
- 4. Install                                               |asyncrun-45-install|
- 5. Example                                               |asyncrun-46-example|
- 6. Tutorials                                           |asyncrun-48-tutorials|
-   1. Async run gcc to compile current file |asyncrun-49-async-run-gcc-to-compile-current-file|
-   2. Async run make                               |asyncrun-50-async-run-make|
-   3. Grep key word                                 |asyncrun-51-grep-key-word|
-   4. Compile go project                       |asyncrun-52-compile-go-project|
-   5. Lookup man page                             |asyncrun-53-lookup-man-page|
-   6. Git push                                           |asyncrun-54-git-push|
+ 2. Preface                                                  |asyncrun-preface|
+ 3. News                                                        |asyncrun-news|
+ 4. Install                                                  |asyncrun-install|
+ 5. Example                                                  |asyncrun-example|
+ 6. Tutorials                                              |asyncrun-tutorials|
+   1. Async run gcc to compile current file |asyncrun-async-run-gcc-to-compile-current-file|
+   2. Async run make                                  |asyncrun-async-run-make|
+   3. Grep key word                                    |asyncrun-grep-key-word|
+   4. Compile go project                          |asyncrun-compile-go-project|
+   5. Lookup man page                                |asyncrun-lookup-man-page|
+   6. Git push                                              |asyncrun-git-push|
    7. Setup '<F7>' to compile file                                         |F7|
- 7. Manual                                                 |asyncrun-56-manual|
-   1. AsyncRun - Run shell command              |57-asyncrun-run-shell-command|
-   2. AsyncStop - Stop the running job |asyncrun-58-asyncstop-stop-running-job|
-   3. Settings:                                          |asyncrun-59-settings|
-   4. Variables:                                        |asyncrun-61-variables|
-   5. Requirements:                                  |asyncrun-62-requirements|
-   6. Cooperate with vim-fugitive:    |asyncrun-63-cooperate-with-vim-fugitive|
- 8. More                                                     |asyncrun-66-more|
- 9. Further                                               |asyncrun-75-further|
- 10. History                                              |asyncrun-77-history|
- 11. Credits                                              |asyncrun-78-credits|
- 12. References                                           |asyncrun-references|
+   8. Run a python script                          |asyncrun-run-python-script|
+ 7. Manual                                                    |asyncrun-manual|
+   1. AsyncRun - Run shell command                 |asyncrun-run-shell-command|
+   2. AsyncStop - Stop the running job    |asyncrun-asyncstop-stop-running-job|
+   3. Settings:                                             |asyncrun-settings|
+   4. Variables:                                           |asyncrun-variables|
+   5. Autocmd:                                               |asyncrun-autocmd|
+   6. Project Root                                      |asyncrun-project-root|
+   7. Quickfix window                                |asyncrun-quickfix-window|
+   8. Range support                                    |asyncrun-range-support|
+   9. Requirements:                                     |asyncrun-requirements|
+   10. Cooperate with vim-fugitive:      |asyncrun-cooperate-with-vim-fugitive|
+ 8. Language Tips                                      |asyncrun-language-tips|
+ 9. More                                                        |asyncrun-more|
+ 10. Cooperate with other Plugins       |asyncrun-cooperate-with-other-plugins|
+ 11. History                                                 |asyncrun-history|
+ 12. Credits                                                 |asyncrun-credits|
+ 13. References                                           |asyncrun-references|
 
 ===============================================================================
                                                         *asyncrun-introduction*
 Introduction ~
 
-
-Run Async Shell Commands in Vim 8.0 and Output to Quickfix Window
-
 ===============================================================================
-                                                          *asyncrun-43-preface*
+                                                             *asyncrun-preface*
 Preface ~
 
 This plugin takes the advantage of new apis in Vim 8 (and NeoVim) to enable you
@@ -66,38 +65,55 @@ realtime:
 - Fast and lightweight, just a single self-contained 'asyncrun.vim' source
   file.
 
-- Provide corresponding user experience vim, neovim, gvim and macvim.
+- Provide corresponding user experience in vim, neovim, gvim and macvim.
 
 If that doesn't excite you, then perhaps this GIF screen capture below will
 change your mind.
 
 ===============================================================================
-                                                             *asyncrun-44-news*
+                                                                *asyncrun-news*
 News ~
 
+- 2018/04/17 AsyncRun now supports command range, try: ':%AsyncRun cat'.
+
+- 2018/04/16 better makeprg/grepprg handling, accepts '%' and '$*' macros
+  now.
+
+- 2018/03/11 new option g:asyncrun_open [1] to open quickfix window after job
+  starts.
+
+- 2017/07/12 new option '-raw=1' to use raw output (not match with the
+  errorformat)
+
+- 2017/06/26 new option '-cwd=<root>' to change working directory to project
+  root, see here
+
+- 2016/11/01 'asyncrun.vim' can now cooperate with 'errormarker' now.
+
 - 2016/10/17 Glad to announce that 'asyncrun.vim' supports NeoVim now.
+
 - 2016/10/15 'asyncrun.vim' can cooperate with 'vim-fugitive', see the bottom
   of the README.
 
 ===============================================================================
-                                                          *asyncrun-45-install*
+                                                             *asyncrun-install*
 Install ~
 
 Copy 'asyncrun.vim' to your '~/.vim/plugin' or use Vundle to install it from
 'skywind3000/asyncrun.vim' .
 
 ===============================================================================
-                                                          *asyncrun-46-example*
+                                                             *asyncrun-example*
 Example ~
 
-  Image: [47]
+  Image: (see reference [2])
 
 ===============================================================================
-                                                        *asyncrun-48-tutorials*
+                                                           *asyncrun-tutorials*
 Tutorials ~
 
 -------------------------------------------------------------------------------
-                            *asyncrun-49-async-run-gcc-to-compile-current-file*
+                               *asyncrun-async-run-gcc-to-compile-current-file*
 Async run gcc to compile current file ~
 >
   :AsyncRun gcc % -o %<
@@ -108,27 +124,24 @@ in realtime. Macro ''%'' stands for filename and ''%<'' represents filename
 without extension.
 
 -------------------------------------------------------------------------------
-                                                   *asyncrun-50-async-run-make*
+                                                      *asyncrun-async-run-make*
 Async run make ~
 >
   :AsyncRun make
   :AsyncRun make -f makefile
 <
-Option `-cwd=<root>` will change the current directory to the Project Root 
-before executing command (This will not change the vim's pwd).
-
 -------------------------------------------------------------------------------
-                                                    *asyncrun-51-grep-key-word*
+                                                       *asyncrun-grep-key-word*
 Grep key word ~
 >
-  :AsyncRun! grep -R word .
+  :AsyncRun! grep -R word . 
   :AsyncRun! grep -R <cword> .
 <
 when '!' is included, auto-scroll in quickfix will be disabled. '<cword>'
 represents current word under cursor.
 
 -------------------------------------------------------------------------------
-                                               *asyncrun-52-compile-go-project*
+                                                  *asyncrun-compile-go-project*
 Compile go project ~
 >
   :AsyncRun go build "%:p:h"
@@ -136,13 +149,13 @@ Compile go project ~
 Macro ''%:p:h'' stands for current file dir.
 
 -------------------------------------------------------------------------------
-                                                  *asyncrun-53-lookup-man-page*
+                                                     *asyncrun-lookup-man-page*
 Lookup man page ~
 >
   :AsyncRun! man -S 3:2:1 <cword>
 <
 -------------------------------------------------------------------------------
-                                                         *asyncrun-54-git-push*
+                                                            *asyncrun-git-push*
 Git push ~
 >
   :AsyncRun git push origin master
@@ -154,14 +167,25 @@ Setup '<*F7*>' to compile file
 <
 File name may contain spaces, therefore, it's safe to quote them.
 
+-------------------------------------------------------------------------------
+                                                   *asyncrun-run-python-script*
+Run a python script ~
+>
+  :AsyncRun -raw python %
+<
+New option '-raw' will display the raw output (without matching to
+errorformat), you need the latest AsyncRun (after 1.3.13) to use this option.
+Remember to put 'let $PYTHONUNBUFFERED=1' in your '.vimrc' to disable python
+stdout buffering, see here [3].
+
 ===============================================================================
-                                                           *asyncrun-56-manual*
+                                                              *asyncrun-manual*
 Manual ~
 
 There are two vim commands: ':AsyncRun' and ':AsyncStop' to control async jobs.
 
 -------------------------------------------------------------------------------
-                                                *57-asyncrun-run-shell-command*
+                                                   *asyncrun-run-shell-command*
 AsyncRun - Run shell command ~
 >
   :AsyncRun[!] [options] {cmd} ...
@@ -183,6 +207,7 @@ Parameters accept macros start with ''%'', ''#'' or ''<'' :
   <cwd>   - Current directory
   <cword> - Current word under cursor
   <cfile> - Current file name under cursor
+  <root>  - Project root directory
 <
 Environment variables are set before executing:
 >
@@ -193,7 +218,7 @@ Environment variables are set before executing:
   $VIM_FILENOEXT - File name of current buffer without path and extension
   $VIM_CWD       - Current directory
   $VIM_RELDIR    - File path relativize to current directory
-  $VIM_RELNAME   - File name relativize to current directory
+  $VIM_RELNAME   - File name relativize to current directory 
   $VIM_ROOT      - Project root directory
   $VIM_CWORD     - Current word under cursor
   $VIM_CFILE     - Current filename under cursor
@@ -204,17 +229,18 @@ Environment variables are set before executing:
   $VIM_SVRNAME   - Value of v:servername for +clientserver usage
 <
 These environment variables wrapped by '$(...)' (eg. '$(VIM_FILENAME)') will
-also be expanded in the parameters.
+also be expanded in the parameters. Macro '$(VIM_ROOT)' and '<root>' (new in
+version 1.3.12) indicate the Project Root [4] of the current file.
 
 There can be some options before your '[cmd]':
 >
   -mode=0/1/2 - start mode: 0(async, default), 1(:make), 2(:!)
   -cwd=?      - initial directory, (use current directory if unset)
-  -save=0/1   - non-zero to save unsaved files before executing
-  -program=?  - set to `make` to use `&makeprg`, `grep` to use `&grepprg`
+  -save=0/1/2 - non-zero to save current(1) or all(2) modified buffer(s) before executing.
+  -program=?  - set to `make` to use `&makeprg`, `grep` to use `&grepprg` 
   -post=?     - vimscript to exec after this job finished, spaces **must** be escaped to '\ '
   -auto=?     - event name to trigger "QuickFixCmdPre/QuickFixCmdPost [name]" autocmd
-  -raw=1      - use raw output (output will not match with the errorformat) 
+  -raw=1      - use raw output (output will not match with the errorformat)
 <
 All options must start with a minus and position **before** '[cmd]'. Since no
 shell command string starts with a minus. So they can be distinguished from
@@ -225,7 +251,7 @@ placeholder '@' before your command to tell asyncrun explicitly: "stop parsing
 options now, the following string is all my command".
 
 -------------------------------------------------------------------------------
-                                       *asyncrun-58-asyncstop-stop-running-job*
+                                          *asyncrun-asyncstop-stop-running-job*
 AsyncStop - Stop the running job ~
 >
   :AsyncStop[!]
@@ -233,27 +259,112 @@ AsyncStop - Stop the running job ~
 stop the running job, when "!" is included, job will be stopped by signal KILL
 
 -------------------------------------------------------------------------------
-                                                         *asyncrun-59-settings*
+                                                            *asyncrun-settings*
 Settings: ~
 
 - g:asyncrun_exit - script will be executed after finished
 - g:asyncrun_bell - non-zero to ring a bell after finished
 - g:asyncrun_mode - 0:async(require vim 7.4.1829) 1:sync 2:shell
 - g:asyncrun_encs - set shell encoding if it's different from '&encoding',
-  see here [60]
+  see encoding [5]
 - g:asyncrun_trim - non-zero to trim the empty lines in the quickfix window.
-- g:asyncrun_open - above zero to open quickfix window at given height after command starts
-- g:asyncrun_timer - how many messages should be inserted into quickfix every 100ms interval.
+- g:asyncrun_auto - event name to trigger QuickFixCmdPre/QuickFixCmdPost, see
+  FAQ [6]
+- g:asyncrun_open - above zero to open quickfix window at given height after
+  command starts
+- g:asyncrun_save - non-zero to save current(1) or all(2) modified buffer(s)
+  before executing
+- g:asyncrun_timer - how many messages should be inserted into quickfix every
+  100ms interval.
+- g:asyncrun_wrapper - enable to setup a command prefix.
+
+For more information of above options, please visit **option details [7]**.
 
 -------------------------------------------------------------------------------
-                                                        *asyncrun-61-variables*
+                                                           *asyncrun-variables*
 Variables: ~
 
 - g:asyncrun_code - exit code
 - g:asyncrun_status - 'running', 'success' or 'failure'
 
 -------------------------------------------------------------------------------
-                                                     *asyncrun-62-requirements*
+                                                             *asyncrun-autocmd*
+Autocmd: ~
+>
+  autocmd User AsyncRunPre   - triggered before executing
+  autocmd User AsyncRunStart - triggered after starting successfully
+  autocmd User AsyncRunStop  - triggered when job finished
+<
+Note, 'AsyncRunPre' is always likely to be invoked, but 'AsyncRunStart' and
+'AsyncRunStop' will only be invoked if the job starts successfully.
+
+When previous job is still running or vim job slot is full, AsyncRun may fail.
+In this circumstance, 'AsyncRunPre' will be invoked but 'AsyncRunStart' and
+'AsyncRunStop' will have no chance to trigger.
+
+-------------------------------------------------------------------------------
+                                                        *asyncrun-project-root*
+Project Root ~
+
+Vim is lack of project management, as files usually belong to projects, you can
+do nothing to the project if you don't have any information about where the
+project locates. Inspired by CtrlP, this feature (new in version 1.3.12) is
+very useful when you've something to do with the whole project.
+
+Macro '<root>' or '$(VIM_ROOT)' in the command line or in the '-cwd' option
+will be expanded as the **Project Root Directory** of the current file:
+>
+  :AsyncRun make
+  :AsyncRun -cwd=<root> make
+<
+The first 'make' will run in the vim's current directory (which ':pwd'
+returns), while the second one will run in the project root directory of
+current file. This feature is very useful when you have something (make / grep)
+to do with the whole project.
+
+The project root is the nearest ancestor directory of the current file which
+contains one of these directories or files: '.svn', '.git', '.hg', '.root' or
+'.project'. If none of the parent directories contains these root markers, the
+directory of the current file is used as the project root. The root markers can
+also be configurated, see Project Root [4].
+
+-------------------------------------------------------------------------------
+                                                     *asyncrun-quickfix-window*
+Quickfix window ~
+
+AsyncRun displays its output in quickfix window, so if you don't use ':copen
+{height}' to open quickfix window, you won't see any output. For convenience
+there is an option 'g:asyncrun_open' for you:
+>
+  :let g:asyncrun_open = 8
+<
+Setting 'g:asyncrun_open' to 8 will open quickfix window automatically at 8
+lines height after command starts.
+
+-------------------------------------------------------------------------------
+                                                       *asyncrun-range-support*
+Range support ~
+
+AsyncRun can take a range of lines in the current buffer as command's stdin
+after version '1.3.27'. You can try:
+>
+  :%AsyncRun cat
+<
+the whole buffer will be the input of command 'cat'. you will see the content
+of your current buffer will be output to the quickfix window.
+>
+  :10,20AsyncRun python
+<
+text between line 10-20 will be taken as the stdin of python. code in that
+range will be executed by python and the output will display in the quickfix
+window.
+>
+  :'<,'>AsyncRun -raw perl
+<
+The visual selection (line-wise) will be taken as stdin.
+
+-------------------------------------------------------------------------------
+                                                        *asyncrun-requirements*
 Requirements: ~
 
 Vim 7.4.1829 is minimal version to support async mode. If you are use older
@@ -263,41 +374,114 @@ versions, 'g:asyncrun_mode' will fall back from '0/async' to '1/sync'. NeoVim
 Recommend to use Vim 8.0 or later.
 
 -------------------------------------------------------------------------------
-                                      *asyncrun-63-cooperate-with-vim-fugitive*
+                                         *asyncrun-cooperate-with-vim-fugitive*
 Cooperate with vim-fugitive: ~
 
-asyncrun.vim can cooperate with 'vim-fugitive', see here [64].
+asyncrun.vim can cooperate with 'vim-fugitive', see here [8].
 
-  Image: [65]
+  Image: (see reference [9])
 
 ===============================================================================
-                                                             *asyncrun-66-more*
+                                                       *asyncrun-language-tips*
+Language Tips ~
+
+- Better way for C/C++ developing with AsyncRun [10]
+
+===============================================================================
+                                                                *asyncrun-more*
 More ~
 
-- Additional examples (background ctags updating, pdf conversion, ...) [67]
-- Notify user job finished by playing a sound [68]
-- View progress in status line or vim airline [69]
-- Best practice with quickfix windows [70]
-- Scroll the quickfix window only if the cursor is on the last line [71]
-- Cooperate with vim-fugitive [64]
-- Replace old ':make' command with asyncrun [72]
-- Quickfix encoding problem when using Chinese or Japanese [60]
-- Example for updating and adding cscope files [73]
+- Additional examples (background ctags updating, pdf conversion, ...) [11]
+- Notify user job finished by playing a sound [12]
+- View progress in status line or vim airline [13]
+- Best practice with quickfix window [14]
+- Scroll the quickfix window only if the cursor is on the last line [15]
+- Replace old ':make' command with asyncrun [16]
+- Quickfix encoding problem when using Chinese or Japanese [5]
+- Example for updating and adding cscope files [17]
+- The project root directory of the current file [4]
 
-Don't forget to read the Frequently Asked Questions [74].
-
-===============================================================================
-                                                          *asyncrun-75-further*
-Further ~
-
-- Experiment: get netrw using asyncrun to save remote files [76]
+Don't forget to read the Frequently Asked Questions [18].
 
 ===============================================================================
-                                                          *asyncrun-77-history*
+                                        *asyncrun-cooperate-with-other-plugins*
+Cooperate with other Plugins ~
+
+See: Cooperate with famous plugins [19]
+
+===============================================================================
+                                                             *asyncrun-history*
 History ~
 
-- 1.3.3 (2016-10-28): prevent job who reads stdin getting hanging, fixed an
-  issue in fast exiting jobs.
+- 2.0.1 (2018-04-29): new option 'g:asyncrun_save' to save files.
+
+- 2.0.0 (2018-04-27): improve neovim compatability, handle 'tcd' command in
+  neovim.
+
+- 1.3.27 (2018-04-17): AsyncRun now supports range, try: ':%AsyncRun cat'
+
+- 1.3.26 (2018-04-16): new option 'g:asyncrun_wrapper' to enable setup a
+  command prefix
+
+- 1.3.25 (2018-04-16): handle makeprg/grepprg correctly, accept '%' and '$*'
+  macros. close #96 [23]#84 [24] and #35 [25]
+
+- 1.3.24 (2018-04-13): remove trailing ^M on windows.
+
+- 1.3.23 (2018-04-03): back compatible to vim 7.3, can fall back to mode 1 in
+  old vim.
+
+- 1.3.22 (2018-03-11): new option 'g:asyncrun_open' to open quickfix window
+  automatically at given height.
+
+- 1.3.21 (2018-03-02): fixed: float point reltime issues
+
+- 1.3.20 (2018-02-08): fixed: Incorrect background job status [26]
+  (@antoinemadec)
+
+- 1.3.19 (2017-12-13): new option 'g:asyncrun_skip' to skip specific autocmd.
+
+- 1.3.18 (2017-12-12): fixed: windo breaks commands (especially in neovim).
+
+- 1.3.17 (2017-08-06): fixed: process hang when mode is 5.
+
+- 1.3.16 (2017-08-05): fixed: g:asyncrun_mode issue (Joel Taylor)
+
+- 1.3.15 (2017-07-30): fixed: remove trailing new line in neovim.
+
+- 1.3.14 (2017-07-27): improve asyncrun#get_root(), allow user indicate the
+  rootmarkers
+
+- 1.3.13 (2017-07-12): new option (-raw) to use raw output (not match with
+  the errorformat).
+
+- 1.3.12 (2017-06-25): new macro '<root>' or $(VIM_ROOT) to indicate project
+  root directory.
+
+- 1.3.11 (2017-05-19): new option (-save=2) to save all modified files.
+
+- 1.3.10 (2017-05-04): remove trailing '^M' in NeoVim 2.0 on windows
+
+- 1.3.9 (2016-12-23): minor bugs fixed, improve performance and
+  compatibility.
+
+- 1.3.8 (2016-11-17): new autocmd AsyncRunPre/AsyncRunStart/AsyncRunStop,
+  fixed cmd line window conflict.
+
+- 1.3.7 (2016-11-13): new option 'g:asyncrun_timer' to prevent gui freeze by
+  massive output.
+
+- 1.3.6 (2016-11-08): improve performance in quickfix_toggle, fixed small
+  issue in bell ringing.
+
+- 1.3.5 (2016-11-02): new option "g:asyncrun_auto" to trigger
+  QuickFixCmdPre/QuickFixCmdPost.
+
+- 1.3.4 (2016-10-28): new option "g:asyncrun_local" to use local value of
+  errorformat rather the global value.
+
+- 1.3.3 (2016-10-21): prevent job who reads stdin from getting hanging, fixed
+  an issue in fast exiting jobs.
 
 - 1.3.2 (2016-10-19): new "-post" option to run a vimscript after the job
   finished
@@ -337,7 +521,7 @@ History ~
 - 0.0.0 (2016-08-24): initial version
 
 ===============================================================================
-                                                          *asyncrun-78-credits*
+                                                             *asyncrun-credits*
 Credits ~
 
 Trying best to provide the most simply and convenience experience in the
@@ -346,98 +530,35 @@ asynchronous-jobs.
 Author: skywind3000 Please vote it if you like it:
 http://www.vim.org/scripts/script.php?script_id=5431
 
-
 ===============================================================================
                                                           *asyncrun-references*
 References ~
 
-[1] https://github.com/skywind3000/asyncrun.vim#start-of-content
-[2] https://github.com/
-[3] https://github.com/personal
-[4] https://github.com/open-source
-[5] https://github.com/business
-[6] https://github.com/explore
-[7] https://github.com/join?source=header-repo
-[8] https://github.com/login?return_to=%2Fskywind3000%2Fasyncrun.vim
-[9] https://github.com/pricing
-[10] https://github.com/blog
-[11] https://help.github.com
-[12] https://github.com/search
-[13] https://github.com/skywind3000/asyncrun.vim/watchers
-[14] https://github.com/skywind3000/asyncrun.vim/stargazers
-[15] https://github.com/skywind3000/asyncrun.vim/network
-[16] https://github.com/skywind3000/asyncrun.vim
-[17] https://github.com/skywind3000/asyncrun.vim/issues
-[18] https://github.com/skywind3000/asyncrun.vim/pulls
-[19] https://github.com/skywind3000/asyncrun.vim/projects
-[20] https://github.com/skywind3000/asyncrun.vim/wiki
-[21] https://github.com/skywind3000/asyncrun.vim/pulse
-[22] https://github.com/skywind3000/asyncrun.vim/graphs
-[23] https://github.com/skywind3000/asyncrun.vim/commits/master
-[24] https://github.com/skywind3000/asyncrun.vim/branches
-[25] https://github.com/skywind3000/asyncrun.vim/releases
-[26] https://github.com/skywind3000/asyncrun.vim/graphs/contributors
-[27] https://github.com/skywind3000/asyncrun.vim/blob/master/LICENSE
-[28] https://github.com/skywind3000/asyncrun.vim/search?l=vim
-[29] https://help.github.com/articles/which-remote-url-should-i-use
-[30] https://github.com/skywind3000/asyncrun.vim/archive/master.zip
-[31] https://github.com/skywind3000/asyncrun.vim/find/master
-[32] https://github.com/skywind3000/asyncrun.vim/tree/master
-[33] https://github.com/skywind3000/asyncrun.vim/commit/1edc42699bcb8a1b17398c2590a27636e327531d
-[34] https://camo.githubusercontent.com/a08cc422099cb8fd2a030bc7e6da7732e483e336/68747470733a2f2f322e67726176617461722e636f6d2f6176617461722f33313761636661306235663764643563623831363331303365326266623366363f643d68747470732533412532462532466173736574732d63646e2e6769746875622e636f6d253246696d6167657325324667726176617461727325324667726176617461722d757365722d3432302e706e6726723d7826733d313430
-[35] https://github.com/skywind3000/asyncrun.vim/tree/1edc42699bcb8a1b17398c2590a27636e327531d
-[36] https://assets-cdn.github.com/images/spinners/octocat-spinner-32.gif
-[37] https://github.com/skywind3000/asyncrun.vim/tree/master/doc
-[38] https://github.com/skywind3000/asyncrun.vim/commit/7b906e89f42b811176007a52a8affdfd11c76a93
-[39] https://github.com/skywind3000/asyncrun.vim/tree/master/plugin
-[40] https://github.com/skywind3000/asyncrun.vim/commit/c9bb3b9a1909a7e3bcc53817cefa94460cd4a85e
-[41] https://github.com/skywind3000/asyncrun.vim/commit/e4f207983822abb58df9f3577cf0b3fbacdf0231
-[42] https://github.com/skywind3000/asyncrun.vim/blob/master/README.md
-[43] https://github.com/skywind3000/asyncrun.vim#preface
-[44] https://github.com/skywind3000/asyncrun.vim#news
-[45] https://github.com/skywind3000/asyncrun.vim#install
-[46] https://github.com/skywind3000/asyncrun.vim#example
-[47] https://raw.githubusercontent.com/skywind3000/asyncrun.vim/master/doc/screenshot.gif
-[48] https://github.com/skywind3000/asyncrun.vim#tutorials
-[49] https://github.com/skywind3000/asyncrun.vim#async-run-gcc-to-compile-current-file
-[50] https://github.com/skywind3000/asyncrun.vim#async-run-make
-[51] https://github.com/skywind3000/asyncrun.vim#grep-key-word
-[52] https://github.com/skywind3000/asyncrun.vim#compile-go-project
-[53] https://github.com/skywind3000/asyncrun.vim#lookup-man-page
-[54] https://github.com/skywind3000/asyncrun.vim#git-push
-[55] https://github.com/skywind3000/asyncrun.vim#setup-f7-to-compile-file
-[56] https://github.com/skywind3000/asyncrun.vim#manual
-[57] https://github.com/skywind3000/asyncrun.vim#asyncrun---run-shell-command
-[58] https://github.com/skywind3000/asyncrun.vim#asyncstop---stop-the-running-job
-[59] https://github.com/skywind3000/asyncrun.vim#settings
-[60] https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-encoding-problem-when-using-Chinese-or-Japanese
-[61] https://github.com/skywind3000/asyncrun.vim#variables
-[62] https://github.com/skywind3000/asyncrun.vim#requirements
-[63] https://github.com/skywind3000/asyncrun.vim#cooperate-with-vim-fugitive
-[64] https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-vim-fugitive
-[65] https://raw.githubusercontent.com/skywind3000/asyncrun.vim/master/doc/cooperate_with_fugitive.gif
-[66] https://github.com/skywind3000/asyncrun.vim#more
-[67] https://github.com/skywind3000/asyncrun.vim/wiki/Additional-Examples
-[68] https://github.com/skywind3000/asyncrun.vim/wiki/Playing-Sound
-[69] https://github.com/skywind3000/asyncrun.vim/wiki/Display-Progress-in-Status-Line-or-Airline
-[70] https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-Best-Practice
-[71] https://github.com/skywind3000/asyncrun.vim/wiki/Scroll-the-quickfix-window-only-if-cursor-is-on-the-last-line
-[72] https://github.com/skywind3000/asyncrun.vim/wiki/Replace-old-make-command-with-AsyncRun
-[73] https://github.com/skywind3000/asyncrun.vim/wiki/Example-for-updating-and-adding-cscope
-[74] https://github.com/skywind3000/asyncrun.vim/wiki/FAQ
-[75] https://github.com/skywind3000/asyncrun.vim#further
-[76] https://github.com/skywind3000/asyncrun.vim/wiki/Get-netrw-using-asyncrun-to-save-remote-files
-[77] https://github.com/skywind3000/asyncrun.vim#history
-[78] https://github.com/skywind3000/asyncrun.vim#credits
-[79] https://github.com/contact
-[80] https://developer.github.com
-[81] https://training.github.com
-[82] https://shop.github.com
-[83] https://github.com/about
-[84] https://github.com
-[85] https://github.com/site/terms
-[86] https://github.com/site/privacy
-[87] https://github.com/security
-[88] https://status.github.com/
+[1] https://github.com/skywind3000/asyncrun.vim/raw/master/README.md#quickfix-window
+[2] https://raw.githubusercontent.com/skywind3000/asyncrun.vim/master/doc/screenshot.gif
+[3] https://github.com/skywind3000/asyncrun.vim/wiki/FAQ#cant-see-the-realtime-output-when-running-a-python-script
+[4] https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root
+[5] https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-encoding-problem-when-using-Chinese-or-Japanese
+[6] https://github.com/skywind3000/asyncrun.vim/wiki/FAQ#can-asyncrunvim-trigger-an-autocommand-quickfixcmdpost-to-get-some-plugin-like-errormaker-processing-the-content-in-quickfix-
+[7] https://github.com/skywind3000/asyncrun.vim/wiki/Options
+[8] https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-famous-plugins#fugitive
+[9] https://raw.githubusercontent.com/skywind3000/asyncrun.vim/master/doc/cooperate_with_fugitive.gif
+[10] https://github.com/skywind3000/asyncrun.vim/wiki/Better-way-for-C-and-Cpp-development-in-Vim-8
+[11] https://github.com/skywind3000/asyncrun.vim/wiki/Additional-Examples
+[12] https://github.com/skywind3000/asyncrun.vim/wiki/Playing-Sound
+[13] https://github.com/skywind3000/asyncrun.vim/wiki/Display-Progress-in-Status-Line-or-Airline
+[14] https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-Best-Practice
+[15] https://github.com/skywind3000/asyncrun.vim/wiki/Scroll-the-quickfix-window-only-if-cursor-is-on-the-last-line
+[16] https://github.com/skywind3000/asyncrun.vim/wiki/Replace-old-make-command-with-AsyncRun
+[17] https://github.com/skywind3000/asyncrun.vim/wiki/Example-for-updating-and-adding-cscope
+[18] https://github.com/skywind3000/asyncrun.vim/wiki/FAQ
+[19] https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-famous-plugins
+[20] https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-famous-plugins#vim-airline
+[21] https://github.com/pedsm/sprint
+[22] https://github.com/skywind3000/asyncrun.vim/wiki/Get-netrw-using-asyncrun-to-save-remote-files
+[23] https://github.com/skywind3000/asyncrun.vim/issues/96
+[24] https://github.com/skywind3000/asyncrun.vim/issues/84
+[25] https://github.com/skywind3000/asyncrun.vim/issues/35
+[26] https://github.com/skywind3000/asyncrun.vim/issues/25
 
 vim: ft=help
