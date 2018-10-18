@@ -134,12 +134,7 @@ if !exists('g:asyncrun_status')
 endif
 
 if !exists('g:asyncrun_encs')
-	let g:asyncrun_encs = ''
-	if match(&shell, 'cmd') >= 0
-		let cp = system("@echo off && for /f \"tokens=2* delims=: \" %a in ('chcp') do (echo %a)")
-		let cp = 'cp' . substitute(cp, '[\r\n]', '', 'g')
-		let g:asyncrun_encs = cp
-	endif
+	let g:asyncrun_encs = 'auto'
 endif
 
 if !exists('g:asyncrun_trim')
@@ -330,14 +325,23 @@ endfunc
 
 " invoked on timer or finished
 function! s:AsyncRun_Job_Update(count)
-	let l:iconv = (g:asyncrun_encs != "")? 1 : 0
+	if !exists('s:asyncrun_encs')
+		if g:asyncrun_encs == 'auto' && match(&shell, 'cmd') >= 0
+			let cp = system("@echo off && for /f \"tokens=2* delims=: \" %a in ('chcp') do (echo %a)")
+			let cp = 'cp' . substitute(cp, '[\r\n]', '', 'g')
+			let s:asyncrun_encs = cp
+		else
+			let s:asyncrun_encs = g:asyncrun_encs
+		endif
+	endif
+	let l:iconv = (s:asyncrun_encs != "")? 1 : 0
 	let l:count = 0
 	let l:total = 0
 	let l:empty = [{'text':''}]
 	let l:check = s:AsyncRun_Job_CheckScroll()
 	let l:efm1 = &g:efm
 	let l:efm2 = &l:efm
-	if g:asyncrun_encs == &encoding
+	if s:asyncrun_encs == &encoding
 		let l:iconv = 0 
 	endif
 	if &g:efm != s:async_efm && g:asyncrun_local != 0
@@ -352,7 +356,7 @@ function! s:AsyncRun_Job_Update(count)
 		let l:text = s:async_output[s:async_tail]
 		if l:iconv != 0
 			try
-				let l:text = iconv(l:text, g:asyncrun_encs, &encoding)
+				let l:text = iconv(l:text, s:asyncrun_encs, &encoding)
 			catch /.*/
 			endtry
 		endif
