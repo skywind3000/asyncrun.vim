@@ -135,6 +135,11 @@ endif
 
 if !exists('g:asyncrun_encs')
 	let g:asyncrun_encs = ''
+	if match(&shell, 'cmd') >= 0
+		let cp = system("@echo off && for /f \"tokens=2* delims=: \" %a in ('chcp') do (echo %a)")
+		let cp = 'cp' . substitute(cp, '[\r\n]', '', 'g')
+		let g:asyncrun_encs = cp
+	endif
 endif
 
 if !exists('g:asyncrun_trim')
