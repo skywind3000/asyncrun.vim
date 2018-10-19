@@ -1317,7 +1317,7 @@ endfunc
 command! -bang -nargs=+ -range=0 -complete=file AsyncRun 
 	\ call asyncrun#run('<bang>', '', <q-args>, <count>, <line1>, <line2>)
 
-command! -bang -nargs=0 AsyncStop call asyncrun#stop('<bang>')
+command! -bar -bang -nargs=0 AsyncStop call asyncrun#stop('<bang>')
 
 
 
