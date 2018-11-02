@@ -227,6 +227,7 @@ Environment variables are set before executing:
   $VIM_COLUMNS   - How many columns in vim's screen
   $VIM_LINES     - How many lines in vim's screen
   $VIM_SVRNAME   - Value of v:servername for +clientserver usage
+  $VIM_HOME      - First directory in runtimepath (eg. ~/.vim for linux)
 <
 These environment variables wrapped by '$(...)' (eg. '$(VIM_FILENAME)') will
 also be expanded in the parameters. Macro '$(VIM_ROOT)' and '<root>' (new in
