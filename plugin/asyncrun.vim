@@ -1187,6 +1187,7 @@ function! asyncrun#run(bang, opts, args, ...)
 	let l:macros['VIM_LINES'] = ''.&lines
 	let l:macros['VIM_GUI'] = has('gui_running')? 1 : 0
 	let l:macros['VIM_ROOT'] = asyncrun#get_root('%')
+    let l:macros['VIM_HOME'] = expand(split(&rtp, ',')[0])
 	let l:macros['<cwd>'] = l:macros['VIM_CWD']
 	let l:macros['<root>'] = l:macros['VIM_ROOT']
 	let l:retval = ''
