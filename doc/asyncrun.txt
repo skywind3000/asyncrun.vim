@@ -134,11 +134,15 @@ Async run make ~
                                                        *asyncrun-grep-key-word*
 Grep key word ~
 >
-  :AsyncRun! grep -R word . 
+  :AsyncRun! grep -R word .
   :AsyncRun! grep -R <cword> .
+  :AsyncRun! -strip grep -R word .
+  :AsyncRun! -strip -append grep -R word .
 <
 when '!' is included, auto-scroll in quickfix will be disabled. '<cword>'
-represents current word under cursor.
+represents current word under cursor. With '-strip' option, it works like the
+built-in 'grep', only the grep result is filled in the quickfix list. With
+extra '-append', it's similar to 'grepadd'.
 
 -------------------------------------------------------------------------------
                                                   *asyncrun-compile-go-project*
@@ -242,6 +246,8 @@ There can be some options before your '[cmd]':
   -post=?     - vimscript to exec after this job finished, spaces **must** be escaped to '\ '
   -auto=?     - event name to trigger "QuickFixCmdPre/QuickFixCmdPost [name]" autocmd
   -raw=1      - use raw output (output will not match with the errorformat)
+  -strip      - omit command and finish message in output
+  -append     - append result to current quickfix instead of creating a new one
 <
 All options must start with a minus and position **before** '[cmd]'. Since no
 shell command string starts with a minus. So they can be distinguished from
