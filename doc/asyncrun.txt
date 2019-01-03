@@ -219,6 +219,7 @@ Environment variables are set before executing:
   $VIM_FILENAME  - File name of current buffer without path
   $VIM_FILEDIR   - Full path of current buffer without the file name
   $VIM_FILEEXT   - File extension of current buffer
+  $VIM_PATHNOEXT - File name of current buffer with path and without extension
   $VIM_FILENOEXT - File name of current buffer without path and extension
   $VIM_CWD       - Current directory
   $VIM_RELDIR    - File path relativize to current directory
