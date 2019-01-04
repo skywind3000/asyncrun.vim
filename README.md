@@ -101,6 +101,7 @@ Environment variables are set before executing:
     $VIM_FILEDIR   - Full path of current buffer without the file name
     $VIM_FILEEXT   - File extension of current buffer
     $VIM_FILENOEXT - File name of current buffer without path and extension
+    $VIM_PATHNOEXT - Current file name with full path but without extension
     $VIM_CWD       - Current directory
     $VIM_RELDIR    - File path relativize to current directory
     $VIM_RELNAME   - File name relativize to current directory 
@@ -261,6 +262,8 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 2.0.3 (2019-01-04): new macro `$VIM_PATHNOEXT` (by @PietroPate)
+- 2.0.2 (2018-12-25): new `-strip` and `-append` option to control quickfix (by @bennyyip)
 - 2.0.1 (2018-04-29): new option `g:asyncrun_save` to save files.
 - 2.0.0 (2018-04-27): improve neovim compatability, handle `tcd` command in neovim.
 - 1.3.27 (2018-04-17): AsyncRun now supports range, try: `:%AsyncRun cat`
