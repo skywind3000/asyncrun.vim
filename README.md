@@ -263,7 +263,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
-- 2.0.4 (2019-01-13): set option `g:asyncrun_stdin` to 1 to enable stdin (fix cmake warnings on windows).
+- 2.0.4 (2019-01-13): new option `g:asyncrun_stdin`, set to 1 to enable stdin (fix cmake warnings on windows).
 - 2.0.3 (2019-01-04): new macro `$VIM_PATHNOEXT` (by @PietroPate)
 - 2.0.2 (2018-12-25): new `-strip` and `-append` option to control quickfix (by @bennyyip)
 - 2.0.1 (2018-04-29): new option `g:asyncrun_save` to save files.
