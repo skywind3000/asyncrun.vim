@@ -151,6 +151,7 @@ stop the running job, when "!" is included, job will be stopped by signal KILL
 - g:asyncrun_save - non-zero to save current(1) or all(2) modified buffer(s) before executing
 - g:asyncrun_timer - how many messages should be inserted into quickfix every 100ms interval.
 - g:asyncrun_wrapper - enable to setup a command prefix.
+- g:asyncrun_stdin - set to 1 to enable stdin (useful for cmake on windows).
 
 For more information of above options, please visit **[option details](https://github.com/skywind3000/asyncrun.vim/wiki/Options)**.
 
@@ -262,6 +263,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 2.0.4 (2019-01-13): set option `g:asyncrun_stdin` to 1 to enable stdin (fix cmake warnings on windows).
 - 2.0.3 (2019-01-04): new macro `$VIM_PATHNOEXT` (by @PietroPate)
 - 2.0.2 (2018-12-25): new `-strip` and `-append` option to control quickfix (by @bennyyip)
 - 2.0.1 (2018-04-29): new option `g:asyncrun_save` to save files.
