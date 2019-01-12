@@ -125,6 +125,7 @@ There can be some options before your `[cmd]`:
 	-post=?     - vimscript to exec after this job finished, spaces **must** be escaped to '\ '
 	-auto=?     - event name to trigger "QuickFixCmdPre/QuickFixCmdPost [name]" autocmd
 	-raw=1      - use raw output (output will not match with the errorformat) 
+    -strip      - remove the heading / tailing messages (command and [Finished in ...]).
 
 All options must start with a minus and position **before** `[cmd]`. Since no shell command  string starts with a minus. So they can be distinguished from shell command easily without any ambiguity. 
 
