@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2019/01/13 05:15
+" Last Modified: 2019/01/13 13:32
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -180,6 +180,10 @@ endif
 
 if !exists('g:asyncrun_save')
 	let g:asyncrun_save = 0
+endif
+
+if !exists('g:asyncrun_stdin')
+	let g:asyncrun_stdin = 1
 endif
 
 
@@ -675,12 +679,12 @@ function! s:AsyncRun_Job_Start(cmd)
 			let l:options['in_top'] = s:async_info.range_top
 			let l:options['in_bot'] = s:async_info.range_bot
 		endif
-		if get(g:, 'asyncrun_stdin', 0)
+		if g:asyncrun_stdin
 			let l:options['in_io'] = 'pipe'
 		endif
 		let s:async_job = job_start(l:args, l:options)
 		let l:success = (job_status(s:async_job) != 'fail')? 1 : 0
-		if l:success && l:options['in_io'] == 'pipe'
+		if l:success && g:asynrcun_stdin
 			silent! call ch_close_in(job_getchannel(s:async_job))	
 		endif
 	else
