@@ -684,7 +684,7 @@ function! s:AsyncRun_Job_Start(cmd)
 		endif
 		let s:async_job = job_start(l:args, l:options)
 		let l:success = (job_status(s:async_job) != 'fail')? 1 : 0
-		if l:success && g:asynrcun_stdin
+		if l:success && g:asyncrun_stdin
 			silent! call ch_close_in(job_getchannel(s:async_job))	
 		endif
 	else
