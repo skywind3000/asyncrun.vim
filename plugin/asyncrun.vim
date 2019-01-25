@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2019/01/13 13:49
+" Last Modified: 2019/01/26 01:50
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -182,9 +182,6 @@ if !exists('g:asyncrun_save')
 	let g:asyncrun_save = 0
 endif
 
-if !exists('g:asyncrun_stdin')
-	let g:asyncrun_stdin = (has('win32') || has('win64'))
-endif
 
 
 "----------------------------------------------------------------------
@@ -678,14 +675,13 @@ function! s:AsyncRun_Job_Start(cmd)
 			let l:options['in_buf'] = s:async_info.range_buf
 			let l:options['in_top'] = s:async_info.range_top
 			let l:options['in_bot'] = s:async_info.range_bot
-		endif
-		if g:asyncrun_stdin
+		elseif exists('*ch_close_in')
 			let l:options['in_io'] = 'pipe'
 		endif
 		let s:async_job = job_start(l:args, l:options)
 		let l:success = (job_status(s:async_job) != 'fail')? 1 : 0
-		if l:success && g:asyncrun_stdin
-			silent! call ch_close_in(job_getchannel(s:async_job))	
+		if l:success && l:options['in_io'] == 'pipe'
+			silent! call ch_close_in(job_getchannel(s:async_job))
 		endif
 	else
 		let l:callbacks = {'shell': 'AsyncRun'}
@@ -1330,7 +1326,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.0.5'
+	return '2.0.6'
 endfunc
 
 
