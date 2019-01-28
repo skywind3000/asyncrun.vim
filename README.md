@@ -152,6 +152,7 @@ stop the running job, when "!" is included, job will be stopped by signal KILL
 - g:asyncrun_save - non-zero to save current(1) or all(2) modified buffer(s) before executing
 - g:asyncrun_timer - how many messages should be inserted into quickfix every 100ms interval.
 - g:asyncrun_wrapper - enable to setup a command prefix.
+- g:asyncrun_stdin - non-zero to enable stdin (useful for cmake on windows).
 
 For more information of above options, please visit **[option details](https://github.com/skywind3000/asyncrun.vim/wiki/Options)**.
 
@@ -263,6 +264,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 2.0.7 (2019-01-27): restore `g:asyncrun_stdin` because rg will break if stdin is pipe.
 - 2.0.6 (2019-01-26): more adaptive to handle stdin and remove 'g:asyncrun_stdin'
 - 2.0.5 (2019-01-14): enable stdin by default on windows (fix cmake stdin warning on windows).
 - 2.0.4 (2019-01-13): new option `g:asyncrun_stdin`, set to 1 to enable stdin .
