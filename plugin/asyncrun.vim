@@ -652,7 +652,6 @@ function! s:AsyncRun_Job_Start(cmd)
 	let s:async_output = {}
 	let s:async_head = 0
 	let s:async_tail = 0
-	let s:async_efm = &errorformat
 	let s:async_info.post = s:async_info.postsave
 	let s:async_info.auto = s:async_info.autosave
 	let s:async_info.postsave = ''
@@ -1024,10 +1023,13 @@ function! s:run(opts)
 	" process makeprg/grepprg in -program=?
 	let l:program = ""
 
+	let s:async_efm = &errorformat
+
 	if l:opts.program == 'make'
 		let l:program = &makeprg
 	elseif l:opts.program == 'grep'
 		let l:program = &grepprg
+		let s:async_efm = &grepformat
 	endif
 
 	if l:program != ''
