@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2019/01/28 11:36
+" Last Modified: 2019/04/28 14:55
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -221,7 +221,7 @@ function! s:chdir(path)
 	if has('nvim')
 		let cmd = haslocaldir()? 'lcd' : (haslocaldir(-1, 0)? 'tcd' : 'cd')
 	else
-		let cmd = haslocaldir()? 'lcd' : 'cd'
+		let cmd = haslocaldir()? ((haslocaldir() == 1)? 'lcd' : 'tcd') : 'cd'
 	endif
 	silent execute cmd . ' '. fnameescape(a:path)
 endfunc
@@ -1334,7 +1334,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.0.7'
+	return '2.0.8'
 endfunc
 
 

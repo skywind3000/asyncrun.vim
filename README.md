@@ -264,6 +264,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 2.0.8 (2019-04-28): handle `tcd` (introduced in 8.1.1218). use grepformat when `-program=grep`.
 - 2.0.7 (2019-01-27): restore `g:asyncrun_stdin` because rg will break if stdin is pipe.
 - 2.0.6 (2019-01-26): more adaptive to handle stdin and remove 'g:asyncrun_stdin'
 - 2.0.5 (2019-01-14): enable stdin by default on windows (fix cmake stdin warning on windows).
