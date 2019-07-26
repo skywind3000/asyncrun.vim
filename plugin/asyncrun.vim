@@ -765,6 +765,7 @@ function! s:AsyncRun_Job_Stop(how)
 		if s:async_nvim == 0
 			if job_status(s:async_job) == 'run'
 				if job_stop(s:async_job, l:how)
+          call s:AutoCmd('Interrupt')
 					return 0
 				else
 					return -2
@@ -775,6 +776,7 @@ function! s:AsyncRun_Job_Stop(how)
 		else
 			if s:async_job > 0
 				silent! call jobstop(s:async_job)
+        call s:AutoCmd('Interrupt')
 			endif
 		endif
 	else
