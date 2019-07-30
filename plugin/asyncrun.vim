@@ -1377,8 +1377,22 @@ function! asyncrun#quickfix_toggle(size, ...)
 		endif
 	elseif l:mode == 1
 		if s:quickfix_open == 0
-			exec 'botright copen '. ((a:size > 0)? a:size : ' ')
-			wincmd k
+      let l:win_loc = get(g:, 'asyncrun_win_loc', 0)
+      if l:win_loc == 1
+        exec 'vert copen'
+        wincmd h
+        exec 'vertical resize +' . ((a:size > 0)? a:size : '100')
+        wincmd l
+      elseif l:win_loc == 2
+        exec 'vert copen'
+        wincmd h
+        exec 'vertical resize +' . ((a:size > 0)? a:size : '100')
+        wincmd l
+        wincmd H
+      else
+        exec 'botright copen '. ((a:size > 0)? a:size : ' ')
+        wincmd k
+      endif
 		endif
 	elseif l:mode == 2
 		if s:quickfix_open == 0
