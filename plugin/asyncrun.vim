@@ -719,7 +719,7 @@ function! s:AsyncRun_Job_Start(cmd)
 		let s:async_state = or(s:async_state, 1)
 		let g:asyncrun_status = "running"
 		let s:async_start = localtime()
-		let l:arguments = "[".l:name."]"
+		let l:arguments = printf("[ %s ] start at %s", l:name, strftime("%c", s:async_start))
 		let l:title = ':AsyncRun '.l:name
 		if !s:async_info.append
 			if s:async_nvim == 0
