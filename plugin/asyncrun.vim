@@ -1,9 +1,9 @@
 " asyncrun.vim - Run shell commands in background and output to quickfix
 "
-" Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019
+" Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2019/04/28 14:55
+" Last Modified: 2020/01/09 01:24
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1008,6 +1008,73 @@ endfunc
 
 
 "----------------------------------------------------------------------
+" run in a terminal
+"----------------------------------------------------------------------
+function! s:start_in_terminal(opts)
+	let command = a:opts.command
+	let pos = get(g:, 'asyncrun_shell_pos', 'bottom')
+	let rows = get(g:, 'asyncrun_shell_rows', 10)
+	let cols = get(g:, 'asyncrun_shell_cols', 80)
+	let pos = get(a:opts, 'pos', pos)
+	let rows = get(a:opts, 'rows', rows)
+	let cols = get(a:opts, 'cols', cols)
+	if has('patch-8.1.0') == 0 && has('nvim-0.3') == 0
+		return -1
+	endif
+	let avail = -1
+	for ii in range(winnr('$'))
+		let wid = ii + 1
+		if getwinvar(wid, '&bt') == 'terminal'
+			if has('nvim') == 0
+				let bid = winbufnr(wid)
+				if term_getstatus(bid) == 'finished'
+					let avail = wid
+					break
+				endif
+			else
+				let ch = getwinvar(wid, '&channel')
+				let status = (jobwait([ch], 0)[0] == -1)? 1 : 0
+				let avail = (status == 0)? wid : avail
+			endif
+		endif
+	endfor
+	if avail < 0
+		if pos == 'top'
+			exec "leftabove " . rows . "split"	
+		elseif pos == 'bottom' || pos == 'bot'
+			exec "rightbelow " . rows . "split"
+		elseif pos == 'left'
+			exec "leftabove " . cols . "vs"
+		elseif pos == 'right'
+			exec "rightbelow " . cols . "vs"
+		elseif pos == 'tab'
+			if has('nvim') == 0
+				let cmd = 'tab term ++noclose ++norestore'
+				exec cmd . ' ++shell ' . command
+			else
+				exec 'tabe term://'. fnameescape(&shell)
+			endif
+			return 0
+		else
+			exec "rightbelow " . rows . "split"
+		endif
+	endif
+	if avail > 0 
+		exec "normal! ". avail . "\<c-w>\<c-w>"
+	endif
+	if has('nvim') == 0
+		let cmd = 'term ++noclose ++norestore ++curwin ++shell '
+		exec cmd . '++kill=term ' . command
+	else
+		exec 'term '. command
+		setlocal nonumber signcolumn=no
+		startinsert
+	endif
+	return 0
+endfunc
+
+
+"----------------------------------------------------------------------
 " run command
 "----------------------------------------------------------------------
 function! s:run(opts)
@@ -1019,6 +1086,12 @@ function! s:run(opts)
 	if a:opts.mode != ''
 		let l:mode = a:opts.mode
 	endif
+
+	" mode alias
+	let l:modemap = {'async':0, 'make':1, 'bang':2, 'python':3, 'os':4,
+				\ 'hide':5, 'terminal': 6, 'execute':1, 'term':6}
+
+	let l:mode = get(l:modemap, l:mode, l:mode)
 
 	" process makeprg/grepprg in -program=?
 	let l:program = ""
@@ -1185,6 +1258,9 @@ function! s:run(opts)
 		if opts.post != ''
 			exec opts.post
 		endif
+	elseif l:mode == 6
+		let opts.command = l:command
+		call s:start_in_terminal(opts)
 	endif
 
 	return l:retval
@@ -1334,7 +1410,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.0.8'
+	return '2.1.0'
 endfunc
 
 
@@ -1377,22 +1453,8 @@ function! asyncrun#quickfix_toggle(size, ...)
 		endif
 	elseif l:mode == 1
 		if s:quickfix_open == 0
-      let l:win_loc = get(g:, 'asyncrun_win_loc', 0)
-      if l:win_loc == 1
-        exec 'vert copen'
-        wincmd h
-        exec 'vertical resize +' . ((a:size > 0)? a:size : '100')
-        wincmd l
-      elseif l:win_loc == 2
-        exec 'vert copen'
-        wincmd h
-        exec 'vertical resize +' . ((a:size > 0)? a:size : '100')
-        wincmd l
-        wincmd H
-      else
-        exec 'botright copen '. ((a:size > 0)? a:size : ' ')
-        wincmd k
-      endif
+			exec 'botright copen '. ((a:size > 0)? a:size : ' ')
+			wincmd k
 		endif
 	elseif l:mode == 2
 		if s:quickfix_open == 0
