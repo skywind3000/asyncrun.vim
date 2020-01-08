@@ -70,6 +70,13 @@
 "     g:asyncrun_encs - shell program output encoding
 "     g:asyncrun_open - open quickfix window at given height
 "
+" Modes:
+"     -mode=async     - run in quickfix window (default)
+"     -mode=make      - run in makeprg
+"     -mode=bang      - run in !xxx
+"     -mode=system    - run in new system window (windows) or ! (others)
+"     -mode=terminal  - run in a reusable terminal window
+"
 " Variables:
 "     g:asyncrun_code - exit code
 "     g:asyncrun_status - 'running', 'success' or 'failure'
@@ -1039,6 +1046,19 @@ function! s:start_in_terminal(opts)
 			endif
 		endif
 	endfor
+	if pos == 'tab'
+		if has('nvim') == 0
+			let cmd = 'tab term ++noclose ++norestore'
+			if has('patch-8.1.2255') || v:version >= 802
+				exec cmd . ' ++shell ' . command
+			else
+				exec cmd . ' ' . command
+			endif
+		else
+			exec 'tabe term://'. fnameescape(&shell)
+		endif
+		return 0
+	endif
 	if avail < 0
 		if pos == 'top'
 			exec "leftabove " . rows . "split"	
@@ -1048,14 +1068,6 @@ function! s:start_in_terminal(opts)
 			exec "leftabove " . cols . "vs"
 		elseif pos == 'right'
 			exec "rightbelow " . cols . "vs"
-		elseif pos == 'tab'
-			if has('nvim') == 0
-				let cmd = 'tab term ++noclose ++norestore'
-				exec cmd . ' ++shell ' . command
-			else
-				exec 'tabe term://'. fnameescape(&shell)
-			endif
-			return 0
 		else
 			exec "rightbelow " . rows . "split"
 		endif
@@ -1064,8 +1076,12 @@ function! s:start_in_terminal(opts)
 		exec "normal! ". avail . "\<c-w>\<c-w>"
 	endif
 	if has('nvim') == 0
-		let cmd = 'term ++noclose ++norestore ++curwin ++shell '
-		exec cmd . '++kill=term ' . command
+		let cmd = 'term ++noclose ++norestore ++curwin '
+		if has('patch-8.2.2255') || v:version >= 802
+			exec cmd . ' ++shell ++kill=term ' . command
+		else
+			exec cmd . ' ++kill=term ' . command
+		endif
 	else
 		exec 'term '. command
 		setlocal nonumber signcolumn=no
@@ -1090,7 +1106,7 @@ function! s:run(opts)
 
 	" mode alias
 	let l:modemap = {'async':0, 'make':1, 'bang':2, 'python':3, 'os':4,
-				\ 'hide':5, 'terminal': 6, 'execute':1, 'term':6}
+		\ 'hide':5, 'terminal': 6, 'execute':1, 'term':6, 'system':4}
 
 	let l:mode = get(l:modemap, l:mode, l:mode)
 
