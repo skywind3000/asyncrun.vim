@@ -1018,7 +1018,8 @@ function! s:start_in_terminal(opts)
 	let pos = get(a:opts, 'pos', pos)
 	let rows = get(a:opts, 'rows', rows)
 	let cols = get(a:opts, 'cols', cols)
-	if has('patch-8.1.0') == 0 && has('nvim-0.3') == 0
+	if has('patch-8.1.1') == 0 && has('nvim-0.3') == 0
+		call s:ErrorMsg("Terminal is not available in this vim")
 		return -1
 	endif
 	let avail = -1
