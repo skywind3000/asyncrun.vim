@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/01/09 01:24
+" Last Modified: 2020/01/09 08:39
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -233,6 +233,15 @@ function! s:chdir(path)
 	silent execute cmd . ' '. fnameescape(a:path)
 endfunc
 
+" save/restore view
+function! s:save_restore_view(mode)
+	if a:mode == 0
+		let w:__asyncrun_view__ = winsaveview()
+	elseif exists('w:__asyncrun_view__')
+		call winrestview(w:__asyncrun_view__)
+		unlet w:__asyncrun_view__
+	endif
+endfunc
 
 let s:asyncrun_windows = 0
 let g:asyncrun_windows = 0
@@ -1019,12 +1028,7 @@ endfunc
 "----------------------------------------------------------------------
 function! s:start_in_terminal(opts)
 	let command = a:opts.command
-	let pos = get(g:, 'asyncrun_shell_pos', 'bottom')
-	let rows = get(g:, 'asyncrun_shell_rows', 10)
-	let cols = get(g:, 'asyncrun_shell_cols', 80)
-	let pos = get(a:opts, 'pos', pos)
-	let rows = get(a:opts, 'rows', rows)
-	let cols = get(a:opts, 'cols', cols)
+	let pos = get(a:opts, 'pos', 'bottom')
 	if has('patch-8.1.1') == 0 && has('nvim-0.3') == 0
 		call s:ErrorMsg("Terminal is not available in this vim")
 		return -1
@@ -1059,7 +1063,12 @@ function! s:start_in_terminal(opts)
 		endif
 		return 0
 	endif
+	let uid = win_getid()
+	noautocmd windo call s:save_restore_view(0)
+	noautocmd call win_gotoid(uid)
 	if avail < 0
+		let rows = get(a:opts, 'rows', '')
+		let cols = get(a:opts, 'cols', '')
 		if pos == 'top'
 			exec "leftabove " . rows . "split"	
 		elseif pos == 'bottom' || pos == 'bot'
@@ -1075,6 +1084,9 @@ function! s:start_in_terminal(opts)
 	if avail > 0 
 		exec "normal! ". avail . "\<c-w>\<c-w>"
 	endif
+	let uid = win_getid()
+	noautocmd windo call s:save_restore_view(1)
+	noautocmd call win_gotoid(uid)
 	if has('nvim') == 0
 		let cmd = 'term ++noclose ++norestore ++curwin '
 		if has('patch-8.2.2255') || v:version >= 802
@@ -1427,7 +1439,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.1.0'
+	return '2.1.1'
 endfunc
 
 
