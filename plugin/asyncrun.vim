@@ -866,37 +866,36 @@ endfunc
 
 " write script to a file and return filename
 function! s:ScriptWrite(command, pause)
-	let l:tmp = fnamemodify(tempname(), ':h') . '\asyncrun.cmd'
+	let tmpname = fnamemodify(tempname(), ':h') . '\asyncrun.cmd'
 	let command = a:command
-	if g:asyncrun_encs != '' && g:asyncrun_encs != &encoding
+	if s:asyncrun_windows != 0
+		let lines = ["@echo off\r"]
 		try
 			let command = iconv(command, &encoding, g:asyncrun_encs)
 		catch /.*/
 		endtry
-	endif
-	if s:asyncrun_windows != 0
-		let l:line = ['@echo off', 'call '.command]
+		let lines += ['call ' . command . "\r"]
 		if a:pause != 0
-			let l:line += ['pause']
+			let lines += ["pause\r"]
 		endif
 	else
-		let l:line = ['#! '.&shell]
-		let l:line += [command]
+		let lines = ['#! '.&shell]
+		let lines += [command]
 		if a:pause != 0
-			let l:line += ['read -n1 -rsp "press any key to confinue ..."']
+			let lines += ['read -n1 -rsp "press any key to confinue ..."']
 		endif
-		let l:tmp = tempname()
+		let tmpname = tempname()
 	endif
 	if v:version >= 700
-		call writefile(l:line, l:tmp)
+		call writefile(lines, tmpname)
 	else
-		exe 'redir ! > '.fnameescape(l:tmp)
-		for l:index in range(len(l:line))
-			silent echo l:line[l:index]
+		exe 'redir ! > '.fnameescape(tmpname)
+		for line in lines
+			silent echo line
 		endfor
 		redir END
 	endif
-	return l:tmp
+	return tmpname
 endfunc
 
 " full file name
@@ -1224,26 +1223,13 @@ function! s:run(opts)
 		endif
 		call s:AutoCmd('Stop')
 	elseif l:mode == 3
-		if s:asyncrun_windows != 0 && has('python')
-			let l:script = s:ScriptWrite(l:command, 0)
-			py import subprocess, vim
-			py argv = {'args': vim.eval('l:script'), 'shell': True}
-			py argv['stdout'] = subprocess.PIPE
-			py argv['stderr'] = subprocess.STDOUT
-			py p = subprocess.Popen(**argv)
-			py text = p.stdout.read()
-			py p.stdout.close()
-			py c = p.wait()
-			if has('patch-7.4.145')
-				let l:retval = pyeval('text')
-				let g:asyncrun_shell_error = pyeval('c')
-			else
-				py text = text.replace('\\', '\\\\').replace('"', '\\"')
-				py text = text.replace('\n', '\\n').replace('\r', '\\r')
-				py vim.command('let l:retval = "%s"'%text)
-				py vim.command('let g:asyncrun_shell_error = %d'%c)
-			endif
-		elseif s:asyncrun_windows != 0 && has('python3')
+		if s:asyncrun_windows == 0
+			let l:retval = system(l:command)
+			let g:asyncrun_shell_error = v:shell_error
+		elseif has('nvim')
+			let l:retval = system(l:command)
+			let g:asyncrun_shell_error = v:shell_error
+		elseif has('python3')
 			let l:script = s:ScriptWrite(l:command, 0)
 			py3 import subprocess, vim
 			py3 argv = {'args': vim.eval('l:script'), 'shell': True}
@@ -1261,6 +1247,25 @@ function! s:run(opts)
 				py3 text = text.replace('\n', '\\n').replace('\r', '\\r')
 				py3 vim.command('let l:retval = "%s"'%text)
 				py3 vim.command('let g:asyncrun_shell_error = %d'%c)
+			endif
+		elseif has('python')
+			let l:script = s:ScriptWrite(l:command, 0)
+			py import subprocess, vim
+			py argv = {'args': vim.eval('l:script'), 'shell': True}
+			py argv['stdout'] = subprocess.PIPE
+			py argv['stderr'] = subprocess.STDOUT
+			py p = subprocess.Popen(**argv)
+			py text = p.stdout.read()
+			py p.stdout.close()
+			py c = p.wait()
+			if has('patch-7.4.145')
+				let l:retval = pyeval('text')
+				let g:asyncrun_shell_error = pyeval('c')
+			else
+				py text = text.replace('\\', '\\\\').replace('"', '\\"')
+				py text = text.replace('\n', '\\n').replace('\r', '\\r')
+				py vim.command('let l:retval = "%s"'%text)
+				py vim.command('let g:asyncrun_shell_error = %d'%c)
 			endif
 		else
 			let l:retval = system(l:command)
