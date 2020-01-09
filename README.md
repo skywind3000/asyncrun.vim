@@ -65,8 +65,6 @@ File name may contain spaces, therefore, it's safe to quote them.
 
 New option `-raw` will display the raw output (without matching to errorformat), you need the latest AsyncRun (after 1.3.13) to use this option. Remember to put `let $PYTHONUNBUFFERED=1` in your `.vimrc` to disable python stdout buffering, see [here](https://github.com/skywind3000/asyncrun.vim/wiki/FAQ#cant-see-the-realtime-output-when-running-a-python-script).
 
-
-
 ## Manual
 
 There are two vim commands: `:AsyncRun` and `:AsyncStop` to control async jobs.
@@ -78,7 +76,6 @@ There are two vim commands: `:AsyncRun` and `:AsyncStop` to control async jobs.
 ```
 
 run shell command in background and output to quickfix. when `!` is included, auto-scroll in quickfix will be disabled. Parameters are splited by space, if a parameter contains space, it should be **quoted** or escaped as backslash + space (unix only).
-
 
 Parameters accept macros start with '`%`', '`#`' or '`<`' :
 
@@ -92,7 +89,7 @@ Parameters accept macros start with '`%`', '`#`' or '`<`' :
     <cwd>   - Current directory
     <cword> - Current word under cursor
     <cfile> - Current file name under cursor
-	<root>  - Project root directory
+    <root>  - Project root directory
 
 Environment variables are set before executing:
 
@@ -105,14 +102,14 @@ Environment variables are set before executing:
     $VIM_CWD       - Current directory
     $VIM_RELDIR    - File path relativize to current directory
     $VIM_RELNAME   - File name relativize to current directory 
-	$VIM_ROOT      - Project root directory
+    $VIM_ROOT      - Project root directory
     $VIM_CWORD     - Current word under cursor
     $VIM_CFILE     - Current filename under cursor
     $VIM_GUI       - Is running under gui ?
     $VIM_VERSION   - Value of v:version
     $VIM_COLUMNS   - How many columns in vim's screen
     $VIM_LINES     - How many lines in vim's screen
-	$VIM_SVRNAME   - Value of v:servername for +clientserver usage 
+    $VIM_SVRNAME   - Value of v:servername for +clientserver usage 
 
 These environment variables wrapped by `$(...)` (eg. `$(VIM_FILENAME)`) will also be expanded in the parameters. Macro `$(VIM_ROOT)` and `<root>` (new in version 1.3.12) indicate the [Project Root](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root) of the current file. 
 
@@ -122,15 +119,14 @@ There can be some options before your `[cmd]`:
     -cwd=?      - initial directory, (use current directory if unset)
     -save=0/1/2 - non-zero to save current(1) or all(2) modified buffer(s) before executing.
     -program=?  - set to `make` to use `&makeprg`, `grep` to use `&grepprg` 
-	-post=?     - vimscript to exec after this job finished, spaces **must** be escaped to '\ '
-	-auto=?     - event name to trigger "QuickFixCmdPre/QuickFixCmdPost [name]" autocmd
-	-raw=1      - use raw output (output will not match with the errorformat) 
+    -post=?     - vimscript to exec after this job finished, spaces **must** be escaped to '\ '
+    -auto=?     - event name to trigger "QuickFixCmdPre/QuickFixCmdPost [name]" autocmd
+    -raw=1      - use raw output (output will not match with the errorformat) 
     -strip      - remove the heading / tailing messages (command and [Finished in ...]).
 
 All options must start with a minus and position **before** `[cmd]`. Since no shell command  string starts with a minus. So they can be distinguished from shell command easily without any ambiguity. 
 
 Don't worry if you do have a shell command starting with '-', Just put a placeholder `@` before your command to tell asyncrun explicitly: "stop parsing options now, the following string is all my command".
-
 
 #### AsyncStop - Stop the running job
 
@@ -140,11 +136,11 @@ Don't worry if you do have a shell command starting with '-', Just put a placeho
 
 stop the running job, when "!" is included, job will be stopped by signal KILL
 
-#### Settings:
+#### Settings
 
 - g:asyncrun_exit - script will be executed after finished
 - g:asyncrun_bell - non-zero to ring a bell after finished
-- g:asyncrun_mode - 0:async(require vim 7.4.1829) 1:sync 2:shell
+- g:asyncrun_mode - run mode, see [here](https://github.com/skywind3000/asyncrun.vim/wiki/Multiple-run-mode).
 - g:asyncrun_encs - set shell encoding if it's different from `&encoding`, see [encoding](https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-encoding-problem-when-using-Chinese-or-Japanese)
 - g:asyncrun_trim - non-zero to trim the empty lines in the quickfix window.
 - g:asyncrun_auto - event name to trigger QuickFixCmdPre/QuickFixCmdPost, see [FAQ](https://github.com/skywind3000/asyncrun.vim/wiki/FAQ#can-asyncrunvim-trigger-an-autocommand-quickfixcmdpost-to-get-some-plugin-like-errormaker-processing-the-content-in-quickfix-)
@@ -157,11 +153,11 @@ stop the running job, when "!" is included, job will be stopped by signal KILL
 For more information of above options, please visit **[option details](https://github.com/skywind3000/asyncrun.vim/wiki/Options)**.
 
 
-#### Variables:
+#### Variables
 - g:asyncrun_code - exit code
 - g:asyncrun_status - 'running', 'success' or 'failure'
 
-#### Autocmd:
+#### Autocmd
 
 ```VimL
 autocmd User AsyncRunPre   - triggered before executing
@@ -264,6 +260,8 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 2.1.2 (2020-01-09): correct command encoding on windows.
+- 2.1.0 (2020-01-09): new mode `-mode=term` to run command in a reusable terminal window.
 - 2.0.8 (2019-04-28): handle `tcd` (introduced in 8.1.1218). use grepformat when `-program=grep`.
 - 2.0.7 (2019-01-27): restore `g:asyncrun_stdin` because rg will break if stdin is pipe.
 - 2.0.6 (2019-01-26): more adaptive to handle stdin and remove 'g:asyncrun_stdin'
