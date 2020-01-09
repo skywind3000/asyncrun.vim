@@ -639,9 +639,7 @@ function! s:AsyncRun_Job_Start(cmd)
 		if s:asyncrun_windows == 0
 			let l:args += [a:cmd]
 		else
-			let l:tmp = fnamemodify(tempname(), ':h') . '\asyncrun.cmd'
-			let l:run = ['@echo off', a:cmd]
-			call writefile(l:run, l:tmp)
+			let l:tmp = s:ScriptWrite(a:cmd, 0)
 			let l:args += [l:tmp]
 		endif
 	elseif type(a:cmd) == 3
@@ -869,14 +867,21 @@ endfunc
 " write script to a file and return filename
 function! s:ScriptWrite(command, pause)
 	let l:tmp = fnamemodify(tempname(), ':h') . '\asyncrun.cmd'
+	let command = a:command
+	if g:asyncrun_encs != '' && g:asyncrun_encs != &encoding
+		try
+			let command = iconv(command, &encoding, g:asyncrun_encs)
+		catch /.*/
+		endtry
+	endif
 	if s:asyncrun_windows != 0
-		let l:line = ['@echo off', 'call '.a:command]
+		let l:line = ['@echo off', 'call '.command]
 		if a:pause != 0
 			let l:line += ['pause']
 		endif
 	else
 		let l:line = ['#! '.&shell]
-		let l:line += [a:command]
+		let l:line += [command]
 		if a:pause != 0
 			let l:line += ['read -n1 -rsp "press any key to confinue ..."']
 		endif
@@ -1439,7 +1444,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.1.1'
+	return '2.1.2'
 endfunc
 
 
