@@ -138,14 +138,14 @@ stop the running job, when "!" is included, job will be stopped by signal KILL
 
 #### Settings
 
-- g:asyncrun_exit - script will be executed after finished
-- g:asyncrun_bell - non-zero to ring a bell after finished
-- g:asyncrun_mode - run mode, see [here](https://github.com/skywind3000/asyncrun.vim/wiki/Multiple-run-mode).
-- g:asyncrun_encs - set shell encoding if it's different from `&encoding`, see [encoding](https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-encoding-problem-when-using-Chinese-or-Japanese)
+- g:asyncrun_exit - script will be executed after finished.
+- g:asyncrun_bell - non-zero to ring a bell after finished.
+- g:asyncrun_mode - specify how to run your command, see [here](https://github.com/skywind3000/asyncrun.vim/wiki/Specify-how-to-run-your-command).
+- g:asyncrun_encs - set shell encoding if it's different from `&encoding`, see [encoding](https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-encoding-problem-when-using-Chinese-or-Japanese).
 - g:asyncrun_trim - non-zero to trim the empty lines in the quickfix window.
-- g:asyncrun_auto - event name to trigger QuickFixCmdPre/QuickFixCmdPost, see [FAQ](https://github.com/skywind3000/asyncrun.vim/wiki/FAQ#can-asyncrunvim-trigger-an-autocommand-quickfixcmdpost-to-get-some-plugin-like-errormaker-processing-the-content-in-quickfix-)
-- g:asyncrun_open - above zero to open quickfix window at given height after command starts
-- g:asyncrun_save - non-zero to save current(1) or all(2) modified buffer(s) before executing
+- g:asyncrun_auto - event name to trigger QuickFixCmdPre/QuickFixCmdPost, see [FAQ](https://github.com/skywind3000/asyncrun.vim/wiki/FAQ#can-asyncrunvim-trigger-an-autocommand-quickfixcmdpost-to-get-some-plugin-like-errormaker-processing-the-content-in-quickfix-).
+- g:asyncrun_open - above zero to open quickfix window at given height after command starts.
+- g:asyncrun_save - non-zero to save current(1) or all(2) modified buffer(s) before executing.
 - g:asyncrun_timer - how many messages should be inserted into quickfix every 100ms interval.
 - g:asyncrun_wrapper - enable to setup a command prefix.
 - g:asyncrun_stdin - non-zero to enable stdin (useful for cmake on windows).
@@ -214,8 +214,20 @@ text between line 10-20 will be taken as the stdin of python. code in that range
 
 The visual selection (line-wise) will be taken as stdin.
 
+#### Specify how to run
 
-#### Requirements:
+The default behavior is to run async command and output to quickfix window. However there is a `-mode=?` option can allow you specify how to run your command:
+
+| mode | description |
+|--|--|
+| async | default behavior, run async command and output to quickfix window |
+| bang | same as `!` |
+| term | open a reusable built-in terminal window and run your command |
+| os | (windows only) open a new cmd.exe window and run your command in it |
+
+For more information, please see [here](https://github.com/skywind3000/asyncrun.vim/wiki/Specify-how-to-run-your-command).
+
+#### Requirements
 Vim 7.4.1829 is minimal version to support async mode. If you are use older versions, `g:asyncrun_mode` will fall back from `0/async` to `1/sync`. NeoVim 0.1.4 or later is also supported. 
 
 Recommend to use Vim 8.0 or later. 
@@ -242,6 +254,7 @@ asyncrun.vim can cooperate with `vim-fugitive`, see [here](https://github.com/sk
 - [Quickfix encoding problem when using Chinese or Japanese](https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-encoding-problem-when-using-Chinese-or-Japanese)
 - [Example for updating and adding cscope files](https://github.com/skywind3000/asyncrun.vim/wiki/Example-for-updating-and-adding-cscope)
 - [The project root directory of the current file](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root)
+- [Specify how to run your command](https://github.com/skywind3000/asyncrun.vim/wiki/Specify-how-to-run-your-command)
 
 Don't forget to read the [Frequently Asked Questions](https://github.com/skywind3000/asyncrun.vim/wiki/FAQ).
 
@@ -260,7 +273,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
-- 2.1.2 (2020-01-09): correct command encoding on windows.
+- 2.1.4 (2020-01-09): correct command encoding on windows and fixed minor issues.
 - 2.1.0 (2020-01-09): new mode `-mode=term` to run command in a reusable terminal window.
 - 2.0.8 (2019-04-28): handle `tcd` (introduced in 8.1.1218). use grepformat when `-program=grep`.
 - 2.0.7 (2019-01-27): restore `g:asyncrun_stdin` because rg will break if stdin is pipe.
