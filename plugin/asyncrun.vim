@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/01/09 08:39
+" Last Modified: 2020/01/09 19:48
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -247,6 +247,8 @@ let s:asyncrun_windows = 0
 let g:asyncrun_windows = 0
 let s:asyncrun_support = 0
 let g:asyncrun_support = 0
+let s:asyncrun_gui = has('gui_running')
+let g:asyncrun_gui = has('gui_running')
 
 " check running in windows
 if has('win32') || has('win64') || has('win95') || has('win16')
@@ -263,6 +265,23 @@ if (v:version >= 800 || has('patch-7.4.1829')) && (!has('nvim'))
 elseif has('nvim')
 	let s:asyncrun_support = 1
 	let g:asyncrun_support = 1
+endif
+
+" check is gui loaded in neovim
+if has('nvim')
+	if exists('g:GuiLoaded')
+		if g:GuiLoaded != 0
+			let s:asyncrun_gui = 1
+			let g:asyncrun_gui = 1
+		endif
+	elseif exists('*nvim_list_uis') && len(nvim_list_uis()) > 0
+		let uis = nvim_list_uis()[0]
+		let s:asyncrun_gui = get(uis, 'ext_termcolors', 0)? 0 : 1
+		let g:asyncrun_gui = s:asyncrun_gui
+	elseif exists("+termguicolors") && (&termguicolors) != 0
+		let s:asyncrun_gui = 1
+		let g:asyncrun_gui = 1
+	endif
 endif
 
 
@@ -1276,7 +1295,16 @@ function! s:run(opts)
 			exec opts.post
 		endif
 	elseif l:mode <= 5
-		if s:asyncrun_windows != 0 && (has('gui_running') || has('nvim'))
+		let script = get(g:, 'asyncrun_script', '')
+		if script != '' && l:mode == 4
+			let $VIM_COMMAND = l:command
+			if s:asyncrun_windows
+				let ccc = shellescape(s:ScriptWrite(script, 0))
+				silent exec '!start /b cmd /C '. ccc
+			else
+				call system(script . ' &')
+			endif
+		elseif s:asyncrun_windows && s:asyncrun_gui != 0
 			if l:mode == 4
 				let l:ccc = shellescape(s:ScriptWrite(l:command, 1))
 				silent exec '!start cmd /C '. l:ccc
@@ -1286,7 +1314,6 @@ function! s:run(opts)
 			endif
 			redraw
 		else
-			let l:ccc = shellescape(s:ScriptWrite(l:command, 0))
 			if l:mode == 4
 				exec '!' . escape(l:command, '%#')
 			else
@@ -1449,7 +1476,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.1.2'
+	return '2.1.3'
 endfunc
 
 
