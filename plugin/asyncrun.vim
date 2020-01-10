@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/01/10 18:42
+" Last Modified: 2020/01/11 01:29
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -376,9 +376,9 @@ function! s:AsyncRun_Job_Update(count)
 	if g:asyncrun_encs == &encoding
 		let l:iconv = 0
 	endif
-	if &g:efm != s:async_efm && g:asyncrun_local != 0
-		let &l:efm = s:async_efm
-		let &g:efm = s:async_efm
+	if g:asyncrun_local != 0
+		let &l:efm = s:async_info.errorformat
+		let &g:efm = s:async_info.errorformat
 	endif
 	let l:raw = (s:async_efm == '')? 1 : 0
 	if s:async_info.raw == 1
@@ -1153,7 +1153,7 @@ function! s:run(opts)
 	" process makeprg/grepprg in -program=?
 	let l:program = ""
 
-	let s:async_efm = &errorformat
+	let s:async_efm = a:opts.errorformat
 
 	if l:opts.program == 'make'
 		let l:program = &makeprg
@@ -1208,6 +1208,7 @@ function! s:run(opts)
 		let s:async_info.range_buf = opts.range_buf
 		let s:async_info.strip = opts.strip
 		let s:async_info.append = opts.append
+		let s:async_info.errorformat = s:async_efm
 		if s:AsyncRun_Job_Start(l:command) != 0
 			call s:AutoCmd('Error')
 		endif
@@ -1221,12 +1222,22 @@ function! s:run(opts)
 		else
 			let &l:makeprg = 'source '. shellescape(l:script)
 		endif
+		let l:efm1 = &g:efm
+		let l:efm2 = &l:efm
+		if g:asyncrun_local != 0
+			let &g:efm = s:async_efm
+			let &l:efm = s:async_efm
+		endif
 		if has('autocmd')
 			call s:AsyncRun_Job_AutoCmd(0, opts.auto)
 			exec "noautocmd make!"
 			call s:AsyncRun_Job_AutoCmd(1, opts.auto)
 		else
 			exec "make!"
+		endif
+		if g:asyncrun_local != 0
+			if l:efm1 != &g:efm | let &g:efm = l:efm1 | endif
+			if l:efm2 != &l:efm | let &l:efm = l:efm2 | endif
 		endif
 		let &l:makeprg = l:makesave
 		if s:asyncrun_windows == 0
@@ -1428,6 +1439,7 @@ function! asyncrun#run(bang, opts, args, ...)
 	let l:opts.cmd = l:command
 	let l:opts.macros = l:macros
 	let l:opts.mode = get(l:opts, 'mode', g:asyncrun_mode)
+	let l:opts.errorformat = get(l:opts, 'errorformat', &errorformat)
 	let s:async_scroll = (a:bang == '!')? 0 : 1
 
 	" check if need to save
@@ -1481,7 +1493,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.1.5'
+	return '2.1.6'
 endfunc
 
 
