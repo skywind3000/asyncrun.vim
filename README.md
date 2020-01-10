@@ -287,7 +287,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
-- 2.1.7 (2020-01-11): new options `errorformat` in `asyncrun#run(...)`.
+- 2.1.8 (2020-01-11): new options `errorformat` in `asyncrun#run(...)`.
 - 2.1.4 (2020-01-09): correct command encoding on windows and fixed minor issues.
 - 2.1.0 (2020-01-09): new mode `-mode=term` to run command in a reusable terminal window.
 - 2.0.8 (2019-04-28): handle `tcd` (introduced in 8.1.1218). use grepformat when `-program=grep`.
