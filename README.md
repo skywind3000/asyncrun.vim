@@ -136,6 +136,20 @@ Don't worry if you do have a shell command starting with '-', Just put a placeho
 
 stop the running job, when "!" is included, job will be stopped by signal KILL
 
+#### Function (API)
+
+Function form is convenient for vimscript:
+
+```VimL
+:call asyncrun#run(bang, opts, command)
+```
+
+parameters:
+
+- bang: an empty string or a single bang character `"!"`, same as bang sign in `AsyncRun!`.
+- opts: a dictionary contains: `mode`, `cwd`, `raw` and `errorformat` etc.
+- command: the shell command you want to execute.
+
 #### Settings
 
 - g:asyncrun_exit - script will be executed after finished.
@@ -273,6 +287,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 2.1.6 (2020-01-11): new options `errorformat` in `asyncrun#run(...)`.
 - 2.1.4 (2020-01-09): correct command encoding on windows and fixed minor issues.
 - 2.1.0 (2020-01-09): new mode `-mode=term` to run command in a reusable terminal window.
 - 2.0.8 (2019-04-28): handle `tcd` (introduced in 8.1.1218). use grepformat when `-program=grep`.
