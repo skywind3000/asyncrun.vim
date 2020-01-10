@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/01/09 21:23
+" Last Modified: 2020/01/10 18:42
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -979,7 +979,7 @@ function! s:path_join(home, name)
 endfunc
 
 " find project root
-function! s:find_root(path, markers)
+function! s:find_root(path, markers, strict)
     function! s:guess_root(filename, markers)
         let fullname = asyncrun#fullname(a:filename)
         if exists('b:asyncrun_root')
@@ -1013,8 +1013,10 @@ function! s:find_root(path, markers)
         return ''
 	endfunc
 	let root = s:guess_root(a:path, a:markers)
-	if len(root)
+	if root != ''
 		return asyncrun#fullname(root)
+	elseif a:strict != 0
+		return ''
 	endif
 	" Not found: return parent directory of current file / file itself.
 	let fullname = asyncrun#fullname(a:path)
@@ -1031,9 +1033,12 @@ function! asyncrun#get_root(path, ...)
 		let markers = g:asyncrun_rootmarks
 	endif
 	if a:0 > 0
-		let markers = a:1
+		if type(a:1) == type([])
+			let markers = a:1
+		endif
 	endif
-	let l:hr = s:find_root(a:path, markers)
+	let strict = (a:0 >= 2)? (a:2) : 0
+	let l:hr = s:find_root(a:path, markers, strict)
 	if s:asyncrun_windows
 		let l:hr = s:StringReplace(l:hr, '/', "\\")
 	endif
@@ -1476,7 +1481,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.1.4'
+	return '2.1.5'
 endfunc
 
 
