@@ -287,6 +287,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 2.1.9 (2020-01-12): polish `-mode=term`, omit `number` and `signcolunm` in terminal.
 - 2.1.8 (2020-01-11): new options `errorformat` in `asyncrun#run(...)`.
 - 2.1.4 (2020-01-09): correct command encoding on windows and fixed minor issues.
 - 2.1.0 (2020-01-09): new mode `-mode=term` to run command in a reusable terminal window.

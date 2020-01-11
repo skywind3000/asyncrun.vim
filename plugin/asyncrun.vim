@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/01/11 02:08
+" Last Modified: 2020/01/12 01:55
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1087,6 +1087,7 @@ function! s:start_in_terminal(opts)
 			else
 				exec cmd . ' ' . command
 			endif
+			setlocal nonumber signcolumn=no
 		else
 			exec 'tabe term://'. fnameescape(command)
 			setlocal nonumber signcolumn=no
@@ -1125,6 +1126,7 @@ function! s:start_in_terminal(opts)
 		else
 			exec cmd . ' ++kill=term ' . command
 		endif
+		setlocal nonumber signcolumn=no
 	else
 		exec 'term '. command
 		setlocal nonumber signcolumn=no
@@ -1495,7 +1497,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.1.8'
+	return '2.1.9'
 endfunc
 
 
