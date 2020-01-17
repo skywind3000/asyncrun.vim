@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/01/12 01:55
+" Last Modified: 2020/01/18 04:28
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1098,6 +1098,8 @@ function! s:start_in_terminal(opts)
 	let uid = win_getid()
 	noautocmd windo call s:save_restore_view(0)
 	noautocmd call win_gotoid(uid)
+	let focus = get(a:opts, 'focus', 0)
+	let origin = win_getid()
 	if avail < 0
 		let rows = get(a:opts, 'rows', '')
 		let cols = get(a:opts, 'cols', '')
@@ -1132,6 +1134,9 @@ function! s:start_in_terminal(opts)
 		setlocal nonumber signcolumn=no
 		startinsert
 	endif
+	if focus == 0
+		call win_gotoid(origin)
+	endif
 	return 0
 endfunc
 
@@ -1152,6 +1157,10 @@ function! s:run(opts)
 	" mode alias
 	let l:modemap = {'async':0, 'make':1, 'bang':2, 'python':3, 'os':4,
 		\ 'hide':5, 'terminal': 6, 'execute':1, 'term':6, 'system':4}
+
+	let l:modemap['external'] = 4
+	let l:modemap['quickfix'] = 0
+	let l:modemap['vim'] = 2
 
 	let l:mode = get(l:modemap, l:mode, l:mode)
 
@@ -1253,14 +1262,19 @@ function! s:run(opts)
 		endif
 		call s:AutoCmd('Stop')
 	elseif l:mode <= 2
-		call s:AutoCmd('Pre')
-		call s:AutoCmd('Start')
+		let autocmd = get(opts, 'autocmd', 0)
+		if autocmd != 0
+			call s:AutoCmd('Pre')
+			call s:AutoCmd('Start')
+		endif
 		exec '!'. escape(l:command, '%#')
 		let g:asyncrun_text = opts.text
 		if opts.post != ''
 			exec opts.post
 		endif
-		call s:AutoCmd('Stop')
+		if autocmd != 0
+			call s:AutoCmd('Stop')
+		endif
 	elseif l:mode == 3
 		if s:asyncrun_windows == 0
 			let l:retval = system(l:command)
@@ -1497,7 +1511,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.1.9'
+	return '2.2.1'
 endfunc
 
 
