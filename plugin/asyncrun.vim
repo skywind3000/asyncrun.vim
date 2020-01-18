@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/01/18 05:03
+" Last Modified: 2020/01/18 13:52
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1210,6 +1210,12 @@ function! s:run(opts)
 			exec 'call '. g:asyncrun_hook .'(l:opts)'
 		endif
 		return
+	elseif l:mode == 7
+		if s:asyncrun_windows != 0 && s:asyncrun_gui != 0
+			let l:mode = 4
+		else
+			let l:mode = (s:asyncrun_script == '')? 2 : 4
+		endif
 	endif
 
 	if l:mode == 0 && s:asyncrun_support != 0
@@ -1333,13 +1339,14 @@ function! s:run(opts)
 		let script = get(g:, 'asyncrun_script', '')
 		if script != '' && l:mode == 4
 			let $VIM_COMMAND = l:command
+			let l:command = script . ' ' . l:command
 			if s:asyncrun_windows
-				let ccc = shellescape(s:ScriptWrite(script, 0))
+				let ccc = shellescape(s:ScriptWrite(l:command, 0))
 				silent exec '!start /b cmd /C '. ccc
 			else
-				call system(script . ' &')
+				call system(l:command . ' &')
 			endif
-		elseif s:asyncrun_windows && s:asyncrun_gui != 0
+		elseif s:asyncrun_windows
 			if l:mode == 4
 				let l:ccc = shellescape(s:ScriptWrite(l:command, 1))
 				silent exec '!start cmd /C '. l:ccc
@@ -1512,7 +1519,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.2.2'
+	return '2.3.0'
 endfunc
 
 
@@ -1582,7 +1589,7 @@ function! s:execute(mode)
 			if !has('nvim')
 				silent exec '!start cmd /C '. l:fname .' & pause'
 			else
-				call asyncrun#run('', {'mode':4}, l:fname)
+				call asyncrun#run('', {'mode':7}, l:fname)
 			endif
 		else
 			exec '!' . l:fname
@@ -1593,7 +1600,7 @@ function! s:execute(mode)
 			if !has('nvim')
 				silent exec '!start cmd /C '. l:fname .' & pause'
 			else
-				call asyncrun#run('', {'mode':4}, l:fname)
+				call asyncrun#run('', {'mode':7}, l:fname)
 			endif
 		else
 			exec '!' . l:fname
@@ -1604,7 +1611,7 @@ function! s:execute(mode)
 			if !has('nvim')
 				silent exec '!start cmd /C emake -e '. l:fname .' & pause'
 			else
-				call asyncrun#run('', {'mode':4}, "emake -e ". l:fname)
+				call asyncrun#run('', {'mode':7}, "emake -e ". l:fname)
 			endif
 		else
 			exec '!emake -e ' . l:fname
@@ -1630,7 +1637,7 @@ function! s:execute(mode)
 			if !has('nvim')
 				silent exec '!start cmd /C '.l:cmdline . ' & pause'
 			else
-				call asyncrun#run('', {'mode':4}, l:cmdline)
+				call asyncrun#run('', {'mode':7}, l:cmdline)
 			endif
 		else
 			exec '!'.l:makeprg.' '.l:fname
@@ -1724,7 +1731,7 @@ function! asyncrun#execute(mode, cwd, save)
 		elseif !has('nvim')
 			silent exec '!start cmd /C '. cmd . ' ' . fname . ' & pause'
 		else
-			call asyncrun#run('', {'mode':4}, cmd . ' ' . fname)
+			call asyncrun#run('', {'mode':7}, cmd . ' ' . fname)
 		endif
 	else
 		let cmd = get(g:asyncrun_ftrun, &ft, '')
