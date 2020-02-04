@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/02/05 05:44
+" Last Modified: 2020/02/05 06:23
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1105,11 +1105,15 @@ function! s:start_in_terminal(opts)
 			else
 				exec cmd . ' ' . command
 			endif
-			setlocal nonumber signcolumn=no norelativenumber
+			if &bt == 'terminal'
+				setlocal nonumber signcolumn=no norelativenumber
+			endif
 		else
 			exec 'term '. command
-			setlocal nonumber signcolumn=no norelativenumber
-			startinsert
+			if &bt == 'terminal'
+				setlocal nonumber signcolumn=no norelativenumber
+				startinsert
+			endif
 		endif
 		return 0
 	endif
@@ -1558,7 +1562,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.2.3'
+	return '2.2.4'
 endfunc
 
 
