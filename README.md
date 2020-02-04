@@ -288,6 +288,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 2.2.5 (2020-02-05): more safe to start a terminal.
 - 2.2.4 (2020-02-05): exit when starting terminal failed in current window with `-pos=curwin`.
 - 2.2.3 (2020-02-05): new `-program=wsl` to run command in wsl (windows 10 only).
 - 2.2.2 (2020-02-05): new `-pos=curwin` to open terminal in current window.
