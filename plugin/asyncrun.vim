@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/01/20 16:11
+" Last Modified: 2020/02/05 05:19
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1097,6 +1097,21 @@ function! s:start_in_terminal(opts)
 			startinsert
 		endif
 		return 0
+	elseif pos == 'cur' || pos == 'curwin' || pos == 'current'
+		if has('nvim') == 0
+			let cmd = 'term ++noclose ++norestore ++curwin'
+			if has('patch-8.1.2255') || v:version >= 802
+				exec cmd . ' ++shell ' . command
+			else
+				exec cmd . ' ' . command
+			endif
+			setlocal nonumber signcolumn=no norelativenumber
+		else
+			exec 'term '. command
+			setlocal nonumber signcolumn=no norelativenumber
+			startinsert
+		endif
+		return 0
 	endif
 	let uid = win_getid()
 	noautocmd windo call s:save_restore_view(0)
@@ -1523,7 +1538,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.2.1'
+	return '2.2.2'
 endfunc
 
 
