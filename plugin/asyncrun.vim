@@ -1200,7 +1200,7 @@ function! s:run(opts)
 			let t2 = root . '/sysnative/wsl.exe'
 			let tt = executable(t1)? t1 : (executable(t2)? t2 : '')
 			if tt == ''
-				call s:ErrorMsg("Error: not find wsl in your system")
+				call s:ErrorMsg("not find wsl in your system")
 				return
 			endif
 			let cmd = shellescape(substitute(tt, '\\', '\/', 'g'))
@@ -1210,7 +1210,7 @@ function! s:run(opts)
 			endif
 			let l:command = cmd . ' ' . l:command
 		else
-			call s:ErrorMsg("Error: only available on Windows")
+			call s:ErrorMsg("only available for Windows")
 			return
 		endif
 	endif
