@@ -288,6 +288,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 2.2.3 (2020-02-06): new `-program=wsl` to run command in wsl (windows 10 only).
 - 2.2.2 (2020-02-05): new `-pos=curwin` to open terminal in current window.
 - 2.2.1 (2020-01-20): set noreletivenumber for terminal window.
 - 2.2.0 (2020-01-18): new `-focus=0` option for `-mode=term` to prevent focus change.
