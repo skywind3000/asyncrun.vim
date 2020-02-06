@@ -119,17 +119,17 @@ There can be some options before your `[cmd]`:
 
 | Option | Default Value | Description |
 |-|-|-|
-| `-mode` | "async" | specify how to run the command, available modes are `"async"` (default), `"terminal"`, `"bang"` and `"os"`, see [running modes](#running-modes) for details. |
-| `-cwd` | `unset` | initial directory (use current directory if unset), for example use `-cwd=<root>` to run commands in [project root directory](#project-root), or `-cwd=$(VIM_FILEDIR)` to run commands in current buffer's parent directory. |
-| `-save` | 0 | `1` to save current file, `2` to save all modified files before executing |
-| `-program` | `unset` | set to `make` to use `&makeprg`, `grep` to use `&grepprt` and `wsl` to execute commands in WSL (windows 10) |
-| `-post` | `unset` | vimscript to exec after job finished, spaces **must** be escaped to '\ ' |
-| `-auto` | `unset` | event name to trigger `QuickFixCmdPre`/`QuickFixCmdPost` [name] autocmd 
+| `-mode=?` | "async" | specify how to run the command as `-mode=?`, available modes are `"async"` (default), `"terminal"`, `"bang"` and `"os"`, see [running modes](#running-modes) for details. |
+| `-cwd=?` | `unset` | initial directory (use current directory if unset), for example use `-cwd=<root>` to run commands in [project root directory](#project-root), or `-cwd=$(VIM_FILEDIR)` to run commands in current buffer's parent directory. |
+| `-save=?` | 0 | use `-save=1` to save current file, `-save=2` to save all modified files before executing |
+| `-program=?` | `unset` | set to `make` to use `&makeprg`, `grep` to use `&grepprt` and `wsl` to execute commands in WSL (windows 10) |
+| `-post=?` | `unset` | vimscript to exec after job finished, spaces **must** be escaped to '\ ' |
+| `-auto=?` | `unset` | event name to trigger `QuickFixCmdPre`/`QuickFixCmdPost` [name] autocmd 
 | `-raw` | `unset` | provide as `-raw` to use raw output, and `&errorformat` will be ignored. |
 | `-strip` | `unset` | provide as `-strip` to remove the heading/trailing messages (command and "[Finished in ...]" message)
-| `-pos` | "bottom" | When using internal terminal with `-mode=term`, `-pos` is used to specify where to split the terminal window, it can be one of `"tab"`, `"curwin"`, `"top"`, `"bottom"`, `"left"` and `"right"` |
-| `-rows` | 0 | When using a horizontal split terminal, this value can be used to specify the height of terminal window. |
-| `-cols` | 0 | When using a vertical split terminal, this value can be used to specify the width of terminal window. |
+| `-pos=?` | "bottom" | When using internal terminal with `-mode=term`, `-pos` is used to specify where to split the terminal window, it can be one of `"tab"`, `"curwin"`, `"top"`, `"bottom"`, `"left"` and `"right"` |
+| `-rows=num` | 0 | When using a horizontal split terminal, this value can be used to specify the height of terminal window. |
+| `-cols=num` | 0 | When using a vertical split terminal, this value can be used to specify the width of terminal window. |
 
 All options must start with a minus and position **before** `[cmd]`. Since no shell command  string starts with a minus. So they can be distinguished from shell command easily without any ambiguity. 
 
