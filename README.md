@@ -36,14 +36,6 @@ Copy `asyncrun.vim` to your `~/.vim/plugin` or use Vundle to install it from `sk
 <!-- TOC -->
 
 - [Tutorials](#tutorials)
-        - [Async run gcc to compile current file](#async-run-gcc-to-compile-current-file)
-        - [Async run make](#async-run-make)
-        - [Grep key word](#grep-key-word)
-        - [Compile go project](#compile-go-project)
-        - [Lookup man page](#lookup-man-page)
-        - [Git push](#git-push)
-        - [Setup `<F7>` to compile file](#setup-f7-to-compile-file)
-        - [Run a python script](#run-a-python-script)
 - [Manual](#manual)
     - [AsyncRun - Run shell command](#asyncrun---run-shell-command)
     - [AsyncStop - Stop the running job](#asyncstop---stop-the-running-job)
@@ -67,40 +59,44 @@ Copy `asyncrun.vim` to your `~/.vim/plugin` or use Vundle to install it from `sk
 
 ## Tutorials
 
-#### Async run gcc to compile current file
+**Async run gcc to compile current file**
 
 	:AsyncRun gcc % -o %<
 	:AsyncRun g++ -O3 "%" -o "%<" -lpthread 
 This command will run gcc in the background and output to the quickfix window in realtime. Macro '`%`' stands for filename and '`%<`' represents filename without extension.
 
-#### Async run make
+**Async run make**
 
     :AsyncRun make
 	:AsyncRun make -f makefile
 
-#### Grep key word 
+**Grep key word**
 
     :AsyncRun! grep -R word . 
     :AsyncRun! grep -R <cword> . 
 when `!` is included, auto-scroll in quickfix will be disabled. `<cword>` represents current word under cursor.
 
-#### Compile go project
+**Compile go project**
 
     :AsyncRun go build "%:p:h"
 Macro '`%:p:h`' stands for current file dir. 
 
-#### Lookup man page
+**Lookup man page**
+
     :AsyncRun! man -S 3:2:1 <cword>
 
-#### Git push
+**Git push**
+
     :AsyncRun git push origin master
 
-#### Setup `<F7>` to compile file
+**Setup `<F7>` to compile file**
+
     :noremap <F7> :AsyncRun gcc "%" -o "%<" <cr> 
 
 File name may contain spaces, therefore, it's safe to quote them.
 
-#### Run a python script
+**Run a python script**
+
     :AsyncRun -raw python %
 
 New option `-raw` will display the raw output (without matching to errorformat), you need the latest AsyncRun (after 1.3.13) to use this option. Remember to put `let $PYTHONUNBUFFERED=1` in your `.vimrc` to disable python stdout buffering, see [here](https://github.com/skywind3000/asyncrun.vim/wiki/FAQ#cant-see-the-realtime-output-when-running-a-python-script).
