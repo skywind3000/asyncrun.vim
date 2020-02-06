@@ -125,11 +125,11 @@ There can be some options before your `[cmd]`:
 | `-program=?` | `unset` | set to `make` to use `&makeprg`, `grep` to use `&grepprt` and `wsl` to execute commands in WSL (windows 10) |
 | `-post=?` | `unset` | vimscript to exec after job finished, spaces **must** be escaped to '\ ' |
 | `-auto=?` | `unset` | event name to trigger `QuickFixCmdPre`/`QuickFixCmdPost` [name] autocmd 
-| `-raw` | `unset` | provide as `-raw` to use raw output, and `&errorformat` will be ignored. |
-| `-strip` | `unset` | provide as `-strip` to remove the heading/trailing messages (command and "[Finished in ...]" message)
+| `-raw` | `unset` | use raw output if provided, and `&errorformat` will be ignored. |
+| `-strip` | `unset` | remove the heading/trailing messages if provided (omit command and "[Finished in ...]" message). |
 | `-pos=?` | "bottom" | When using internal terminal with `-mode=term`, `-pos` is used to specify where to split the terminal window, it can be one of `"tab"`, `"curwin"`, `"top"`, `"bottom"`, `"left"` and `"right"` |
-| `-rows=num` | 0 | When using a horizontal split terminal, this value can be used to specify the height of terminal window. |
-| `-cols=num` | 0 | When using a vertical split terminal, this value can be used to specify the width of terminal window. |
+| `-rows=num` | 0 | When using a horizontal split terminal, this value represents the height of terminal window. |
+| `-cols=num` | 0 | When using a vertical split terminal, this value represents the width of terminal window. |
 
 All options must start with a minus and position **before** `[cmd]`. Since no shell command  string starts with a minus. So they can be distinguished from shell command easily without any ambiguity. 
 
