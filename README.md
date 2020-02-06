@@ -153,7 +153,7 @@ There can be some options before your `[cmd]`:
 
 | Option | Default Value | Description |
 |-|-|-|
-| `-mode=?` | "async" | specify how to run the command as `-mode=?`, available modes are `"async"` (default), `"terminal"`, `"bang"` and `"os"`, see [running modes](#running-modes) for details. |
+| `-mode=?` | "async" | specify how to run the command as `-mode=?`, available modes are `"async"` (default), `"terminal"` (in internal terminal), `"bang"` (with `!` command) and `"os"` (in external os terminal), see [running modes](#running-modes) for details. |
 | `-cwd=?` | `unset` | initial directory (use current directory if unset), for example use `-cwd=<root>` to run commands in [project root directory](#project-root), or `-cwd=$(VIM_FILEDIR)` to run commands in current buffer's parent directory. |
 | `-save=?` | 0 | use `-save=1` to save current file, `-save=2` to save all modified files before executing |
 | `-program=?` | `unset` | set to `make` to use `&makeprg`, `grep` to use `&grepprt` and `wsl` to execute commands in WSL (windows 10) |
