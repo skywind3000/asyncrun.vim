@@ -45,6 +45,7 @@ Copy `asyncrun.vim` to your `~/.vim/plugin` or use Vundle to install it from `sk
     - [Autocmd](#autocmd)
     - [Project Root](#project-root)
     - [Running modes](#running-modes)
+    - [Internal Terminal](#internal-terminal)
     - [Quickfix window](#quickfix-window)
     - [Range support](#range-support)
     - [Requirements](#requirements)
@@ -252,6 +253,29 @@ The default behavior is to run async command and output to quickfix window. Howe
 | os | (windows only) open a new cmd.exe window and run your command in it |
 
 For more information, please see [here](https://github.com/skywind3000/asyncrun.vim/wiki/Specify-how-to-run-your-command).
+
+### Internal Terminal
+
+AsyncRun is capable to run commands in Vim/NeoVim's internal terminal with the `-mode=term` option. You can specify how to open the terminal window by `-pos=?`, available positions are:
+
+- `-pos=tab`: open the terminal in a new tab.
+- `-pos=curwin`: open the terminal in the current window.
+- `-pos=top`: open the terminal above the current window.
+- `-pos=bottom`: open the terminal below the current window.
+- `-pos=left`: open the terminal on the left side.
+- `-pos=right`: open the terminal on the right side.
+
+Examples:
+
+```VimL
+:AsyncRun -mode=term -pos=tab python "$(VIM_FILEPATH)"
+:AsyncRun -mode=term -pos=bottom -rows=10 python "$(VIM_FILEPATH)"
+:AsyncRun -mode=term -pos=right -cols=80 python "$(VIM_FILEPATH)"
+:AsyncRun -mode=term -pos=curwin python "$(VIM_FILEPATH)"
+:AsyncRun -mode=term -pos=curwin -hidden python "$(VIM_FILEPATH)"
+```
+
+When using a split (`-pos` is one of `top`, `bottom`, `left` and `right`), AsyncRun will firstly reuse a finished previous terminal window if it exists, if not, AsyncRun will create a new terminal window in given position.
 
 ### Quickfix window
 
