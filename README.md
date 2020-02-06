@@ -1,4 +1,4 @@
-## Preface
+# Preface
 
 This plugin takes the advantage of new apis in Vim 8 (and NeoVim) to enable you to run shell commands in background and read output in the quickfix window in realtime:
 
@@ -12,7 +12,7 @@ This plugin takes the advantage of new apis in Vim 8 (and NeoVim) to enable you 
 
 If that doesn't excite you, then perhaps this GIF screen capture below will change your mind.
 
-## News
+# News
 
 - 2020/01/21 run command in internal terminal with `-mode=term` see [here](https://github.com/skywind3000/asyncrun.vim/wiki/Specify-how-to-run-your-command).
 - 2018/04/17 AsyncRun now supports command range, try: `:%AsyncRun cat`.
@@ -24,30 +24,68 @@ If that doesn't excite you, then perhaps this GIF screen capture below will chan
 - 2016/10/17 Glad to announce that `asyncrun.vim` supports NeoVim now.
 - 2016/10/15 `asyncrun.vim` can cooperate with `vim-fugitive`, see the bottom of the README.
 
-## Install
+# Install
 Copy `asyncrun.vim` to your `~/.vim/plugin` or use Vundle to install it from `skywind3000/asyncrun.vim` .
 
-## Example
+# Example
 
 ![](https://raw.githubusercontent.com/skywind3000/asyncrun.vim/master/doc/screenshot.gif)
+
+# Contents
+
+<!-- TOC -->
+
+- [Tutorials](#tutorials)
+        - [Async run gcc to compile current file](#async-run-gcc-to-compile-current-file)
+        - [Async run make](#async-run-make)
+        - [Grep key word](#grep-key-word)
+        - [Compile go project](#compile-go-project)
+        - [Lookup man page](#lookup-man-page)
+        - [Git push](#git-push)
+        - [Setup `<F7>` to compile file](#setup-f7-to-compile-file)
+        - [Run a python script](#run-a-python-script)
+- [Manual](#manual)
+    - [AsyncRun - Run shell command](#asyncrun---run-shell-command)
+    - [AsyncStop - Stop the running job](#asyncstop---stop-the-running-job)
+    - [Function APIs](#function-apis)
+    - [Settings](#settings)
+    - [Variables](#variables)
+    - [Autocmd](#autocmd)
+    - [Project Root](#project-root)
+    - [Running modes](#running-modes)
+    - [Quickfix window](#quickfix-window)
+    - [Range support](#range-support)
+    - [Requirements](#requirements)
+    - [Cooperate with vim-fugitive:](#cooperate-with-vim-fugitive)
+- [Language Tips](#language-tips)
+- [More](#more)
+- [Cooperate with other Plugins](#cooperate-with-other-plugins)
+- [History](#history)
+- [Credits](#credits)
+
+<!-- /TOC -->
 
 ## Tutorials
 
 #### Async run gcc to compile current file
+
 	:AsyncRun gcc % -o %<
 	:AsyncRun g++ -O3 "%" -o "%<" -lpthread 
 This command will run gcc in the background and output to the quickfix window in realtime. Macro '`%`' stands for filename and '`%<`' represents filename without extension.
 
 #### Async run make
+
     :AsyncRun make
 	:AsyncRun make -f makefile
 
 #### Grep key word 
+
     :AsyncRun! grep -R word . 
     :AsyncRun! grep -R <cword> . 
 when `!` is included, auto-scroll in quickfix will be disabled. `<cword>` represents current word under cursor.
 
 #### Compile go project
+
     :AsyncRun go build "%:p:h"
 Macro '`%:p:h`' stands for current file dir. 
 
@@ -71,7 +109,7 @@ New option `-raw` will display the raw output (without matching to errorformat),
 
 There are two vim commands: `:AsyncRun` and `:AsyncStop` to control async jobs.
 
-#### AsyncRun - Run shell command
+### AsyncRun - Run shell command
 
 ```VimL
 :AsyncRun[!] [options] {cmd} ...
@@ -135,7 +173,7 @@ All options must start with a minus and position **before** `[cmd]`. Since no sh
 
 Don't worry if you do have a shell command starting with '-', Just put a placeholder `@` before your command to tell asyncrun explicitly: "stop parsing options now, the following string is all my command".
 
-#### AsyncStop - Stop the running job
+### AsyncStop - Stop the running job
 
 ```VimL
 :AsyncStop[!]
@@ -143,7 +181,7 @@ Don't worry if you do have a shell command starting with '-', Just put a placeho
 
 stop the running job, when "!" is included, job will be stopped by signal KILL
 
-#### Function (API)
+### Function APIs
 
 Function form is convenient for vimscript:
 
@@ -153,11 +191,11 @@ Function form is convenient for vimscript:
 
 parameters:
 
-- bang: an empty string or a single bang character `"!"`, same as bang sign in `AsyncRun!`.
-- opts: a dictionary contains: `mode`, `cwd`, `raw` and `errorformat` etc.
-- command: the shell command you want to execute.
+- `bang`: an empty string or a single bang character `"!"`, same as bang sign in `AsyncRun!`.
+- `opts`: a dictionary contains: `mode`, `cwd`, `raw` and `errorformat` etc.
+- `command`: the shell command you want to execute.
 
-#### Settings
+### Settings
 
 - g:asyncrun_exit - script will be executed after finished.
 - g:asyncrun_bell - non-zero to ring a bell after finished.
@@ -174,11 +212,12 @@ parameters:
 For more information of above options, please visit **[option details](https://github.com/skywind3000/asyncrun.vim/wiki/Options)**.
 
 
-#### Variables
+### Variables
+
 - g:asyncrun_code - exit code
 - g:asyncrun_status - 'running', 'success' or 'failure'
 
-#### Autocmd
+### Autocmd
 
 ```VimL
 autocmd User AsyncRunPre   - triggered before executing
@@ -190,7 +229,7 @@ Note, `AsyncRunPre` is always likely to be invoked, but `AsyncRunStart` and `Asy
 
 When previous job is still running or vim job slot is full, AsyncRun may fail. In this circumstance, `AsyncRunPre` will be invoked but `AsyncRunStart` and `AsyncRunStop` will have no chance to trigger.
 
-#### Project Root
+### Project Root
 
 Vim is lack of project management, as files usually belong to projects, you can do nothing to the project if you don't have any information about where the project locates. Inspired by CtrlP, this feature (new in version 1.3.12) is very useful when you've something to do with the whole project. 
 
@@ -205,7 +244,7 @@ The first `make` will run in the vim's current directory (which `:pwd` returns),
 
 The project root is the nearest ancestor directory of the current file which contains one of these directories or files: `.svn`, `.git`, `.hg`, `.root` or `.project`. If none of the parent directories contains these root markers, the directory of the current file is used as the project root. The root markers can also be configurated, see [Project Root](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root).
 
-#### Running modes
+### Running modes
 
 The default behavior is to run async command and output to quickfix window. However there is a `-mode=?` option can allow you specify how to run your command:
 
@@ -218,7 +257,7 @@ The default behavior is to run async command and output to quickfix window. Howe
 
 For more information, please see [here](https://github.com/skywind3000/asyncrun.vim/wiki/Specify-how-to-run-your-command).
 
-#### Quickfix window
+### Quickfix window
 
 AsyncRun displays its output in quickfix window, so if you don't use `:copen {height}` to open quickfix window, you won't see any output. For convenience there is an option `g:asyncrun_open` for you:
 
@@ -226,7 +265,7 @@ AsyncRun displays its output in quickfix window, so if you don't use `:copen {he
 
 Setting `g:asyncrun_open` to 8 will open quickfix window automatically at 8 lines height after command starts.
 
-#### Range support
+### Range support
 
 AsyncRun can take a range of lines in the current buffer as command's stdin after version `1.3.27`. You can try:
 
@@ -250,12 +289,13 @@ text between line 10-20 will be taken as the stdin of python. code in that range
 The visual selection (line-wise) will be taken as stdin.
 
 
-#### Requirements
+### Requirements
+
 Vim 7.4.1829 is minimal version to support async mode. If you are use older versions, `g:asyncrun_mode` will fall back from `0/async` to `1/sync`. NeoVim 0.1.4 or later is also supported. 
 
 Recommend to use Vim 8.0 or later. 
 
-#### Cooperate with vim-fugitive:
+### Cooperate with vim-fugitive:
 
 asyncrun.vim can cooperate with `vim-fugitive`, see [here](https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-famous-plugins#fugitive).
 
