@@ -50,7 +50,7 @@ Copy `asyncrun.vim` to your `~/.vim/plugin` or use Vundle to install it from `sk
     - [Requirements](#requirements)
     - [Cooperate with vim-fugitive:](#cooperate-with-vim-fugitive)
 - [Language Tips](#language-tips)
-- [More](#more)
+- [More Topics](#more-topics)
 - [Cooperate with other Plugins](#cooperate-with-other-plugins)
 - [History](#history)
 - [Credits](#credits)
@@ -302,7 +302,7 @@ asyncrun.vim can cooperate with `vim-fugitive`, see [here](https://github.com/sk
 
 - [Better way for C/C++ developing with AsyncRun](https://github.com/skywind3000/asyncrun.vim/wiki/Better-way-for-C-and-Cpp-development-in-Vim-8)
 
-## More
+## More Topics
 
 - [Additional examples (background ctags updating, pdf conversion, ...)](https://github.com/skywind3000/asyncrun.vim/wiki/Additional-Examples)
 - [Notify user job finished by playing a sound](https://github.com/skywind3000/asyncrun.vim/wiki/Playing-Sound)
