@@ -39,7 +39,7 @@ Copy `asyncrun.vim` to your `~/.vim/plugin` or use Vundle to install it from `sk
 - [Manual](#manual)
     - [AsyncRun - Run shell command](#asyncrun---run-shell-command)
     - [AsyncStop - Stop the running job](#asyncstop---stop-the-running-job)
-    - [Function APIs](#function-apis)
+    - [Function (API)](#function-api)
     - [Settings](#settings)
     - [Variables](#variables)
     - [Autocmd](#autocmd)
@@ -177,7 +177,7 @@ Don't worry if you do have a shell command starting with '-', Just put a placeho
 
 stop the running job, when "!" is included, job will be stopped by signal KILL
 
-### Function APIs
+### Function (API)
 
 Function form is convenient for vimscript:
 
