@@ -1,7 +1,8 @@
 ## Preface
+
 This plugin takes the advantage of new apis in Vim 8 (and NeoVim) to enable you to run shell commands in background and read output in the quickfix window in realtime:
 
-- Easy to use, just start your background command by `:AsyncRun` (just like old "!" cmd).
+- Easy to use, start your background command by `:AsyncRun` (just like old `!` cmd).
 - Command is done in the background, no need to wait for the entire process to finish.
 - Output are displayed in the quickfix window, errors are matched with `errorformat`.
 - You can explore the error output immediately or keep working in vim while executing.
@@ -116,14 +117,19 @@ These environment variables wrapped by `$(...)` (eg. `$(VIM_FILENAME)`) will als
 
 There can be some options before your `[cmd]`:
 
-    -mode=0/1/2 - start mode: 0(async, default), 1(:make), 2(:!)
-    -cwd=?      - initial directory, (use current directory if unset)
-    -save=0/1/2 - non-zero to save current(1) or all(2) modified buffer(s) before executing.
-    -program=?  - set to `make` to use `&makeprg`, `grep` to use `&grepprg` 
-    -post=?     - vimscript to exec after this job finished, spaces **must** be escaped to '\ '
-    -auto=?     - event name to trigger "QuickFixCmdPre/QuickFixCmdPost [name]" autocmd
-    -raw=1      - use raw output (output will not match with the errorformat) 
-    -strip      - remove the heading / tailing messages (command and [Finished in ...]).
+| Option | Default Value | Description |
+|-|-|-|
+| `-mode` | "async" | specify how to run the command, available modes are `"async"` (default), `"terminal"`, `"bang"` and `"os"`, see [running modes](#running-modes) for details. |
+| `-cwd` | `unset` | initial directory (use current directory if unset), for example use `-cwd=<root>` to run commands in [project root directory](#project-root), or `-cwd=$(VIM_FILEDIR)` to run commands in current buffer's parent directory. |
+| `-save` | 0 | `1` to save current file, `2` to save all modified files before executing |
+| `-program` | `unset` | set to `make` to use `&makeprg`, `grep` to use `&grepprt` and `wsl` to execute commands in WSL (windows 10) |
+| `-post` | `unset` | vimscript to exec after job finished, spaces **must** be escaped to '\ ' |
+| `-auto` | `unset` | event name to trigger `QuickFixCmdPre`/`QuickFixCmdPost` [name] autocmd 
+| `-raw` | `unset` | provide as `-raw` to use raw output, and `&errorformat` will be ignored. |
+| `-strip` | `unset` | provide as `-strip` to remove the heading/trailing messages (command and "[Finished in ...]" message)
+| `-pos` | "bottom" | When using internal terminal with `-mode=term`, `-pos` is used to specify where to split the terminal window, it can be one of `"tab"`, `"curwin"`, `"top"`, `"bottom"`, `"left"` and `"right"` |
+| `-rows` | 0 | When using a horizontal split terminal, this value can be used to specify the height of terminal window. |
+| `-cols` | 0 | When using a vertical split terminal, this value can be used to specify the width of terminal window. |
 
 All options must start with a minus and position **before** `[cmd]`. Since no shell command  string starts with a minus. So they can be distinguished from shell command easily without any ambiguity. 
 
@@ -199,7 +205,21 @@ The first `make` will run in the vim's current directory (which `:pwd` returns),
 
 The project root is the nearest ancestor directory of the current file which contains one of these directories or files: `.svn`, `.git`, `.hg`, `.root` or `.project`. If none of the parent directories contains these root markers, the directory of the current file is used as the project root. The root markers can also be configurated, see [Project Root](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root).
 
+#### Running modes
+
+The default behavior is to run async command and output to quickfix window. However there is a `-mode=?` option can allow you specify how to run your command:
+
+| mode | description |
+|--|--|
+| async | default behavior, run async command and output to quickfix window |
+| bang | same as `!` |
+| term | open a reusable built-in terminal window and run your command |
+| os | (windows only) open a new cmd.exe window and run your command in it |
+
+For more information, please see [here](https://github.com/skywind3000/asyncrun.vim/wiki/Specify-how-to-run-your-command).
+
 #### Quickfix window
+
 AsyncRun displays its output in quickfix window, so if you don't use `:copen {height}` to open quickfix window, you won't see any output. For convenience there is an option `g:asyncrun_open` for you:
 
     :let g:asyncrun_open = 8
@@ -229,18 +249,6 @@ text between line 10-20 will be taken as the stdin of python. code in that range
 
 The visual selection (line-wise) will be taken as stdin.
 
-#### Specify how to run
-
-The default behavior is to run async command and output to quickfix window. However there is a `-mode=?` option can allow you specify how to run your command:
-
-| mode | description |
-|--|--|
-| async | default behavior, run async command and output to quickfix window |
-| bang | same as `!` |
-| term | open a reusable built-in terminal window and run your command |
-| os | (windows only) open a new cmd.exe window and run your command in it |
-
-For more information, please see [here](https://github.com/skywind3000/asyncrun.vim/wiki/Specify-how-to-run-your-command).
 
 #### Requirements
 Vim 7.4.1829 is minimal version to support async mode. If you are use older versions, `g:asyncrun_mode` will fall back from `0/async` to `1/sync`. NeoVim 0.1.4 or later is also supported. 
@@ -349,6 +357,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 - 0.0.0 (2016-08-24): initial version
 
 ## Credits
+
 Trying best to provide the most simply and convenience experience in the asynchronous-jobs. 
 
 Author: skywind3000
