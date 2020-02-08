@@ -1,44 +1,48 @@
-# Preface
+# 特性说明
 
-This plugin takes the advantage of new apis in Vim 8 (and NeoVim) to enable you to run shell commands in background and read output in the quickfix window in realtime:
+本插件使用 Vim 8 / NeoVim 的异步机制，让你在后台运行 shell 命令，并将结果实时显示到 Vim 的 Quickfix 窗口中：
 
-- Easy to use, start your background command by `:AsyncRun` (just like old `!` cmd).
-- Command is done in the background, no need to wait for the entire process to finish.
-- Output are displayed in the quickfix window, errors are matched with `errorformat`.
-- You can explore the error output immediately or keep working in vim while executing.
-- Ring the bell or play a sound to notify you job finished while you're focusing on editing.
-- Fast and lightweight, just a single self-contained `asyncrun.vim` source file.  
-- Provide corresponding user experience in vim, neovim, gvim and macvim.
+- 使用简单，输入 `:AsyncRun {command}` 即可在后台执行你的命令（和传统的 `!` 命令类似）。
+- 命令会在后台运行，不会阻碍 Vim 操作，不需要等待整个命令结束你就继续操作 Vim。
+- 进程的输出会实时的显示在下方的 quickfix 窗口里，编译信息会自动同 `errorformat` 匹配。
+- 你可以立即浏览错误输出，或者在任务执行的同时继续编辑你的文件。
+- 当任务结束时，播放一个铃声提醒你，避免你眼睛盯着代码忘记编译已经结束。
+- 丰富的参数和配置项目，可以自由指定运行方式，命令初始目录，autocmd 触发等。
+- 除了异步任务+quickfix 外，还提供多种运行方式，比如一键在内置终端里运行命令。
+- 快速和轻量级，无其他依赖，仅仅单个 `asyncrun.vim` 源文件。
+- 同时为 Vim/NeoVim/GVim/MacVim 提供一致的用户体验。
 
 If that doesn't excite you, then perhaps this GIF screen capture below will change your mind.
 
-# News
+# 新闻
 
-- 2020/01/21 run command in internal terminal with `-mode=term` see [here](https://github.com/skywind3000/asyncrun.vim/wiki/Specify-how-to-run-your-command).
-- 2018/04/17 AsyncRun now supports command range, try: `:%AsyncRun cat`.
-- 2018/04/16 better makeprg/grepprg handling, accepts `%` and `$*` macros now.
-- 2018/03/11 new option [g:asyncrun_open](#quickfix-window) to open quickfix window after job starts.
-- 2017/07/12 new option `-raw=1` to use raw output (not match with the errorformat)
-- 2017/06/26 new option `-cwd=<root>` to change working directory to project root, see [here](#project-root). 
-- 2016/11/01 `asyncrun.vim` can now cooperate with `errormarker` now.
-- 2016/10/17 Glad to announce that `asyncrun.vim` supports NeoVim now.
-- 2016/10/15 `asyncrun.vim` can cooperate with `vim-fugitive`, see the bottom of the README.
+- 2020/01/21 使用 `-mode=term` 在内置终端里运行你的命令，见 [这里](https://github.com/skywind3000/asyncrun.vim/wiki/Specify-how-to-run-your-command).
+- 2018/04/17 支持 range 了，可以 Vim 中选中一段文本，然后 `:%AsyncRun cat`。
+- 2018/04/16 更好的支持 makeprg/grepprg，允许他俩包含 `%` 和 `$*` 了。
+- 2018/03/11 新增配置 [g:asyncrun_open](#quickfix-window) 设置后可以自动打开 quickfix 窗口。
+- 2017/07/12 新增参数 `-raw=1` 启用后会跳过 errorformat 匹配，直接在 qf 中显示原始文本。
+- 2017/06/26 新增参数 `-cwd=<root>` 可以指定在项目的根目录运行命令，见 [project-root](#project-root).
+- 2016/11/01 `asyncrun.vim` 可以同 `errormarker` 协同。
+- 2016/10/17 高兴的宣布，`asyncrun.vim` 支持 NeoVim 了。
+- 2016/10/15 `asyncrun.vim` 可以同 `vim-fugitive` 协作，见 README 底部。
 
-# Install
+# 安装
 
-Copy `asyncrun.vim` to your `~/.vim/plugin` or use Vundle to install it from `skywind3000/asyncrun.vim` .
+拷贝 `asyncrun.vim` 到你的 `~/.vim/plugin` 目录，或者用 vim-plug/Vundle 之类的包管理工具从 `skywind3000/asyncrun.vim` 位置安装。
 
-# Example
+# 例子
 
 ![](https://raw.githubusercontent.com/skywind3000/asyncrun.vim/master/doc/screenshot.gif)
 
-# Contents
+演示了：异步调用 gcc 进行编译，异步运行 grep。
+
+# 内容目录
 
 <!-- TOC -->
 
-- [Tutorials](#tutorials)
-- [Manual](#manual)
-    - [AsyncRun - Run shell command](#asyncrun---run-shell-command)
+- [使用例子](#使用例子)
+- [使用手册](#使用手册)
+    - [AsyncRun - 运行 shell 命令](#asyncrun---运行-shell-命令)
     - [AsyncStop - Stop the running job](#asyncstop---stop-the-running-job)
     - [Function (API)](#function-api)
     - [Settings](#settings)
@@ -59,60 +63,62 @@ Copy `asyncrun.vim` to your `~/.vim/plugin` or use Vundle to install it from `sk
 
 <!-- /TOC -->
 
-## Tutorials
+## 使用例子
 
-**Async run gcc to compile current file**
+**异步运行 gcc 编译当前的文件**
 
 	:AsyncRun gcc % -o %<
 	:AsyncRun g++ -O3 "%" -o "%<" -lpthread 
 
-This command will run gcc in the background and output to the quickfix window in realtime. Macro '`%`' stands for filename and '`%<`' represents filename without extension.
+上面的命令会在后台运行 gcc 命令，并把编译输出实时显示到 quickfix 窗口中，标记 '`%`' 代表当前正在编辑的文件名，而 '`%<`' 代表去掉扩展名的文件名。
 
-**Async run make**
+**异步运行 make**
 
     :AsyncRun make
 	:AsyncRun make -f makefile
 
-Remember to open quickfix window by `:copen` before using `AsyncRun` command, if you don't open it, you will not see any output.
+记得在执行 `AsyncRun` 命令前，提前使用 `copen` 命令打开 quickfix 窗口，不然你看不到任何内容。
 
-**Grep key word**
+**Grep 关键字**
 
-    :AsyncRun! grep -R -n word . 
-    :AsyncRun! grep -R -n <cword> . 
+    :AsyncRun! grep -n -R word . 
+    :AsyncRun! grep -n -R <cword> . 
+    
+当 `AsyncRun` 命令后面追加一个叹号时，quickfix 将不会自动滚动，保持在第一行。`<cword>` 代表光标下面的单词。
 
-when `!` is included, auto-scroll in quickfix will be disabled. `<cword>` represents current word under cursor.
-
-**Compile go project**
+**编译 go 项目**
 
     :AsyncRun go build "%:p:h"
 
-Macro '`%:p:h`' stands for current file dir. 
+标记 '`%:p:h`' 表示当前文件的所在目录。 
 
-**Lookup man page**
+**查看 man page**
 
     :AsyncRun! man -S 3:2:1 <cword>
 
-**Git push**
+**异步 git push**
 
     :AsyncRun git push origin master
 
-**Setup `<F7>` to compile file**
+**初始化 `<F7>` 来编译文件**
 
-    :noremap <F7> :AsyncRun gcc "%" -o "%<" <cr> 
+    :noremap <F7> :AsyncRun gcc "$(VIM_FILEPATH)" -o "$(VIM_FILEDIR)/$(VIM_FILENAME)" <cr> 
 
-File name may contain spaces, therefore, it's safe to quote them.
+文件可能会包含空格，所以正式使用推荐用 `$(...)` 的宏形，后面有表格说明可用宏。
 
-**Run a python script**
+**运行 Python 脚本**
 
     :AsyncRun -raw python %
 
-New option `-raw` will display the raw output (without matching to errorformat), you need the latest AsyncRun (after 1.3.13) to use this option. Remember to put `let $PYTHONUNBUFFERED=1` in your `.vimrc` to disable python stdout buffering, see [here](https://github.com/skywind3000/asyncrun.vim/wiki/FAQ#cant-see-the-realtime-output-when-running-a-python-script).
+使用 `-raw` 参数可以在 quickfix 中显示原始输出（不进行 errorformat 匹配），记得用 `let $PYTHONNUNBUFFERED=1` 来禁止 python 的行缓存，这样可以实时查看结果。很多程序在后台运行时都会将输出全部缓存住直到调用 flush 或者程序结束，python 可以设置该变量来禁用缓存，让你实时看到输出，而无需每次手工调用 `sys.stdout.flush()`。
 
-## Manual
+关于缓存的更多说明见 [这里](https://github.com/skywind3000/asyncrun.vim/wiki/FAQ#cant-see-the-realtime-output-when-running-a-python-script).
 
-There are two vim commands: `:AsyncRun` and `:AsyncStop` to control async jobs.
+## 使用手册
 
-### AsyncRun - Run shell command
+本插件有且只提供了两条命令：`:AsyncRun` 以及 `:AsyncStop` 来控制你的任务。
+
+### AsyncRun - 运行 shell 命令
 
 ```VimL
 :AsyncRun[!] [options] {cmd} ...
