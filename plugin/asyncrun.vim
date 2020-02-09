@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/02/10 05:50
+" Last Modified: 2020/02/10 06:12
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -395,7 +395,7 @@ function! s:AsyncRun_Job_Update(count)
 		let &l:efm = s:async_info.errorformat
 		let &g:efm = s:async_info.errorformat
 	endif
-	let l:raw = (s:async_efm == '')? 1 : 0
+	let l:raw = (&efm == '')? 1 : 0
 	if s:async_info.raw == 1
 		let l:raw = 1
 	endif
@@ -1089,7 +1089,7 @@ function! s:start_in_terminal(opts)
 	endif
 	if get(a:opts, 'safe', get(g:, 'asyncrun_term_safe', 0)) != 0
 		let command = s:ScriptWrite(a:opts.command, 0)
-		" let shell = ''
+		let shell = ''
 	endif
 	let avail = -1
 	for ii in range(winnr('$'))
@@ -1257,7 +1257,7 @@ function! s:run(opts)
 	let l:mode = get(l:modemap, l:mode, l:mode)
 
 	" alias "-mode=raw" to "-mode=async -raw=1"
-	if l:mode == 'raw'
+	if type(l:mode) == type('') && l:mode == 'raw'
 		let l:mode = 0
 		let l:opts.raw = 1
 	endif
@@ -1584,6 +1584,7 @@ function! asyncrun#run(bang, opts, args, ...)
 	let l:opts.macros = l:macros
 	let l:opts.mode = get(l:opts, 'mode', g:asyncrun_mode)
 	let l:opts.errorformat = get(l:opts, 'errorformat', &errorformat)
+	echo l:opts.errorformat
 	let s:async_scroll = (a:bang == '!')? 0 : 1
 
 	" check if need to save
@@ -1637,7 +1638,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.2.8'
+	return '2.2.9'
 endfunc
 
 
