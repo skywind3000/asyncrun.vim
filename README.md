@@ -1,11 +1,5 @@
 # Preface
 
-Run asynchronous shell commands in Vim 8.0 / NeoVim and output to the quickfix window.
-
-【[README in Chinese | 中文文档](README-cn.md)】
-
-# Features
-
 This plugin takes the advantage of new apis in Vim 8 (and NeoVim) to enable you to run shell commands in background and read output in the quickfix window in realtime:
 
 - Easy to use, start your background command by `:AsyncRun` (just like old `!` cmd).
@@ -18,6 +12,7 @@ This plugin takes the advantage of new apis in Vim 8 (and NeoVim) to enable you 
 
 If that doesn't excite you, then perhaps this GIF screen capture below will change your mind.
 
+【[README in Chinese | 中文文档](README-cn.md)】
 
 # News
 
