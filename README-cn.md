@@ -12,7 +12,7 @@
 - 快速和轻量级，无其他依赖，仅仅单个 `asyncrun.vim` 源文件。
 - 同时为 Vim/NeoVim/GVim/MacVim 提供一致的用户体验。
 
-If that doesn't excite you, then perhaps this GIF screen capture below will change your mind.
+具体运行效果，可以看下面的 GIF 截屏。
 
 # 新闻
 
