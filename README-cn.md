@@ -18,13 +18,7 @@
 
 - 2020/01/21 使用 `-mode=term` 在内置终端里运行你的命令，见 [这里](https://github.com/skywind3000/asyncrun.vim/wiki/Specify-how-to-run-your-command).
 - 2018/04/17 支持 range 了，可以 Vim 中选中一段文本，然后 `:%AsyncRun cat`。
-- 2018/04/16 更好的支持 makeprg/grepprg，允许他俩包含 `%` 和 `$*` 了。
-- 2018/03/11 新增配置 [g:asyncrun_open](#quickfix-window) 设置后可以自动打开 quickfix 窗口。
-- 2017/07/12 新增参数 `-raw=1` 启用后会跳过 errorformat 匹配，直接在 qf 中显示原始文本。
-- 2017/06/26 新增参数 `-cwd=<root>` 可以指定在项目的根目录运行命令，见 [project-root](#project-root).
-- 2016/11/01 `asyncrun.vim` 可以同 `errormarker` 协同。
-- 2016/10/17 高兴的宣布，`asyncrun.vim` 支持 NeoVim 了。
-- 2016/10/15 `asyncrun.vim` 可以同 `vim-fugitive` 协作，见 README 底部。
+- 2017/06/26 新增参数 `-cwd=<root>` 可以指定在项目的根目录运行命令，见 [project-root](#项目根目录).
 
 # 安装
 
