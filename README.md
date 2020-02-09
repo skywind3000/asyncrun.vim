@@ -184,7 +184,7 @@ Don't worry if you do have a shell command starting with '-', Just put a placeho
 :AsyncStop[!]
 ```
 
-stop the running job, when "!" is included, job will be stopped by signal KILL
+stop the running job, when "!" is included, job will be stopped by signal KILL.
 
 ### Function (API)
 
