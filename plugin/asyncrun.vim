@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/02/06 14:43
+" Last Modified: 2020/02/10 04:12
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -914,12 +914,13 @@ function! s:ScriptWrite(command, pause)
 			let lines += ["pause\r"]
 		endif
 	else
-		let lines = ['#! '.&shell]
+		let shell = (g:asyncrun_shell != '')? g:asyncrun_shell : (&shell)
+		let lines = ['#! ' . shell]
 		let lines += [command]
 		if a:pause != 0
 			let lines += ['read -n1 -rsp "press any key to confinue ..."']
 		endif
-		let tmpname = tempname()
+		let tmpname = fnamemodify(tempname(), ':h') . '/asyncrun.cmd'
 	endif
 	if v:version >= 700
 		call writefile(lines, tmpname)
@@ -929,6 +930,9 @@ function! s:ScriptWrite(command, pause)
 			silent echo line
 		endfor
 		redir END
+	endif
+	if s:asyncrun_windows == 0
+		call setfperm(tmpname, 'rwxrwxrws')
 	endif
 	return tmpname
 endfunc
@@ -1078,6 +1082,15 @@ function! s:start_in_terminal(opts)
 		call s:ErrorMsg("Terminal is not available in this vim")
 		return -1
 	endif
+	if has('nvim') == 0 && (has('patch-8.1.2255') || v:version >= 802)
+		let shell = '++shell'
+	else
+		let shell = ''
+	endif
+	if get(a:opts, 'safe', get(g:, 'asyncrun_term_safe', 0)) != 0
+		let command = s:ScriptWrite(a:opts.command, 0)
+		" let shell = ''
+	endif
 	let avail = -1
 	for ii in range(winnr('$'))
 		let wid = ii + 1
@@ -1091,48 +1104,78 @@ function! s:start_in_terminal(opts)
 			else
 				let ch = getwinvar(wid, '&channel')
 				let status = (jobwait([ch], 0)[0] == -1)? 1 : 0
-				let avail = (status == 0)? wid : avail
+				if status == 0
+					let avail = wid
+					break
+				endif
 			endif
 		endif
 	endfor
-	if pos == 'tab'
-		exec "tab split"
+	if pos == 'tab' || pos == 'tabreuse' || pos == 'tabpage'
+		if pos == 'tab'
+			exec "tab split"
+		else
+			let avail = -1
+			for i in range(tabpagenr('$'))
+				if tabpagewinnr(i + 1, '$') == 1
+					let bid = tabpagebuflist(i + 1)[0]
+					if getbufvar(bid, '&bt', '') == 'terminal'
+						if has('nvim') == 0
+							if term_getstatus(bid) == 'finished'
+								let avail = i + 1
+								break
+							endif
+						else
+							let ch = getbufvar(bid, '&channel')
+							let status = (jobwait([ch], 0)[0] == -1)? 1 : 0
+							if status == 0
+								let avail = i + 1
+								break
+							endif
+						endif
+					endif
+				endif
+			endfor
+			if avail < 0
+				exec "tab split"
+			else
+				exec 'tabn ' . avail
+			endif
+		endif
 		if has('nvim') == 0
 			let cmd = 'tab term ++noclose ++norestore ++curwin'
-			if has('patch-8.1.2255') || v:version >= 802
-				exec cmd . ' ++shell ++kill=term ' . command
-			else
-				exec cmd . ' ++kill=term ' . command
-			endif
+			exec cmd . ' ' . shell . ' ++kill=term ' . command
 		else
 			exec 'term '. command
 		endif
 		if &bt == 'terminal'
 			setlocal nonumber signcolumn=no norelativenumber
-			let b:asyncrun_cmd = command
+			let b:asyncrun_cmd = a:opts.command
+			if get(a:opts, 'listed', 1) == 0
+				setlocal nobuflisted
+			endif
 			exec has('nvim')? 'startinsert' : ''
 			if has_key(a:opts, 'hidden')
-				exec 'setlocal bufhidden=' .. (hidden? 'hide' : '')
+				exec 'setlocal bufhidden=' . (hidden? 'hide' : '')
 			endif
 		endif
 		return 0
 	elseif pos == 'cur' || pos == 'curwin' || pos == 'current'
 		if has('nvim') == 0
 			let cmd = 'term ++noclose ++norestore ++curwin'
-			if has('patch-8.1.2255') || v:version >= 802
-				exec cmd . ' ++shell ++kill=term ' . command
-			else
-				exec cmd . ' ++kill=term ' . command
-			endif
+			exec cmd . ' ' . shell . ' ++kill=term ' . command
 		else
 			exec 'term '. command
 		endif
 		if &bt == 'terminal'
 			setlocal nonumber signcolumn=no norelativenumber
-			let b:asyncrun_cmd = command
+			let b:asyncrun_cmd = a:opts.command
+			if get(a:opts, 'listed', 1) == 0
+				setlocal nobuflisted
+			endif
 			exec has('nvim')? 'startinsert' : ''
 			if has_key(a:opts, 'hidden')
-				exec 'setlocal bufhidden=' .. (hidden? 'hide' : '')
+				exec 'setlocal bufhidden=' . (hidden? 'hide' : '')
 			endif
 		endif
 		return 0
@@ -1167,20 +1210,19 @@ function! s:start_in_terminal(opts)
 	noautocmd call win_gotoid(uid)
 	if has('nvim') == 0
 		let cmd = 'term ++noclose ++norestore ++curwin '
-		if has('patch-8.2.2255') || v:version >= 802
-			exec cmd . ' ++shell ++kill=term ' . command
-		else
-			exec cmd . ' ++kill=term ' . command
-		endif
+		exec cmd . ' ' . shell . ' ++kill=term ' . command
 	else
 		exec 'term '. command
 	endif
 	if &bt == 'terminal'
 		setlocal nonumber signcolumn=no norelativenumber
-		let b:asyncrun_cmd = command
+		let b:asyncrun_cmd = a:opts.command
+		if get(a:opts, 'listed', 1) == 0
+			setlocal nobuflisted
+		endif
 		exec has('nvim')? 'startinsert' : ''
 		if has_key(a:opts, 'hidden')
-			exec 'setlocal bufhidden=' .. (hidden? 'hide' : '')
+			exec 'setlocal bufhidden=' . (hidden? 'hide' : '')
 		endif
 	endif
 	if focus == 0 && &bt == 'terminal'
@@ -1213,6 +1255,12 @@ function! s:run(opts)
 	let l:modemap['vim'] = 2
 
 	let l:mode = get(l:modemap, l:mode, l:mode)
+
+	" alias "-mode=raw" to "-mode=async -raw=1"
+	if l:mode == 'raw'
+		let l:mode = 0
+		let l:opts.raw = 1
+	endif
 
 	" process makeprg/grepprg in -program=?
 	let l:program = ""
@@ -1589,7 +1637,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.2.6'
+	return '2.2.7'
 endfunc
 
 
