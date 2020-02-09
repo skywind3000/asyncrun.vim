@@ -16,9 +16,9 @@
 
 # 新闻
 
-- 2020/01/21 使用 `-mode=term` 在内置终端里运行你的命令，见 [这里](https://github.com/skywind3000/asyncrun.vim/wiki/Specify-how-to-run-your-command).
+- 2020/01/21 使用 `-mode=term` 在内置终端里运行你的命令，见 [内置终端](#内置终端)。
 - 2018/04/17 支持 range 了，可以 Vim 中选中一段文本，然后 `:%AsyncRun cat`。
-- 2017/06/26 新增参数 `-cwd=<root>` 可以指定在项目的根目录运行命令，见 [project-root](#项目根目录).
+- 2017/06/26 新增参数 `-cwd=<root>` 可以指定在项目的根目录运行命令，见 [project-root](#项目根目录)。
 
 # 安装
 
