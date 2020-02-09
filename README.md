@@ -364,7 +364,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
-- 2.2.7 (2020-02-10): new terminal mode options: `-pos=tabreuse` and `-listed=0`.
+- 2.2.7 (2020-02-10): new terminal mode options: `-safe=1`, `-pos=tabreuse` and `-listed=0`.
 - 2.2.6 (2020-02-06): new: parameter `-hidden` when using `-mode=term` to set `bufhidden` to `hidden`.
 - 2.2.5 (2020-02-05): more safe to start a terminal.
 - 2.2.4 (2020-02-05): exit when starting terminal failed in current window with `-pos=curwin`.
