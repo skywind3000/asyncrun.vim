@@ -16,7 +16,7 @@ If that doesn't excite you, then perhaps this GIF screen capture below will chan
 
 # News
 
-- 2020/01/21 run command in internal terminal with `-mode=term` see [here](#running-modes).
+- 2020/01/21 run command in internal terminal with `-mode=term` see [here](#internal-terminal).
 - 2018/04/17 AsyncRun now supports command range, try: `:%AsyncRun cat`.
 - 2018/04/16 better makeprg/grepprg handling, accepts `%` and `$*` macros now.
 - 2018/03/11 new option [g:asyncrun_open](#quickfix-window) to open quickfix window after job starts.
