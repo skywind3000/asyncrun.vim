@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/02/10 04:12
+" Last Modified: 2020/02/10 05:50
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1111,8 +1111,8 @@ function! s:start_in_terminal(opts)
 			endif
 		endif
 	endfor
-	if pos == 'tab' || pos == 'tabreuse' || pos == 'tabpage'
-		if pos == 'tab'
+	if pos == 'tab'
+		if get(a:opts, 'reuse', 0) == 0
 			exec "tab split"
 		else
 			let avail = -1
@@ -1637,7 +1637,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.2.7'
+	return '2.2.8'
 endfunc
 
 
