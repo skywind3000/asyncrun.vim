@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/02/10 06:12
+" Last Modified: 2020/02/10 06:16
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1584,7 +1584,6 @@ function! asyncrun#run(bang, opts, args, ...)
 	let l:opts.macros = l:macros
 	let l:opts.mode = get(l:opts, 'mode', g:asyncrun_mode)
 	let l:opts.errorformat = get(l:opts, 'errorformat', &errorformat)
-	echo l:opts.errorformat
 	let s:async_scroll = (a:bang == '!')? 0 : 1
 
 	" check if need to save
