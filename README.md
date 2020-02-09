@@ -1,5 +1,11 @@
 # Preface
 
+Run asynchronous shell commands in Vim 8.0 / NeoVim and output to the quickfix window.
+
+【[README in Chinese | 中文文档](README-cn.md)】
+
+# Features
+
 This plugin takes the advantage of new apis in Vim 8 (and NeoVim) to enable you to run shell commands in background and read output in the quickfix window in realtime:
 
 - Easy to use, start your background command by `:AsyncRun` (just like old `!` cmd).
@@ -12,9 +18,10 @@ This plugin takes the advantage of new apis in Vim 8 (and NeoVim) to enable you 
 
 If that doesn't excite you, then perhaps this GIF screen capture below will change your mind.
 
+
 # News
 
-- 2020/01/21 run command in internal terminal with `-mode=term` see [here](https://github.com/skywind3000/asyncrun.vim/wiki/Specify-how-to-run-your-command).
+- 2020/01/21 run command in internal terminal with `-mode=term` see [here](#running-modes).
 - 2018/04/17 AsyncRun now supports command range, try: `:%AsyncRun cat`.
 - 2018/04/16 better makeprg/grepprg handling, accepts `%` and `$*` macros now.
 - 2018/03/11 new option [g:asyncrun_open](#quickfix-window) to open quickfix window after job starts.
@@ -30,7 +37,9 @@ Copy `asyncrun.vim` to your `~/.vim/plugin` or use Vundle to install it from `sk
 
 # Example
 
-![](https://raw.githubusercontent.com/skywind3000/asyncrun.vim/master/doc/screenshot.gif)
+![](doc/screenshot.gif)
+
+Remember to open vim's quickfix window by `:copen` (or setting  `g:asyncrun_open`) before invoking `AsyncRun`, otherwise, you will not see any output.
 
 # Contents
 
@@ -162,15 +171,16 @@ There can be some options before your `[cmd]`:
 |-|-|-|
 | `-mode=?` | "async" | specify how to run the command as `-mode=?`, available modes are `"async"` (default), `"terminal"` (in internal terminal), `"bang"` (with `!` command) and `"os"` (in external os terminal), see [running modes](#running-modes) for details. |
 | `-cwd=?` | `unset` | initial directory (use current directory if unset), for example use `-cwd=<root>` to run commands in [project root directory](#project-root), or `-cwd=$(VIM_FILEDIR)` to run commands in current buffer's parent directory. |
-| `-save=?` | 0 | use `-save=1` to save current file, `-save=2` to save all modified files before executing |
+| `-save=?` | 0 | use `-save=1` to save current file, `-save=2` to save all modified files before executing. |
 | `-program=?` | `unset` | set to `make` to use `&makeprg`, `grep` to use `&grepprt` and `wsl` to execute commands in WSL (windows 10) |
 | `-post=?` | `unset` | vimscript to exec after job finished, spaces **must** be escaped to '\ ' |
-| `-auto=?` | `unset` | event name to trigger `QuickFixCmdPre`/`QuickFixCmdPost` [name] autocmd 
+| `-auto=?` | `unset` | event name to trigger `QuickFixCmdPre`/`QuickFixCmdPost` [name] autocmd. |
 | `-raw` | `unset` | use raw output if provided, and `&errorformat` will be ignored. |
 | `-strip` | `unset` | remove the heading/trailing messages if provided (omit command and "[Finished in ...]" message). |
-| `-pos=?` | "bottom" | When using internal terminal with `-mode=term`, `-pos` is used to specify where to split the terminal window, it can be one of `"tab"`, `"curwin"`, `"top"`, `"bottom"`, `"left"` and `"right"` |
+| `-pos=?` | "bottom" | When using internal terminal with `-mode=term`, `-pos` is used to specify where to split the terminal window, it can be one of `"tab"`, `"curwin"`, `"top"`, `"bottom"`, `"left"` and `"right"`. |
 | `-rows=num` | 0 | When using a horizontal split terminal, this value represents the height of terminal window. |
 | `-cols=num` | 0 | When using a vertical split terminal, this value represents the width of terminal window. |
+| `-errorformat=?` | `unset` | errorformat for error matching, if it is unprovided, use current `&errorformat` value. |
 
 All options must start with a minus and position **before** `[cmd]`. Since no shell command  string starts with a minus. So they can be distinguished from shell command easily without any ambiguity. 
 
@@ -255,7 +265,7 @@ The default behavior is to run async command and output to quickfix window. Howe
 |--|--|
 | async | default behavior, run async command and output to quickfix window |
 | bang | same as `!` |
-| term | open a reusable built-in terminal window and run your command |
+| term | open a reusable internal terminal window and run your command |
 | os | (windows only) open a new cmd.exe window and run your command in it |
 
 For more information, please see [here](https://github.com/skywind3000/asyncrun.vim/wiki/Specify-how-to-run-your-command).

@@ -32,9 +32,9 @@ If that doesn't excite you, then perhaps this GIF screen capture below will chan
 
 # 例子
 
-![](https://raw.githubusercontent.com/skywind3000/asyncrun.vim/master/doc/screenshot.gif)
+![](doc/screenshot.gif)
 
-演示了：异步调用 gcc 进行编译，异步运行 grep。
+异步运行 gcc/grep 的演示，别忘记在运行前使用 `:copen` 命令打开 vim 的 quickfix 窗口，否则你看不到具体输出，还可以设置 `g:asyncrun_open=6` 来自动打开。
 
 # 内容目录
 
@@ -43,22 +43,21 @@ If that doesn't excite you, then perhaps this GIF screen capture below will chan
 - [使用例子](#使用例子)
 - [使用手册](#使用手册)
     - [AsyncRun - 运行 shell 命令](#asyncrun---运行-shell-命令)
-    - [AsyncStop - Stop the running job](#asyncstop---stop-the-running-job)
-    - [Function (API)](#function-api)
-    - [Settings](#settings)
-    - [Variables](#variables)
+    - [AsyncStop - 停止正在运行的任务](#asyncstop---停止正在运行的任务)
+    - [函数接口](#函数接口)
+    - [全局设置](#全局设置)
+    - [全局变量](#全局变量)
     - [Autocmd](#autocmd)
-    - [Project Root](#project-root)
-    - [Running modes](#running-modes)
-    - [Internal Terminal](#internal-terminal)
+    - [项目根目录](#项目根目录)
+    - [运行模式](#运行模式)
+    - [内置终端](#内置终端)
     - [Quickfix window](#quickfix-window)
-    - [Range support](#range-support)
-    - [Requirements](#requirements)
-    - [Cooperate with vim-fugitive:](#cooperate-with-vim-fugitive)
-- [Language Tips](#language-tips)
-- [More Topics](#more-topics)
-- [Cooperate with other Plugins](#cooperate-with-other-plugins)
-- [History](#history)
+    - [Range 支持](#range-支持)
+    - [运行需求](#运行需求)
+    - [同 fugitive 协作](#同-fugitive-协作)
+- [语言参考](#语言参考)
+- [更多话题](#更多话题)
+- [插件协作](#插件协作)
 - [Credits](#credits)
 
 <!-- /TOC -->
@@ -124,160 +123,162 @@ If that doesn't excite you, then perhaps this GIF screen capture below will chan
 :AsyncRun[!] [options] {cmd} ...
 ```
 
-run shell command in background and output to quickfix. when `!` is included, auto-scroll in quickfix will be disabled. Parameters are splited by space, if a parameter contains space, it should be **quoted** or escaped as backslash + space (unix only).
+在后台运行 shell 命令，并把结果实时输出到 quickfix 窗口，当命令后跟随一个 `!` 时，quickfix 将不会自动滚动。参数用空格分隔，如果某项参数包含空格，那么需要双引号引起来（unix 下面还可以使用反斜杠加空格）。
 
-Parameters accept macros start with '`%`', '`#`' or '`<`' :
+参数可以接受各种以 '`%`', '`#`' or '`<`' 开头的文件名宏：
 
-    %:p     - File name of current buffer with full path
-    %:t     - File name of current buffer without path
-    %:p:h   - File path of current buffer without file name
-    %:e     - File extension of current buffer
-    %:t:r   - File name of current buffer without path and extension
-    %       - File name relativize to current directory
-    %:h:.   - File path relativize to current directory
-    <cwd>   - Current directory
-    <cword> - Current word under cursor
-    <cfile> - Current file name under cursor
-    <root>  - Project root directory
+    %:p     - 当前 buffer 的文件名全路径
+    %:t     - 当前 buffer 的文件名（没有前面的路径）
+    %:p:h   - 当前 buffer 的文件所在路径
+    %:e     - 当前 buffer 的扩展名
+    %:t:r   - 当前 buffer 的主文件名（没有前面路径和后面扩展名）
+    %       - 相对于当前路径的文件名
+    %:h:.   - 相对于当前路径的文件路径
+    <cwd>   - 当前路径
+    <cword> - 光标下的单词
+    <cfile> - 光标下的文件名
+    <root>  - 当前 buffer 的项目根目录
 
-Environment variables are set before executing:
+在运行前会批量初始化一些环境变量（方便你在 shell 脚本中使用）：
 
-    $VIM_FILEPATH  - File name of current buffer with full path
-    $VIM_FILENAME  - File name of current buffer without path
-    $VIM_FILEDIR   - Full path of current buffer without the file name
-    $VIM_FILEEXT   - File extension of current buffer
-    $VIM_FILENOEXT - File name of current buffer without path and extension
-    $VIM_PATHNOEXT - Current file name with full path but without extension
-    $VIM_CWD       - Current directory
-    $VIM_RELDIR    - File path relativize to current directory
-    $VIM_RELNAME   - File name relativize to current directory 
-    $VIM_ROOT      - Project root directory
-    $VIM_CWORD     - Current word under cursor
-    $VIM_CFILE     - Current filename under cursor
-    $VIM_GUI       - Is running under gui ?
-    $VIM_VERSION   - Value of v:version
-    $VIM_COLUMNS   - How many columns in vim's screen
-    $VIM_LINES     - How many lines in vim's screen
-    $VIM_SVRNAME   - Value of v:servername for +clientserver usage 
+    $VIM_FILEPATH  - 当前 buffer 的文件名全路径
+    $VIM_FILENAME  - 当前 buffer 的文件名（没有前面的路径）
+    $VIM_FILEDIR   - 当前 buffer 的文件所在路径
+    $VIM_FILEEXT   - 当前 buffer 的扩展名
+    $VIM_FILENOEXT - 当前 buffer 的主文件名（没有前面路径和后面扩展名）
+    $VIM_PATHNOEXT - 带路径的主文件名（$VIM_FILEPATH 去掉扩展名）
+    $VIM_CWD       - 当前 Vim 目录
+    $VIM_RELDIR    - 相对于当前路径的文件名
+    $VIM_RELNAME   - 相对于当前路径的文件路径
+    $VIM_ROOT      - 当前 buffer 的项目根目录
+    $VIM_CWORD     - 光标下的单词
+    $VIM_CFILE     - 光标下的文件名
+    $VIM_GUI       - 是否在 GUI 下面运行？
+    $VIM_VERSION   - Vim 版本号
+    $VIM_COLUMNS   - 当前屏幕宽度
+    $VIM_LINES     - 当前屏幕高度
+    $VIM_SVRNAME   - v:servername 的值
 
-These environment variables wrapped by `$(...)` (eg. `$(VIM_FILENAME)`) will also be expanded in the parameters. Macro `$(VIM_ROOT)` and `<root>` (new in version 1.3.12) indicate the [Project Root](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root) of the current file. 
+上面这些环境变量，可以使用 `$(...)` 的形式（比如 `$(VIM_FILENAME)`之类）用在 AsyncRun 的参数里面，这样的用法比 `%` 前缀的 vim 宏要安全，因为百分号的 vim 宏是由 vim 展开的，当使用 `-cwd=?` 时百分号宏会失效，所以调用 `AsyncRun` 命令时，推荐使用 `$(...)` 形式的参数。
 
-There can be some options before your `[cmd]`:
+宏 `$(VIM_ROOT)` 或者 `<root>` 指代当前文件的[项目根目录](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root)。
 
-| Option | Default Value | Description |
+调用 `AsyncRun` 时，在具体的命令前面可以有一些 `-` 开头的参数：
+
+| 参数 | 默认值 | 含义 |
 |-|-|-|
-| `-mode=?` | "async" | specify how to run the command as `-mode=?`, available modes are `"async"` (default), `"terminal"` (in internal terminal), `"bang"` (with `!` command) and `"os"` (in external os terminal), see [running modes](#running-modes) for details. |
-| `-cwd=?` | `unset` | initial directory (use current directory if unset), for example use `-cwd=<root>` to run commands in [project root directory](#project-root), or `-cwd=$(VIM_FILEDIR)` to run commands in current buffer's parent directory. |
-| `-save=?` | 0 | use `-save=1` to save current file, `-save=2` to save all modified files before executing |
-| `-program=?` | `unset` | set to `make` to use `&makeprg`, `grep` to use `&grepprt` and `wsl` to execute commands in WSL (windows 10) |
-| `-post=?` | `unset` | vimscript to exec after job finished, spaces **must** be escaped to '\ ' |
-| `-auto=?` | `unset` | event name to trigger `QuickFixCmdPre`/`QuickFixCmdPost` [name] autocmd 
-| `-raw` | `unset` | use raw output if provided, and `&errorformat` will be ignored. |
-| `-strip` | `unset` | remove the heading/trailing messages if provided (omit command and "[Finished in ...]" message). |
-| `-pos=?` | "bottom" | When using internal terminal with `-mode=term`, `-pos` is used to specify where to split the terminal window, it can be one of `"tab"`, `"curwin"`, `"top"`, `"bottom"`, `"left"` and `"right"` |
-| `-rows=num` | 0 | When using a horizontal split terminal, this value represents the height of terminal window. |
-| `-cols=num` | 0 | When using a vertical split terminal, this value represents the width of terminal window. |
+| `-mode=?` | "async" | 用 `-mode=?` 的形式指定运行模式可选模式有： `"async"` (默认模式，后台运行输出到 quickfix), `"terminal"` (在内建终端运行), `"bang"` (使用 `!` 命令运行) and `"os"` (新的外部终端窗口)，具体查看 [运行模式](#运行模式)。 |
+| `-cwd=?` | `未设置` | 命令初始目录（没有设置就用 vim 当前目录），比如  `-cwd=<root>` 就能在 [项目根目录](#项目根目录) 运行命令，或者 `-cwd=$(VIM_FILEDIR)` 就能在当前文件所在目录运行命令。 |
+| `-save=?` | 0 | 运行命令前是否保存文件，`-save=1` 保存当前文件，`-save=2` 保存所有修改过的文件 |
+| `-program=?` | `未设置` | 设置成 `make` 可以用 `&makeprg`，设置成 `grep` 可以使用 `&grepprt`，而设置成 `wsl` 则可以在 WSL 中运行命令 （需要 Windows 10）|
+| `-post=?` | `未设置` | 命令结束后自动运行的 vimscript，如果包含空格则要用反斜杠加空格代替。 |
+| `-auto=?` | `未设置` | 出发 autocmd `QuickFixCmdPre`/`QuickFixCmdPost` 后面的名称。 |
+| `-raw` | `未设置` | 如果提供了，就输出原始内容，忽略 `&errorformat` 过滤。 |
+| `-strip` | `未设置` | 过滤收尾消息 (头部命令名称以及尾部 "[Finished in ...]" 信息)。|
+| `-pos=?` | "bottom" | 当用 `-mode=term` 在内置终端运行命令时， `-pos` 用于指定内置终端窗口位置， 可以设置成 `"tab"`，`"curwin"`，`"top"`，`"bottom"`，`"left"` 以及 `"right"`。|
+| `-rows=num` | 0 | 内置终端窗口的高度。|
+| `-cols=num` | 0 | 内置终端窗口的宽度。|
+| `-errorformat=?` | `未设置` | 用于 quickfix 中匹配错误输出的格式字符串，如果未提供，则使用当前 `&errorformat` 的值。 |
 
-All options must start with a minus and position **before** `[cmd]`. Since no shell command  string starts with a minus. So they can be distinguished from shell command easily without any ambiguity. 
+所有的这些配置参数都必须放在具体 shell 命令 **前面**，因为没有任何 shell 命令使用 `-` 开头，因此很容易区分哪里是命令的开始。如果你确实有一条 shell 命令是减号开头的，那么为了明显区别参数和命令，可以在命令前面放一个 `@` 符号，那么 AsyncRun 在解析参数时碰到 `@` 就知道参数结束了，后面都是命令。
 
-Don't worry if you do have a shell command starting with '-', Just put a placeholder `@` before your command to tell asyncrun explicitly: "stop parsing options now, the following string is all my command".
 
-### AsyncStop - Stop the running job
+### AsyncStop - 停止正在运行的任务
 
 ```VimL
 :AsyncStop[!]
 ```
 
-stop the running job, when "!" is included, job will be stopped by signal KILL
+没有叹号时，使用 `TERM` 信号尝试终止后台任务，有叹号时会使用 `KILL` 信号来终止。
 
-### Function (API)
+### 函数接口
 
-Function form is convenient for vimscript:
+本插件提供了函数形式的接口，方便你在 vimscript 中调用：
 
 ```VimL
 :call asyncrun#run(bang, opts, command)
 ```
 
-parameters:
+参数说明:
 
-- `bang`: an empty string or a single bang character `"!"`, same as bang sign in `AsyncRun!`.
-- `opts`: a dictionary contains: `mode`, `cwd`, `raw` and `errorformat` etc.
-- `command`: the shell command you want to execute.
+- `bang`：空字符串或者内容是一个叹号的字符串 `"!"` 和 `AsyncRun!` 的叹号作用一样。
+- `opts`：参数字典，包含：`mode`, `cwd`, `raw` 以及 `errorformat` 等。
+- `command`：具体要运行的命令。
 
-### Settings
+### 全局设置
 
-- g:asyncrun_exit - script will be executed after finished.
-- g:asyncrun_bell - non-zero to ring a bell after finished.
-- g:asyncrun_mode - specify how to run your command, see [here](https://github.com/skywind3000/asyncrun.vim/wiki/Specify-how-to-run-your-command).
-- g:asyncrun_encs - set shell encoding if it's different from `&encoding`, see [encoding](https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-encoding-problem-when-using-Chinese-or-Japanese).
-- g:asyncrun_trim - non-zero to trim the empty lines in the quickfix window.
-- g:asyncrun_auto - event name to trigger QuickFixCmdPre/QuickFixCmdPost, see [FAQ](https://github.com/skywind3000/asyncrun.vim/wiki/FAQ#can-asyncrunvim-trigger-an-autocommand-quickfixcmdpost-to-get-some-plugin-like-errormaker-processing-the-content-in-quickfix-).
-- g:asyncrun_open - above zero to open quickfix window at given height after command starts.
-- g:asyncrun_save - non-zero to save current(1) or all(2) modified buffer(s) before executing.
-- g:asyncrun_timer - how many messages should be inserted into quickfix every 100ms interval.
-- g:asyncrun_wrapper - enable to setup a command prefix.
-- g:asyncrun_stdin - non-zero to enable stdin (useful for cmake on windows).
+- g:asyncrun_exit - 命令结束时自动运行的 vimscript。
+- g:asyncrun_bell - 命令结束后是否响铃？
+- g:asyncrun_mode - 全局的默认[运行模式](#运行模式).
+- g:asyncrun_encs - 如果系统编码和 Vim 内部编码 `&encoding`，不一致，那么在这里设置一下，具体见 [编码设置](https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-encoding-problem-when-using-Chinese-or-Japanese)。
+- g:asyncrun_trim - 设置成非零的话剔除空白行。
+- g:asyncrun_auto - 用于触发 QuickFixCmdPre/QuickFixCmdPost 的 autocmd 名称，见 [FAQ](https://github.com/skywind3000/asyncrun.vim/wiki/FAQ#can-asyncrunvim-trigger-an-autocommand-quickfixcmdpost-to-get-some-plugin-like-errormaker-processing-the-content-in-quickfix-)。
+- g:asyncrun_open - 大于零的话会在运行时自动打开高度为具体值的 quickfix 窗口。
+- g:asyncrun_save - 全局设置，运行前是否保存文件，1是保存当前文件，2是保存所有修改过的文件。
+- g:asyncrun_timer - 每 100ms 处理多少条消息，默认为 25。
+- g:asyncrun_wrapper - 命令前缀，默认为空，比如可以设置成 `nice`。
+- g:asyncrun_stdin - 设置成非零的话，允许 stdin，比如 cmake 在 windows 下要求 stdin 为打开状态。
 
-For more information of above options, please visit **[option details](https://github.com/skywind3000/asyncrun.vim/wiki/Options)**.
+更多配置内容，见 **[这里](https://github.com/skywind3000/asyncrun.vim/wiki/Options)**.
 
 
-### Variables
+### 全局变量
 
-- g:asyncrun_code - exit code
-- g:asyncrun_status - 'running', 'success' or 'failure'
+- g:asyncrun_code - 命令返回码。
+- g:asyncrun_status - 命令状态：'running', 'success' or 'failure' 可以用于设置到 statusline。
 
 ### Autocmd
 
 ```VimL
-autocmd User AsyncRunPre   - triggered before executing
-autocmd User AsyncRunStart - triggered after starting successfully
-autocmd User AsyncRunStop  - triggered when job finished
+autocmd User AsyncRunPre   - 运行前出发
+autocmd User AsyncRunStart - 命令成功开始了触发
+autocmd User AsyncRunStop  - 命令结束时触发
 ```
 
-Note, `AsyncRunPre` is always likely to be invoked, but `AsyncRunStart` and `AsyncRunStop` will only be invoked if the job starts successfully. 
+注意，`AsyncRunPre` 一般都会被触发，但是 `AsyncRunStart` 和 `AsyncRunStop` 只会在任务成功开始的情况下才会被触发。
 
-When previous job is still running or vim job slot is full, AsyncRun may fail. In this circumstance, `AsyncRunPre` will be invoked but `AsyncRunStart` and `AsyncRunStop` will have no chance to trigger.
+比如当前任务未结束，AsyncRun 会失败。在这种情况下，`AsyncRunPre` 会被触发，但是 `AsyncRunStart` 和 `AsyncRunStop` 无法触发。
 
-### Project Root
+### 项目根目录
 
-Vim is lack of project management, as files usually belong to projects, you can do nothing to the project if you don't have any information about where the project locates. Inspired by CtrlP, this feature (new in version 1.3.12) is very useful when you've something to do with the whole project. 
+Vim 缺乏项目管理，然而日常编辑的一个个文件，大部分都会从属于某个项目。如果你缺乏项目相关的信息，你就很难针对项目做点什么事情。参考 CtrlP 插件的设计，AsyncRun 使用 `root markers` 的机制来识别项目的根路径，当前文件所在的项目目录是该文件的最近一级包含 `root marker` 的父目录（默认为`.git`, `.svn`, `.root` 以及 `.project`），如果递归到根目录还没找到标识文件，那么会用当前文件所在目录代替。
 
-Macro `<root>` or `$(VIM_ROOT)` in the command line or in the `-cwd` option will be expanded as the **Project Root Directory** of the current file:
+在命令或者 `-cwd=?` 参数中使用 `<root>` 或者 `$(VIM_ROOT)` 来表示当前文件的 **项目根目录**，比如：
 
 ```VimL
 :AsyncRun make
 :AsyncRun -cwd=<root> make
 ```
 
-The first `make` will run in the vim's current directory (which `:pwd` returns), while the second one will run in the project root directory of current file. This feature is very useful when you have something (make / grep) to do with the whole project.
+第一个 `make` 命令会在 vim 的当前路径（可以用 `:pwd` 命令查看）下面执行，而第二个 `make` 命令会在当前的项目根目录下面执行。当你要对整个项目做点什么的时候（比如 make/grep），这个特性会非常有用。
 
-The project root is the nearest ancestor directory of the current file which contains one of these directories or files: `.svn`, `.git`, `.hg`, `.root` or `.project`. If none of the parent directories contains these root markers, the directory of the current file is used as the project root. The root markers can also be configurated, see [Project Root](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root).
+更多信息参考：[Project Root](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root).
 
-### Running modes
+### 运行模式
 
-The default behavior is to run async command and output to quickfix window. However there is a `-mode=?` option can allow you specify how to run your command:
+AsyncRun 可以用 `-mode=?` 参数指定运行模式，不指定的话，将会用默认模式，在后台运行，并将输出实时显示到 quickfix 窗口，然而你还可以用 `-mode=?` 设置成下面几种运行模式：
 
-| mode | description |
+| 模式 | 说明 |
 |--|--|
-| async | default behavior, run async command and output to quickfix window |
-| bang | same as `!` |
-| term | open a reusable built-in terminal window and run your command |
-| os | (windows only) open a new cmd.exe window and run your command in it |
+| async | 默认模式，在后台运行命令，并将输出实时显示到 quickfix 窗口。 |
+| bang | 用 Vim 传统的 `:!` 命令执行。 |
+| term | 使用一个可复用的内部终端执行命令。 |
+| os | 目前只支持 Windows，打开一个新的 cmd.exe 窗口执行命令。|
 
-For more information, please see [here](https://github.com/skywind3000/asyncrun.vim/wiki/Specify-how-to-run-your-command).
+更多信息，见 [这里](https://github.com/skywind3000/asyncrun.vim/wiki/Specify-how-to-run-your-command).
 
-### Internal Terminal
+### 内置终端
 
-AsyncRun is capable to run commands in Vim/NeoVim's internal terminal with the `-mode=term` option. You can specify how to open the terminal window by `-pos=?`, available positions are:
+如果 `AsyncRun` 命令后加了一个 `-mode=term` 参数，那么将会在 Vim 内置终端中运行命令，在该模式下，还可以提供一个 `-pos=?` 来指定终端窗口的位置：
 
-- `-pos=tab`: open the terminal in a new tab.
-- `-pos=curwin`: open the terminal in the current window.
-- `-pos=top`: open the terminal above the current window.
-- `-pos=bottom`: open the terminal below the current window.
-- `-pos=left`: open the terminal on the left side.
-- `-pos=right`: open the terminal on the right side.
+- `-pos=tab`: 在新的 tab 中打开终端。
+- `-pos=curwin`: 在当前窗口打开终端。
+- `-pos=top`: 在上方打开终端。
+- `-pos=bottom`: 在下方打开终端。
+- `-pos=left`: 在左边打开终端。
+- `-pos=right`: 在右边打开终端。
 
-Examples:
+例子:
 
 ```VimL
 :AsyncRun -mode=term -pos=tab python "$(VIM_FILEPATH)"
@@ -287,58 +288,58 @@ Examples:
 :AsyncRun -mode=term -pos=curwin -hidden python "$(VIM_FILEPATH)"
 ```
 
-When using a split (`-pos` is one of `top`, `bottom`, `left` and `right`), AsyncRun will firstly reuse a finished previous terminal window if it exists, if not, AsyncRun will create a new terminal window in given position.
+当你用 split 窗口打开终端时 (`-pos` 为 `top`, `bottom`, `left` 和 `right` 的其中之一)，AsyncRun 会先检查是否有之前已经运行结束的终端窗口，有的话会复用，没有的话，才会新建一个 split。
 
 ### Quickfix window
 
-AsyncRun displays its output in quickfix window, so if you don't use `:copen {height}` to open quickfix window, you won't see any output. For convenience there is an option `g:asyncrun_open` for you:
+默认运行模式下，AsyncRun 会在 quickfix 窗口中显示任务的输出，所以如果你事先没有用 `:copen {height}` 打开 quickfix 窗口，你将会看不到任何内容。方便起见，引入了一个 `g:asyncrun_open` 的全局配置，如果设置成非零：
 
     :let g:asyncrun_open = 8
 
-Setting `g:asyncrun_open` to 8 will open quickfix window automatically at 8 lines height after command starts.
+那么在运行命令前，会自动按照 8 行的高度打开 quickfix 窗口。
 
-### Range support
+### Range 支持
 
-AsyncRun can take a range of lines in the current buffer as command's stdin after version `1.3.27`. You can try:
+AsyncRun 可以指定一个当前 buffer 的文本范围，用作命令的 stdin 输入，比如：
 
 ```VimL
 :%AsyncRun cat
 ```
 
-the whole buffer will be the input of command `cat`. you will see the content of your current buffer will be output to the quickfix window.
+那么当前文件的整个内容将会作为命令 `cat` 的标准输入传递过去，这个命令运行后，quickfix 窗口内将会显示当前文件的所有内容。
 
 
 ```VimL
 :10,20AsyncRun python
 ```
 
-text between line 10-20 will be taken as the stdin of python. code in that range will be executed by python and the output will display in the quickfix window.
+使用当前 buffer 的第 10 行到 20 行的内容作为命令 python 的标准输入，可以用来执行一小段 python 代码，并在 quickfix 展现结果。
 
 ```VimL
 :'<,'>AsyncRun -raw perl
 ```
 
-The visual selection (line-wise) will be taken as stdin.
+选中区域的文本 (行模式) 作为标准输入。
 
 
-### Requirements
+### 运行需求
 
-Vim 7.4.1829 is minimal version to support async mode. If you are use older versions, `g:asyncrun_mode` will fall back from `0/async` to `1/sync`. NeoVim 0.1.4 or later is also supported. 
+Vim 7.4.1829 是最低的运行版本，如果低于此版本，运行模式将会从 `async` 衰退回 `sync`。NeoVim 0.1.4 是最低的 nvim 版本。
 
-Recommend to use Vim 8.0 or later. 
+推荐使用 vim 8.0 及以后的版本。
 
-### Cooperate with vim-fugitive:
+### 同 fugitive 协作
 
-asyncrun.vim can cooperate with `vim-fugitive`, see [here](https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-famous-plugins#fugitive).
+asyncrun.vim 可以同 `vim-fugitive` 协作，为 fugitive 提供异步支持，具体见 [here](https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-famous-plugins#fugitive).
 
 ![](https://raw.githubusercontent.com/skywind3000/asyncrun.vim/master/doc/cooperate_with_fugitive.gif)
 
 
-## Language Tips
+## 语言参考
 
 - [Better way for C/C++ developing with AsyncRun](https://github.com/skywind3000/asyncrun.vim/wiki/Better-way-for-C-and-Cpp-development-in-Vim-8)
 
-## More Topics
+## 更多话题
 
 - [Additional examples (background ctags updating, pdf conversion, ...)](https://github.com/skywind3000/asyncrun.vim/wiki/Additional-Examples)
 - [Notify user job finished by playing a sound](https://github.com/skywind3000/asyncrun.vim/wiki/Playing-Sound)
@@ -353,7 +354,7 @@ asyncrun.vim can cooperate with `vim-fugitive`, see [here](https://github.com/sk
 
 Don't forget to read the [Frequently Asked Questions](https://github.com/skywind3000/asyncrun.vim/wiki/FAQ).
 
-## Cooperate with other Plugins
+## 插件协作
 
 | Name | Description |
 |------|-------------|
@@ -365,68 +366,6 @@ Don't forget to read the [Frequently Asked Questions](https://github.com/skywind
 
 
 See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-famous-plugins)
-
-## History
-
-- 2.2.6 (2020-02-06): new: parameter `-hidden` when using `-mode=term` to set `bufhidden` to `hidden`.
-- 2.2.5 (2020-02-05): more safe to start a terminal.
-- 2.2.4 (2020-02-05): exit when starting terminal failed in current window with `-pos=curwin`.
-- 2.2.3 (2020-02-05): new `-program=wsl` to run command in wsl (windows 10 only).
-- 2.2.2 (2020-02-05): new `-pos=curwin` to open terminal in current window.
-- 2.2.1 (2020-01-20): set noreletivenumber for terminal window.
-- 2.2.0 (2020-01-18): new `-focus=0` option for `-mode=term` to prevent focus change.
-- 2.1.9 (2020-01-12): polish `-mode=term`, omit `number` and `signcolunm` in terminal.
-- 2.1.8 (2020-01-11): new options `errorformat` in `asyncrun#run(...)`.
-- 2.1.4 (2020-01-09): correct command encoding on windows and fixed minor issues.
-- 2.1.0 (2020-01-09): new mode `-mode=term` to run command in a reusable terminal window.
-- 2.0.8 (2019-04-28): handle `tcd` (introduced in 8.1.1218). use grepformat when `-program=grep`.
-- 2.0.7 (2019-01-27): restore `g:asyncrun_stdin` because rg will break if stdin is pipe.
-- 2.0.6 (2019-01-26): more adaptive to handle stdin and remove 'g:asyncrun_stdin'
-- 2.0.5 (2019-01-14): enable stdin by default on windows (fix cmake stdin warning on windows).
-- 2.0.4 (2019-01-13): new option `g:asyncrun_stdin`, set to 1 to enable stdin .
-- 2.0.3 (2019-01-04): new macro `$VIM_PATHNOEXT` (by @PietroPate)
-- 2.0.2 (2018-12-25): new `-strip` and `-append` option to control quickfix (by @bennyyip)
-- 2.0.1 (2018-04-29): new option `g:asyncrun_save` to save files.
-- 2.0.0 (2018-04-27): improve neovim compatability, handle `tcd` command in neovim.
-- 1.3.27 (2018-04-17): AsyncRun now supports range, try: `:%AsyncRun cat`
-- 1.3.26 (2018-04-16): new option `g:asyncrun_wrapper` to enable setup a command prefix
-- 1.3.25 (2018-04-16): handle makeprg/grepprg correctly, accept `%` and `$*` macros. close [#96](https://github.com/skywind3000/asyncrun.vim/issues/96) [#84](https://github.com/skywind3000/asyncrun.vim/issues/84) and [#35](https://github.com/skywind3000/asyncrun.vim/issues/35)
-- 1.3.24 (2018-04-13): remove trailing ^M on windows.
-- 1.3.23 (2018-04-03): back compatible to vim 7.3, can fall back to mode 1 in old vim.
-- 1.3.22 (2018-03-11): new option `g:asyncrun_open` to open quickfix window automatically at given height.
-- 1.3.21 (2018-03-02): fixed: float point reltime issues
-- 1.3.20 (2018-02-08): fixed: [Incorrect background job status](https://github.com/skywind3000/asyncrun.vim/issues/25) (@antoinemadec)
-- 1.3.19 (2017-12-13): new option `g:asyncrun_skip` to skip specific autocmd.
-- 1.3.18 (2017-12-12): fixed: windo breaks commands (especially in neovim).
-- 1.3.17 (2017-08-06): fixed: process hang when mode is 5.
-- 1.3.16 (2017-08-05): fixed: g:asyncrun_mode issue (Joel Taylor)
-- 1.3.15 (2017-07-30): fixed: remove trailing new line in neovim.
-- 1.3.14 (2017-07-27): improve asyncrun#get_root(), allow user indicate the rootmarkers
-- 1.3.13 (2017-07-12): new option (-raw) to use raw output (not match with the errorformat).
-- 1.3.12 (2017-06-25): new macro `<root>` or $(VIM_ROOT) to indicate project root directory.
-- 1.3.11 (2017-05-19): new option (-save=2) to save all modified files.
-- 1.3.10 (2017-05-04): remove trailing `^M` in NeoVim 2.0 on windows 
-- 1.3.9 (2016-12-23): minor bugs fixed, improve performance and compatibility.
-- 1.3.8 (2016-11-17): new autocmd AsyncRunPre/AsyncRunStart/AsyncRunStop, fixed cmd line window conflict. 
-- 1.3.7 (2016-11-13): new option 'g:asyncrun_timer' to prevent gui freeze by massive output.
-- 1.3.6 (2016-11-08): improve performance in quickfix_toggle, fixed small issue in bell ringing.
-- 1.3.5 (2016-11-02): new option "g:asyncrun_auto" to trigger QuickFixCmdPre/QuickFixCmdPost.
-- 1.3.4 (2016-10-28): new option "g:asyncrun_local" to use local value of errorformat rather the global value. 
-- 1.3.3 (2016-10-21): prevent job who reads stdin from getting hanging, fixed an issue in fast exiting jobs.
-- 1.3.2 (2016-10-19): new "-post" option to run a vimscript after the job finished
-- 1.3.1 (2016-10-18): fixed few issues of arguments passing in different modes
-- 1.3.0 (2016-10-17): add support to neovim, better CJK characters handling.
-- 1.2.0 (2016-10-16): refactor, correct arguments parsing, cmd options and &makeprg supports
-- 1.1.1 (2016-10-13): use the vim native &shell and &shellcmdflag config to execute commands.
-- 1.1.0 (2016-10-12): quickfix window scroll only if cursor is on the last line
-- 1.0.3 (2016-10-10): reduce quickfix output latency.
-- 1.0.2 (2016-10-09): fixed an issue in replacing macros in parameters.
-- 1.0.1 (2016-10-07): Add a convenient way to toggle quickfix window (asyncrun#quickfix_toggle)
-- 1.0.0 (2016-09-21): can fall back to sync mode to compatible older vim versions.
-- 0.0.3 (2016-09-15): new arguments now accept environment variables wrapped by $(...)
-- 0.0.2 (2016-09-12): some improvements and more documents for a tiny tutorial.
-- 0.0.1 (2016-09-08): improve arguments parsing
-- 0.0.0 (2016-08-24): initial version
 
 ## Credits
 
