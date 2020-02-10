@@ -172,7 +172,7 @@ There can be some options before your `[cmd]`:
 | `-pos=?` | "bottom" | When using internal terminal with `-mode=term`, `-pos` is used to specify where to split the terminal window, it can be one of `"tab"`, `"curwin"`, `"top"`, `"bottom"`, `"left"` and `"right"`. |
 | `-rows=num` | 0 | When using a horizontal split terminal, this value represents the height of terminal window. |
 | `-cols=num` | 0 | When using a vertical split terminal, this value represents the width of terminal window. |
-| `-errorformat=?` | `unset` | errorformat for error matching, if it is unprovided, use current `&errorformat` value. |
+| `-errorformat=?` | `unset` | errorformat for error matching, if it is unprovided, use current `&errorformat` value. Beware that `%` needs to be escaped into `\%`. |
 
 All options must start with a minus and position **before** `[cmd]`. Since no shell command  string starts with a minus. So they can be distinguished from shell command easily without any ambiguity. 
 
