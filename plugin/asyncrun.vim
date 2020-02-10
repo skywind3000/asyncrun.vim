@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/02/10 06:16
+" Last Modified: 2020/02/10 17:57
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1237,7 +1237,7 @@ endfunc
 " run command
 "----------------------------------------------------------------------
 function! s:run(opts)
-	let l:opts = a:opts
+	let l:opts = deepcopy(a:opts)
 	let l:command = a:opts.cmd
 	let l:retval = ''
 	let l:mode = g:asyncrun_mode
@@ -1260,6 +1260,18 @@ function! s:run(opts)
 	if type(l:mode) == type('') && l:mode == 'raw'
 		let l:mode = 0
 		let l:opts.raw = 1
+	elseif type(l:mode) == 0 && l:mode == 6
+		let pos = get(l:opts, 'pos', '')
+		if pos == 'bang' || pos == 'vim'
+			let l:mode = 2
+		elseif pos == 'extern' || pos == 'external'
+			let l:mode = 4
+		elseif pos == 'system' || pos == 'os'
+			let l:mode = 4
+		elseif pos == 'quickfix'
+			let l:mode = 0
+			let l:opts.raw = 1
+		endif
 	endif
 
 	" process makeprg/grepprg in -program=?
@@ -1637,7 +1649,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.2.9'
+	return '2.3.0'
 endfunc
 
 
@@ -1897,5 +1909,7 @@ if has("autocmd")
 	augroup END
 endif
 
+
+" vim: set ts=4 sw=4 tw=78 noet :
 
 
