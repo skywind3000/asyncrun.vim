@@ -161,7 +161,7 @@
 
 | 参数 | 默认值 | 含义 |
 |-|-|-|
-| `-mode=?` | "async" | 用 `-mode=?` 的形式指定运行模式可选模式有： `"async"` (默认模式，后台运行输出到 quickfix), `"terminal"` (在内建终端运行), `"bang"` (使用 `!` 命令运行) and `"os"` (新的外部终端窗口)，具体查看 [运行模式](#运行模式)。 |
+| `-mode=?` | "async" | 用 `-mode=?` 的形式指定运行模式可选模式有： `"async"` (默认模式，后台运行输出到 quickfix), `"bang"` (使用 `!` 命令运行) 以及 `"terminal"` (在内建终端运行)， 具体查看 [运行模式](#运行模式)。 |
 | `-cwd=?` | `未设置` | 命令初始目录（没有设置就用 vim 当前目录），比如  `-cwd=<root>` 就能在 [项目根目录](#项目根目录) 运行命令，或者 `-cwd=$(VIM_FILEDIR)` 就能在当前文件所在目录运行命令。 |
 | `-save=?` | 0 | 运行命令前是否保存文件，`-save=1` 保存当前文件，`-save=2` 保存所有修改过的文件 |
 | `-program=?` | `未设置` | 设置成 `make` 可以用 `&makeprg`，设置成 `grep` 可以使用 `&grepprt`，而设置成 `wsl` 则可以在 WSL 中运行命令 （需要 Windows 10）|
@@ -257,7 +257,6 @@ AsyncRun 可以用 `-mode=?` 参数指定运行模式，不指定的话，将会
 | async | 默认模式，在后台运行命令，并将输出实时显示到 quickfix 窗口。 |
 | bang | 用 Vim 传统的 `:!` 命令执行。 |
 | term | 使用一个可复用的内部终端执行命令。 |
-| os | 目前只支持 Windows，打开一个新的 cmd.exe 窗口执行命令。|
 
 更多信息，见 [这里](https://github.com/skywind3000/asyncrun.vim/wiki/Specify-how-to-run-your-command).
 
@@ -277,6 +276,7 @@ AsyncRun 可以用 `-mode=?` 参数指定运行模式，不指定的话，将会
 - `-pos=bottom`: 在下方打开终端。
 - `-pos=left`: 在左边打开终端。
 - `-pos=right`: 在右边打开终端。
+- `-pos=external': 使用外部终端（仅支持 windows）。
 
 例子:
 

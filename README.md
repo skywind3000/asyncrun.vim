@@ -161,7 +161,7 @@ There can be some options before your `[cmd]`:
 
 | Option | Default Value | Description |
 |-|-|-|
-| `-mode=?` | "async" | specify how to run the command as `-mode=?`, available modes are `"async"` (default), `"terminal"` (in internal terminal), `"bang"` (with `!` command) and `"os"` (in external os terminal), see [running modes](#running-modes) for details. |
+| `-mode=?` | "async" | specify how to run the command as `-mode=?`, available modes are `"async"` (default), `"bang"` (with `!` command) and `"terminal"` (in internal terminal), see [running modes](#running-modes) for details. |
 | `-cwd=?` | `unset` | initial directory (use current directory if unset), for example use `-cwd=<root>` to run commands in [project root directory](#project-root), or `-cwd=$(VIM_FILEDIR)` to run commands in current buffer's parent directory. |
 | `-save=?` | 0 | use `-save=1` to save current file, `-save=2` to save all modified files before executing. |
 | `-program=?` | `unset` | set to `make` to use `&makeprg`, `grep` to use `&grepprt` and `wsl` to execute commands in WSL (windows 10) |
@@ -258,7 +258,6 @@ The default behavior is to run async command and output to quickfix window. Howe
 | async | default behavior, run async command and output to quickfix window |
 | bang | same as `!` |
 | term | open a reusable internal terminal window and run your command |
-| os | (windows only) open a new cmd.exe window and run your command in it |
 
 For more information, please see [here](https://github.com/skywind3000/asyncrun.vim/wiki/Specify-how-to-run-your-command).
 
@@ -272,6 +271,7 @@ AsyncRun is capable to run commands in Vim/NeoVim's internal terminal with the `
 - `-pos=bottom`: open the terminal below the current window.
 - `-pos=left`: open the terminal on the left side.
 - `-pos=right`: open the terminal on the right side.
+- `-pos=external`: use an external terminal (windows only).
 
 Examples:
 
