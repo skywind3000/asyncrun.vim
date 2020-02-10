@@ -364,6 +364,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 2.4.0 (2020-02-10): fixed internal terminal issue in msys.
 - 2.3.0 (2020-02-10): new mode aliases, minor issue fix.
 - 2.2.9 (2020-02-10): new terminal mode options: `-safe=1`, `-listed=0` and `-reuse`.
 - 2.2.6 (2020-02-06): new: parameter `-hidden` when using `-mode=term` to set `bufhidden` to `hidden`.
