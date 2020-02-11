@@ -169,7 +169,7 @@
 | `-auto=?` | `未设置` | 出发 autocmd `QuickFixCmdPre`/`QuickFixCmdPost` 后面的名称。 |
 | `-raw` | `未设置` | 如果提供了，就输出原始内容，忽略 `&errorformat` 过滤。 |
 | `-strip` | `未设置` | 过滤收尾消息 (头部命令名称以及尾部 "[Finished in ...]" 信息)。|
-| `-pos=?` | "bottom" | 当用 `-mode=term` 在内置终端运行命令时， `-pos` 用于指定内置终端窗口位置， 可以设置成 `"tab"`，`"curwin"`，`"top"`，`"bottom"`，`"left"` 以及 `"right"`。|
+| `-pos=?` | "bottom" | 当用 `-mode=term` 在内置终端运行命令时， `-pos` 用于指定内置终端窗口位置， 可以设置成 `"tab"`，`"curwin"`，`"top"`，`"bottom"`，`"left"` ，`"right"` 和 `"external"`。|
 | `-rows=num` | 0 | 内置终端窗口的高度。|
 | `-cols=num` | 0 | 内置终端窗口的宽度。|
 | `-errorformat=?` | `未设置` | 用于 quickfix 中匹配错误输出的格式字符串，如果未提供，则使用当前 `&errorformat` 的值。注意 `%` 需要转写成 `\%`。 |
