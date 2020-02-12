@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/02/11 01:01
+" Last Modified: 2020/02/12 21:17
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1226,7 +1226,7 @@ function! s:start_in_terminal(opts)
 		endif
 	endif
 	if focus == 0 && &bt == 'terminal'
-		silent! stopinsert
+		exec has('nvim')? 'stopinsert' : ''
 		call win_gotoid(origin)
 	endif
 	return 0
@@ -1649,7 +1649,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.4.0'
+	return '2.4.1'
 endfunc
 
 
