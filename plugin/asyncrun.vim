@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/02/12 21:17
+" Last Modified: 2020/02/16 00:47
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1516,6 +1516,7 @@ function! asyncrun#run(bang, opts, args, ...)
 	let l:macros['VIM_FILENOEXT'] = expand("%:t:r")
 	let l:macros['VIM_PATHNOEXT'] = expand("%:r")
 	let l:macros['VIM_FILEEXT'] = "." . expand("%:e")
+	let l:macros['VIM_FILETYPE'] = (&filetype)
 	let l:macros['VIM_CWD'] = getcwd()
 	let l:macros['VIM_RELDIR'] = expand("%:h:.")
 	let l:macros['VIM_RELNAME'] = expand("%:p:.")
@@ -1649,7 +1650,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.4.1'
+	return '2.4.2'
 endfunc
 
 
