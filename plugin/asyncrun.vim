@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/02/16 00:47
+" Last Modified: 2020/02/16 14:00
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -652,20 +652,13 @@ function! s:AsyncRun_Job_Start(cmd)
 		call s:ErrorMsg("empty arguments")
 		return -3
 	endif
+	let l:args = []
 	if g:asyncrun_shell == ''
-		if !executable(&shell)
-			let l:text = "invalid config in &shell and &shellcmdflag"
-			call s:ErrorMsg(l:text . ", &shell must be an executable.")
-			return -4
-		endif
-		let l:args = [&shell, &shellcmdflag]
+		let l:args += split(&shell)
+		let l:args += split(&shellcmdflag)
 	else
-		if !executable(g:asyncrun_shell)
-			let l:text = "invalid config in g:asyncrun_shell"
-			call s:ErrorMsg(l:text . ", it must be an executable.")
-			return -4
-		endif
-		let l:args = [g:asyncrun_shell, g:asyncrun_shellflag]
+		let l:args += split(g:asyncrun_shell)
+		let l:args += split(g:asyncrun_shellflag)
 	endif
 	let s:async_info.errorformat = s:async_efm
 	let l:name = []
@@ -675,7 +668,11 @@ function! s:AsyncRun_Job_Start(cmd)
 			let l:args += [a:cmd]
 		else
 			let l:tmp = s:ScriptWrite(a:cmd, 0)
-			let l:args += [l:tmp]
+			if s:async_nvim == 0
+				let l:args += [l:tmp]
+			else
+				let l:args = shellescape(l:tmp)
+			endif
 		endif
 	elseif type(a:cmd) == 3
 		if s:asyncrun_windows == 0
@@ -1522,6 +1519,7 @@ function! asyncrun#run(bang, opts, args, ...)
 	let l:macros['VIM_RELNAME'] = expand("%:p:.")
 	let l:macros['VIM_CWORD'] = expand("<cword>")
 	let l:macros['VIM_CFILE'] = expand("<cfile>")
+	let l:macros['VIM_CLINE'] = line('.')
 	let l:macros['VIM_VERSION'] = ''.v:version
 	let l:macros['VIM_SVRNAME'] = v:servername
 	let l:macros['VIM_COLUMNS'] = ''.&columns
@@ -1529,6 +1527,8 @@ function! asyncrun#run(bang, opts, args, ...)
 	let l:macros['VIM_GUI'] = has('gui_running')? 1 : 0
 	let l:macros['VIM_ROOT'] = asyncrun#get_root('%')
     let l:macros['VIM_HOME'] = expand(split(&rtp, ',')[0])
+	let l:macros['VIM_PRONAME'] = fnamemodify(l:macros['VIM_ROOT'], ':t')
+	let l:macros['VIM_DIRNAME'] = fnamemodify(l:macros['VIM_CWD'], ':t')
 	let l:macros['<cwd>'] = l:macros['VIM_CWD']
 	let l:macros['<root>'] = l:macros['VIM_ROOT']
 	let l:retval = ''
@@ -1579,6 +1579,7 @@ function! asyncrun#run(bang, opts, args, ...)
 		let l:macros['VIM_RELDIR'] = expand("%:h:.")
 		let l:macros['VIM_RELNAME'] = expand("%:p:.")
 		let l:macros['VIM_CFILE'] = expand("<cfile>")
+		let l:macros['VIM_DIRNAME'] = fnamemodify(l:macros['VIM_CWD'], ':t')
 		let l:macros['<cwd>'] = l:macros['VIM_CWD']
 	endif
 
@@ -1650,7 +1651,7 @@ endfunc
 " asyncrun -version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.4.2'
+	return '2.4.3'
 endfunc
 
 
