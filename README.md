@@ -16,6 +16,7 @@ If that doesn't excite you, then perhaps this GIF screen capture below will chan
 
 # News
 
+- 2020/02/18 [asynctasks](https://github.com/skywind3000/asynctasks.vim) uses asyncrun to introduce vscode's task system to vim.
 - 2020/01/21 run command in internal terminal with `-mode=term` see [here](#internal-terminal).
 - 2018/04/17 AsyncRun now supports command range, try: `:%AsyncRun cat`.
 - 2018/04/16 better makeprg/grepprg handling, accepts `%` and `$*` macros now.
@@ -108,6 +109,10 @@ File name may contain spaces, therefore, it's safe to quote them.
     :AsyncRun -raw python %
 
 New option `-raw` will display the raw output (without matching to errorformat), you need the latest AsyncRun (after 1.3.13) to use this option. Remember to put `let $PYTHONUNBUFFERED=1` in your `.vimrc` to disable python stdout buffering, see [here](https://github.com/skywind3000/asyncrun.vim/wiki/FAQ#cant-see-the-realtime-output-when-running-a-python-script).
+
+**A good assistant to asyncrun**
+
+[asynctasks.vim](https://github.com/skywind3000/asynctasks.vim) a plugin built upon asyncrun, an easy way to use asyncrun. It allows you to manage your building, testing and deploying tasks in a global or project local configuration, and run them by their names.
 
 ## Manual
 

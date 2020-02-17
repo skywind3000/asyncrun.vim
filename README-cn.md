@@ -107,6 +107,10 @@
 
 关于缓存的更多说明见 [这里](https://github.com/skywind3000/asyncrun.vim/wiki/FAQ#cant-see-the-realtime-output-when-running-a-python-script).
 
+**使用 AsyncRun 的助手**
+
+[asynctasks.vim](https://github.com/skywind3000/asynctasks.vim) 是一个使用 asyncrun 提供任务管理的插件，帮助你管理一系列 building, testing 和 deploying 的任务，并且方便的调度他们。
+
 ## 使用手册
 
 本插件有且只提供了两条命令：`:AsyncRun` 以及 `:AsyncStop` 来控制你的任务。
