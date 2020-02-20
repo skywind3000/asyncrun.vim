@@ -296,6 +296,8 @@ AsyncRun 可以用 `-mode=?` 参数指定运行模式，不指定的话，将会
 
 当你用 split 窗口打开终端时 (`-pos` 为 `top`, `bottom`, `left` 和 `right` 的其中之一)，AsyncRun 会先检查是否有之前已经运行结束的终端窗口，有的话会复用，没有的话，才会新建一个 split。
 
+如果这些运行模式还不能满足你，你可以 [自定义运行模式](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner)。
+
 ### Quickfix window
 
 默认运行模式下，AsyncRun 会在 quickfix 窗口中显示任务的输出，所以如果你事先没有用 `:copen {height}` 打开 quickfix 窗口，你将会看不到任何内容。方便起见，引入了一个 `g:asyncrun_open` 的全局配置，如果设置成非零：

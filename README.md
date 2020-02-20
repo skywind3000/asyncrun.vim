@@ -292,6 +292,8 @@ Examples:
 
 When using a split (`-pos` is one of `top`, `bottom`, `left` and `right`), AsyncRun will firstly reuse a finished previous terminal window if it exists, if not, AsyncRun will create a new terminal window in given position.
 
+If it is not enough to fit your need, you can [customize runners](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner) as you like.
+
 ### Quickfix window
 
 AsyncRun displays its output in quickfix window, so if you don't use `:copen {height}` to open quickfix window, you won't see any output. For convenience there is an option `g:asyncrun_open` for you:
@@ -371,6 +373,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 2.4.7 (2020-02-21): new customizable runners by `g:asyncrun_runner`, see [customize runner](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner).
 - 2.4.0 (2020-02-10): fixed internal terminal issue in msys.
 - 2.3.0 (2020-02-10): new mode aliases, minor issue fix.
 - 2.2.9 (2020-02-10): new terminal mode options: `-safe=1`, `-listed=0` and `-reuse`.
