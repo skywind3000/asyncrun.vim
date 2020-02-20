@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/02/18 21:11
+" Last Modified: 2020/02/21 06:16
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -179,6 +179,10 @@ endif
 
 if !exists('g:asyncrun_shellflag')
 	let g:asyncrun_shellflag = ''
+endif
+
+if !exists('g:asyncrun_runner')
+	let g:asyncrun_runner = {}
 endif
 
 if !exists('g:asyncrun_ftrun')
@@ -1261,6 +1265,7 @@ function! s:run(opts)
 	let l:command = a:opts.cmd
 	let l:retval = ''
 	let l:mode = g:asyncrun_mode
+	let l:runner = ''
 
 	if a:opts.mode != ''
 		let l:mode = a:opts.mode
@@ -1282,7 +1287,9 @@ function! s:run(opts)
 		let l:opts.raw = 1
 	elseif type(l:mode) == 0 && l:mode == 6
 		let pos = get(l:opts, 'pos', '')
-		if pos == 'bang' || pos == 'vim'
+		if has_key(g:asyncrun_runner, pos)
+			let l:runner = pos
+		elseif pos == 'bang' || pos == 'vim'
 			let l:mode = 2
 		elseif pos == 'extern' || pos == 'external'
 			let l:mode = 4
@@ -1358,7 +1365,7 @@ function! s:run(opts)
 		if g:asyncrun_hook != ''
 			exec 'call '. g:asyncrun_hook .'(l:opts)'
 		endif
-		return
+		return ''
 	elseif l:mode == 7
 		if s:asyncrun_windows != 0 && s:asyncrun_gui != 0
 			let l:mode = 4
@@ -1366,6 +1373,12 @@ function! s:run(opts)
 			let script = get(g:, 'asyncrun_script', '')
 			let l:mode = (script == '')? 2 : 4
 		endif
+	endif
+
+	if l:runner != ''
+		let F = g:asyncrun_runner[l:runner]
+		call F(l:command)
+		return ''
 	endif
 
 	if l:mode == 0 && s:asyncrun_support != 0
@@ -1692,7 +1705,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.4.6'
+	return '2.4.7'
 endfunc
 
 
