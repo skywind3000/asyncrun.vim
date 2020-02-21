@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/02/21 06:16
+" Last Modified: 2020/02/21 10:54
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1375,7 +1375,12 @@ function! s:run(opts)
 		endif
 	endif
 
-	if l:runner != ''
+	let t = s:StringStrip(l:command)
+
+	if strpart(t, 0, 1) == ':'
+		exec strpart(t, 1)
+		return ''
+	elseif l:runner != ''
 		let F = g:asyncrun_runner[l:runner]
 		call F(l:command)
 		return ''
@@ -1705,7 +1710,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.4.7'
+	return '2.4.8'
 endfunc
 
 
