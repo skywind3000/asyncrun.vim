@@ -373,6 +373,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 2.5.0 (2020-02-29): refactor, remove useless codes, new command modifier `g:asyncrun_program`.
 - 2.4.8 (2020-02-21): run with `:execute` if command is starting with colon.
 - 2.4.7 (2020-02-21): new customizable runners by `g:asyncrun_runner`, see [customize runner](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner).
 - 2.4.0 (2020-02-10): fixed internal terminal issue in msys.
