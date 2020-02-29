@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/02/29 02:43
+" Last Modified: 2020/02/29 14:36
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1388,6 +1388,13 @@ function! s:run(opts)
 		return ''
 	endif
 
+	if exists('g:asyncrun_open')
+		let s:asyncrun_open = g:asyncrun_open
+		if has_key(a:opts, 'open')
+			let s:asyncrun_open = a:opts.open
+		endif
+	endif
+
 	if l:mode == 0 && s:asyncrun_support != 0
 		let s:async_info.postsave = opts.post
 		let s:async_info.autosave = opts.auto
@@ -1712,7 +1719,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.5.0'
+	return '2.5.1'
 endfunc
 
 
@@ -1854,6 +1861,10 @@ endfunc
 if has("autocmd")
 	function! s:check_quickfix()
 		let height = get(g:, "asyncrun_open", 0)
+		if exists('s:asyncrun_open')
+			let height = s:asyncrun_open
+		endif
+		" echo 'height: '.height . ' ' .s:asyncrun_open
 		if height > 0
 			call asyncrun#quickfix_toggle(height, 1)
 		endif
