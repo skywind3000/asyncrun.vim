@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/02/29 14:36
+" Last Modified: 2020/03/01 17:21
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1591,6 +1591,11 @@ function! asyncrun#run(bang, opts, args, ...)
 	" extract options
 	let [l:command, l:opts] = s:ExtractOpt(s:StringStrip(a:args))
 
+	" check lazy load
+	if get(l:opts, 'mode', '') == 'load'
+		return ''
+	endif
+
 	" combine options
 	if type(a:opts) == type({})
 		for [l:key, l:val] in items(a:opts)
@@ -1719,7 +1724,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.5.1'
+	return '2.5.2'
 endfunc
 
 
