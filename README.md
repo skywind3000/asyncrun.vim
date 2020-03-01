@@ -7,6 +7,7 @@ This plugin takes the advantage of new apis in Vim 8 (and NeoVim) to enable you 
 - Output are displayed in the quickfix window, errors are matched with `errorformat`.
 - You can explore the error output immediately or keep working in vim while executing.
 - Ring the bell or play a sound to notify you job finished while you're focusing on editing.
+- Customizable runners and command modifiers brings you dark power of asyncrun.
 - Fast and lightweight, just a single self-contained `asyncrun.vim` source file.  
 - Provide corresponding user experience in vim, neovim, gvim and macvim.
 
@@ -328,7 +329,7 @@ The visual selection (line-wise) will be taken as stdin.
 
 ### Customize Runner
 
-You may want your command run in a tmux split or a new gnome-terminal window, for this reason, AsyncRun provides you [customize runners](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner).
+You may want your command run in a tmux split or a new gnome-terminal window, for this reason, AsyncRun allows you [customize runners](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner).
 
 ### Command Modifier
 
