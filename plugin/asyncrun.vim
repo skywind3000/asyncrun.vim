@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/03/01 17:21
+" Last Modified: 2020/03/01 23:11
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1393,6 +1393,11 @@ function! s:run(opts)
 		if has_key(a:opts, 'open')
 			let s:asyncrun_open = a:opts.open
 		endif
+		if has_key(a:opts, 'silent')
+			if a:opts.silent
+				let s:asyncrun_open = 0
+			endif
+		endif
 	endif
 
 	if l:mode == 0 && s:asyncrun_support != 0
@@ -1724,7 +1729,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.5.2'
+	return '2.5.3'
 endfunc
 
 
