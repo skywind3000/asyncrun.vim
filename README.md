@@ -51,6 +51,8 @@ Remember to open vim's quickfix window by `:copen` (or setting  `g:asyncrun_open
     - [Internal Terminal](#internal-terminal)
     - [Quickfix window](#quickfix-window)
     - [Range support](#range-support)
+    - [Customize Runner](#customize-runner)
+    - [Command Modifier](#command-modifier)
     - [Requirements](#requirements)
     - [Cooperate with vim-fugitive:](#cooperate-with-vim-fugitive)
 - [Language Tips](#language-tips)
@@ -169,12 +171,12 @@ There can be some options before your `[cmd]`:
 | `-mode=?` | "async" | specify how to run the command as `-mode=?`, available modes are `"async"` (default), `"bang"` (with `!` command) and `"terminal"` (in internal terminal), see [running modes](#running-modes) for details. |
 | `-cwd=?` | `unset` | initial directory (use current directory if unset), for example use `-cwd=<root>` to run commands in [project root directory](#project-root), or `-cwd=$(VIM_FILEDIR)` to run commands in current buffer's parent directory. |
 | `-save=?` | 0 | use `-save=1` to save current file, `-save=2` to save all modified files before executing. |
-| `-program=?` | `unset` | set to `make` to use `&makeprg`, `grep` to use `&grepprt` and `wsl` to execute commands in WSL (windows 10) |
+| `-program=?` | `unset` | set to `make` to use `&makeprg`, `grep` to use `&grepprt` and `wsl` to execute commands in WSL (windows 10), see [command modifiers](https://github.com/skywind3000/asyncrun.vim/wiki/Command-Modifier). |
 | `-post=?` | `unset` | vimscript to exec after job finished, spaces **must** be escaped to '\ ' |
 | `-auto=?` | `unset` | event name to trigger `QuickFixCmdPre`/`QuickFixCmdPost` [name] autocmd. |
 | `-raw` | `unset` | use raw output if provided, and `&errorformat` will be ignored. |
 | `-strip` | `unset` | remove the heading/trailing messages if provided (omit command and "[Finished in ...]" message). |
-| `-pos=?` | "bottom" | When using internal terminal with `-mode=term`, `-pos` is used to specify where to split the terminal window, it can be one of `"tab"`, `"curwin"`, `"top"`, `"bottom"`, `"left"`, `"right"` and `"external"`. |
+| `-pos=?` | "bottom" | When using internal terminal with `-mode=term`, `-pos` is used to specify where to split the terminal window, it can be one of `"tab"`, `"curwin"`, `"top"`, `"bottom"`, `"left"`, `"right"` and `"external"`. And you can [customize new runners](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner) and pass runner's name to `-pos` option. |
 | `-rows=num` | 0 | When using a horizontal split terminal, this value represents the height of terminal window. |
 | `-cols=num` | 0 | When using a vertical split terminal, this value represents the width of terminal window. |
 | `-errorformat=?` | `unset` | errorformat for error matching, if it is unprovided, use current `&errorformat` value. Beware that `%` needs to be escaped into `\%`. |
@@ -292,7 +294,6 @@ Examples:
 
 When using a split (`-pos` is one of `top`, `bottom`, `left` and `right`), AsyncRun will firstly reuse a finished previous terminal window if it exists, if not, AsyncRun will create a new terminal window in given position.
 
-If it is not enough to fit your need, you can [customize runners](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner) as you like.
 
 ### Quickfix window
 
@@ -325,6 +326,19 @@ text between line 10-20 will be taken as the stdin of python. code in that range
 
 The visual selection (line-wise) will be taken as stdin.
 
+### Customize Runner
+
+You may want your command run in a tmux split or a new gnome-terminal window, for this reason, AsyncRun provides you [customize runners](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner).
+
+### Command Modifier
+
+You may want to modify your command, like add a `nice` prefix or add a pipe operation postfix, you can use [Command modifier](https://github.com/skywind3000/asyncrun.vim/wiki/Command-Modifier) for this.
+
+The builtin `-program=wsl` is implemented as a new modifier, it changes command `gcc` to:
+
+    c:\windows\sysnative\wsl.exe gcc
+
+And substitute any thing like `$(WSL_FILENAME)` and `$(WSL_FILEPATH)` in your command.
 
 ### Requirements
 
