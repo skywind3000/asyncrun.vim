@@ -308,17 +308,51 @@ The visual selection (line-wise) will be taken as stdin.
 
 ### Customize Runner
 
-You may want your command run in a tmux split or a new gnome-terminal window, for this reason, AsyncRun allows you [customize runners](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner).
+You may want your command run in a tmux split or a new gnome-terminal window, for this reason, AsyncRun allows you create new runners:
+
+```VimL
+function! s:my_runner(command)
+    echo "run: " . a:command
+endfunction
+
+let g:asyncrun_runner = get(g:, 'asyncrun_runner', {})
+let g:asyncrun_runner.test = { cmd -> s:my_runner(cmd) }
+```
+
+Then try:
+
+```VimL
+:AsyncRun -mode=term -pos=test ls -la $(VIM_FILEDIR)
+```
+
+When `-mode` is `term` and `-pos` can used to represent runner name.
 
 ### Command Modifier
 
-You may want to modify your command, like add a `nice` prefix or add a pipe operation postfix, you can use [Command modifier](https://github.com/skywind3000/asyncrun.vim/wiki/Command-Modifier) for this.
+Command modifiers can be used to change your command before running:
 
-The builtin `-program=wsl` is implemented as a new modifier, it changes command `gcc` to:
+```VimL
+let g:asyncrun_program = get(g:, 'asyncrun_program', {})
+let g:asyncrun_program.nice = { opts -> 'nice -5' . opts.cmd }
+```
 
-    c:\windows\sysnative\wsl.exe gcc
+When you are using:
 
-And substitute any thing like `$(WSL_FILENAME)` and `$(WSL_FILEPATH)` in your command.
+```VimL
+:AsyncRun -program=nice ls -la
+```
+
+The command `ls -la` will be changed into `nice -5 ls -la`.
+
+The `-program=msys`, `-program=wsl` are both implemented as a new command modifier it changes command `ls` into:
+
+```
+c:\windows\sysnative\wsl.exe ls
+```
+
+And replace any thing like `$(WSL_FILENAME)` and `$(WSL_FILEPATH)` in your command.
+
+
 
 ### Requirements
 
