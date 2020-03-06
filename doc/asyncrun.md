@@ -90,7 +90,7 @@ New option `-raw` will display the raw output (without matching to errorformat),
 
 ## Reformat multiline error
 
-Reformat output on completion
+Use this in your `vimrc`:
 
     augroup local-asyncrun
       au!
