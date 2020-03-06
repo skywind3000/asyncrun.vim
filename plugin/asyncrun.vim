@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/03/01 23:11
+" Last Modified: 2020/03/06 21:45
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -889,14 +889,10 @@ function! s:ScriptWrite(command, pause)
 	let command = a:command
 	if s:asyncrun_windows != 0
 		let lines = ["@echo off\r"]
-		try
-			let command = iconv(command, &encoding, g:asyncrun_encs)
-		catch /.*/
-		endtry
-		let lines += ['call ' . command . "\r"]
-		if a:pause != 0
-			let lines += ["pause\r"]
-		endif
+		let $VIM_COMMAND = a:command
+		let $VIM_PAUSE = (a:pause)? 'pause' : ''
+		let lines += ["call %VIM_COMMAND% \r"]
+		let lines += ["call %VIM_PAUSE% \r"]
 	else
 		let shell = (g:asyncrun_shell != '')? g:asyncrun_shell : (&shell)
 		let lines = ['#! ' . shell]
@@ -1729,7 +1725,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.5.3'
+	return '2.5.4'
 endfunc
 
 
