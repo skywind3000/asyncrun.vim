@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/03/06 21:45
+" Last Modified: 2020/03/07 05:57
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1114,6 +1114,7 @@ function! s:start_in_terminal(opts)
 			endif
 		endif
 	endfor
+	let focus = get(a:opts, 'focus', 1)
 	if pos == 'tab'
 		if get(a:opts, 'reuse', 0) == 0
 			exec "tab split"
@@ -1161,6 +1162,10 @@ function! s:start_in_terminal(opts)
 			if has_key(a:opts, 'hidden')
 				exec 'setlocal bufhidden=' . (hidden? 'hide' : '')
 			endif
+			if focus == 0
+				exec has('nvim')? 'stopinsert' : ''
+				exec 'tabprevious'
+			endif
 		endif
 		return 0
 	elseif pos == 'cur' || pos == 'curwin' || pos == 'current'
@@ -1186,7 +1191,6 @@ function! s:start_in_terminal(opts)
 	let uid = win_getid()
 	keepalt noautocmd windo call s:save_restore_view(0)
 	keepalt noautocmd call win_gotoid(uid)
-	let focus = get(a:opts, 'focus', 1)
 	let origin = win_getid()
 	if avail < 0
 		let rows = get(a:opts, 'rows', '')
@@ -1725,7 +1729,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.5.4'
+	return '2.5.5'
 endfunc
 
 
