@@ -35,36 +35,6 @@ Copy `asyncrun.vim` to your `~/.vim/plugin` or use Vundle to install it from `sk
 
 Remember to open vim's quickfix window by `:copen` (or setting  `g:asyncrun_open`) before invoking `AsyncRun`, otherwise, you will not see any output.
 
-# Contents
-
-<!-- TOC -->
-
-- [Tutorials](#tutorials)
-- [Reformat multiline error](#reformat-multiline-error)
-- [Manual](#manual)
-    - [AsyncRun - Run shell command](#asyncrun---run-shell-command)
-    - [AsyncStop - Stop the running job](#asyncstop---stop-the-running-job)
-    - [Function (API)](#function-api)
-    - [Settings](#settings)
-    - [Variables](#variables)
-    - [Autocmd](#autocmd)
-    - [Project Root](#project-root)
-    - [Running modes](#running-modes)
-    - [Internal Terminal](#internal-terminal)
-    - [Quickfix window](#quickfix-window)
-    - [Range support](#range-support)
-    - [Customize Runner](#customize-runner)
-    - [Command Modifier](#command-modifier)
-    - [Requirements](#requirements)
-    - [Cooperate with vim-fugitive:](#cooperate-with-vim-fugitive)
-- [Language Tips](#language-tips)
-- [More Topics](#more-topics)
-- [Cooperate with other Plugins](#cooperate-with-other-plugins)
-- [History](#history)
-- [Credits](#credits)
-
-<!-- /TOC -->
-
 ## Tutorials
 
 **Async run gcc to compile current file**
