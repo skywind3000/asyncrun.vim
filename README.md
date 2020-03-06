@@ -31,7 +31,7 @@ Copy `asyncrun.vim` to your `~/.vim/plugin` or use Vundle to install it from `sk
 
 # Example
 
-![](doc/screenshot.gif)
+![](https://skywind3000.github.io/images/p/asyncrun/screenshot.gif)
 
 Remember to open vim's quickfix window by `:copen` (or setting  `g:asyncrun_open`) before invoking `AsyncRun`, otherwise, you will not see any output.
 
@@ -352,7 +352,7 @@ Recommend to use Vim 8.0 or later.
 
 asyncrun.vim can cooperate with `vim-fugitive`, see [here](https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-famous-plugins#fugitive).
 
-![](https://raw.githubusercontent.com/skywind3000/asyncrun.vim/master/doc/cooperate_with_fugitive.gif)
+![](https://skywind3000.github.io/images/p/asyncrun/cooperate_with_fugitive.gif)
 
 
 ## Language Tips
