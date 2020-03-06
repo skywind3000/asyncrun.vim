@@ -284,8 +284,7 @@ There can be some options before your '[cmd]':
   current '&errorformat' value. Beware that '%' needs to be escaped into
   '\%'.
 
-- '-focus=?': set to '0' to prevent focus changing when working with a split
-  temrinal
+- '-focus=?': set to '0' to prevent focus changing when '-mode=term'.
 
 - '-hidden=?': set to '1' to setup 'bufhidden' to 'hide' for internal
   terminal
