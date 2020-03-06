@@ -40,6 +40,7 @@ Remember to open vim's quickfix window by `:copen` (or setting  `g:asyncrun_open
 <!-- TOC -->
 
 - [Tutorials](#tutorials)
+- [Reformat multiline error](#reformat-multiline-error)
 - [Manual](#manual)
     - [AsyncRun - Run shell command](#asyncrun---run-shell-command)
     - [AsyncStop - Stop the running job](#asyncstop---stop-the-running-job)
@@ -113,7 +114,11 @@ File name may contain spaces, therefore, it's safe to quote them.
 
 New option `-raw` will display the raw output (without matching to errorformat), you need the latest AsyncRun (after 1.3.13) to use this option. Remember to put `let $PYTHONUNBUFFERED=1` in your `.vimrc` to disable python stdout buffering, see [here](https://github.com/skywind3000/asyncrun.vim/wiki/FAQ#cant-see-the-realtime-output-when-running-a-python-script).
 
-**Reformat multiple line errorformat**
+**A good assistant to asyncrun**
+
+[asynctasks.vim](https://github.com/skywind3000/asynctasks.vim) a plugin built upon asyncrun, an easy way to use asyncrun. It allows you to manage your building, testing and deploying tasks in a global or project local configuration, and run them by their names.
+
+## Reformat multiline error
 
 Reformat output on completion ~
 
@@ -122,13 +127,7 @@ Reformat output on completion ~
       au User AsyncRunStop copen | wincmd p
     augroup END
 
-Vim may parse errorformat-multi-line incorrectly (using %A, %C, %Z) and omit
-or duplicate output. You can ask vim to re-parse quickfix content with
-copen. This autocmd will automatically re-parse quickfix on job completion.
-
-**A good assistant to asyncrun**
-
-[asynctasks.vim](https://github.com/skywind3000/asynctasks.vim) a plugin built upon asyncrun, an easy way to use asyncrun. It allows you to manage your building, testing and deploying tasks in a global or project local configuration, and run them by their names.
+Vim may parse errorformat-multi-line incorrectly (using %A, %C, %Z) and omit or duplicate output. You can ask vim to re-parse quickfix content with `copen`. This autocmd will automatically re-parse quickfix on job completion.
 
 ## Manual
 
