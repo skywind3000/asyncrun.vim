@@ -181,7 +181,7 @@ There can be some options before your `[cmd]`:
 | `-rows=num` | 0 | When using a horizontal split terminal, this value represents the height of terminal window. |
 | `-cols=num` | 0 | When using a vertical split terminal, this value represents the width of terminal window. |
 | `-errorformat=?` | `unset` | errorformat for error matching, if it is unprovided, use current `&errorformat` value. Beware that `%` needs to be escaped into `\%`. |
-| `-focus=?` | 1 | set to `0` to prevent focus changing when working with a split temrinal |
+| `-focus=?` | 1 | set to `0` to prevent focus changing when `-mode=term` |
 | `-hidden=?` | 0 | set to `1` to setup `bufhidden` to `hide` for internal terminal |
 | `-silent` | `unset` | provide `-silent` to prevent open quickfix window (will override `g:asyncrun_open` temporarily) |
 
@@ -422,6 +422,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 2.5.5 (2020-03-07): "-mode=term -pos=tab" obeys "-focus=0" now.
 - 2.5.3 (2020-03-02): new `-silent` option to prevent open quickfix, add [command modifier](https://github.com/skywind3000/asyncrun.vim/wiki/Command-Modifier).
 - 2.5.0 (2020-02-29): refactor, remove useless codes, new command modifier `g:asyncrun_program`.
 - 2.4.8 (2020-02-21): run with `:execute` if command is starting with colon.

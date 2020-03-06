@@ -161,7 +161,7 @@ There can be some options before your `[cmd]`:
 - `-rows=num`: When using a horizontal split terminal, this value represents the height of terminal window. 
 - `-cols=num`: When using a vertical split terminal, this value represents the width of terminal window. 
 - `-errorformat=?`: errorformat for error matching, if it is unprovided, use current `&errorformat` value. Beware that `%` needs to be escaped into `\%`. 
-- `-focus=?`: set to `0` to prevent focus changing when working with a split temrinal 
+- `-focus=?`: set to `0` to prevent focus changing when `-mode=term`.
 - `-hidden=?`: set to `1` to setup `bufhidden` to `hide` for internal terminal 
 - `-silent`: provide `-silent` to prevent open quickfix window (will override `g:asyncrun_open` temporarily) 
 
