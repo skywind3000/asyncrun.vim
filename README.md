@@ -50,6 +50,7 @@ Remember to open vim's quickfix window by `:copen` (or setting  `g:asyncrun_open
     - [Project Root](#project-root)
     - [Running modes](#running-modes)
     - [Internal Terminal](#internal-terminal)
+    - [Terminal Name](#terminal-name)
     - [Quickfix window](#quickfix-window)
     - [Range support](#range-support)
     - [Customize Runner](#customize-runner)
@@ -282,6 +283,7 @@ AsyncRun is capable to run commands in Vim/NeoVim's internal terminal with the `
 - `-pos=bottom`: open the terminal below the current window.
 - `-pos=left`: open the terminal on the left side.
 - `-pos=right`: open the terminal on the right side.
+- `-pos=hide`: don't open a window, run in background.
 - `-pos=external`: use an external terminal (windows only).
 
 Examples:
@@ -296,6 +298,15 @@ Examples:
 
 When using a split (`-pos` is one of `top`, `bottom`, `left` and `right`), AsyncRun will firstly reuse a finished previous terminal window if it exists, if not, AsyncRun will create a new terminal window in given position.
 
+### Terminal Name
+
+There can be many commands running in the internal terminal, you can specify a name for each of them and receive it in `g:asyncrun_name`:
+
+```VimL
+:AsyncRun -mode=term -pos=hide -name=123 -post=echo\ g:asyncrun_name  ls -la
+```
+
+When this process finished, script defined in `-post` will be executed and your command name will display by `echo`. Another variable `g:asyncrun_code` stores exit code.
 
 ### Quickfix window
 
@@ -422,6 +433,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 2.6.0 (2020-03-07): `-post` can be used in terminal mode.
 - 2.5.5 (2020-03-07): "-mode=term -pos=tab" obeys "-focus=0" now.
 - 2.5.3 (2020-03-02): new `-silent` option to prevent open quickfix, add [command modifier](https://github.com/skywind3000/asyncrun.vim/wiki/Command-Modifier).
 - 2.5.0 (2020-02-29): refactor, remove useless codes, new command modifier `g:asyncrun_program`.

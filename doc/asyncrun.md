@@ -260,6 +260,7 @@ AsyncRun is capable to run commands in Vim/NeoVim's internal terminal with the `
 - `-pos=bottom`: open the terminal below the current window.
 - `-pos=left`: open the terminal on the left side.
 - `-pos=right`: open the terminal on the right side.
+- `-pos=hide`: don't open a window, run in background.
 - `-pos=external`: use an external terminal (windows only).
 
 Examples:
@@ -273,6 +274,16 @@ Examples:
 ```
 
 When using a split (`-pos` is one of `top`, `bottom`, `left` and `right`), AsyncRun will firstly reuse a finished previous terminal window if it exists, if not, AsyncRun will create a new terminal window in given position.
+
+### Terminal Name
+
+There can be many commands running in the internal terminal, you can specify a name for each of them and receive it in `g:asyncrun_name`:
+
+```VimL
+:AsyncRun -mode=term -pos=hide -name=123 -post=echo\ g:asyncrun_name  ls -la
+```
+
+When this process finished, script defined in `-post` will be executed and your command name will display by `echo`. Another variable `g:asyncrun_code` stores exit code.
 
 
 ### Quickfix window
@@ -396,75 +407,6 @@ Don't forget to read the [Frequently Asked Questions](https://github.com/skywind
 
 
 See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-famous-plugins)
-
-## History
-
-- 2.5.3 (2020-03-02): new `-silent` option to prevent open quickfix, add [command modifier](https://github.com/skywind3000/asyncrun.vim/wiki/Command-Modifier).
-- 2.5.0 (2020-02-29): refactor, remove useless codes, new command modifier `g:asyncrun_program`.
-- 2.4.8 (2020-02-21): run with `:execute` if command is starting with colon.
-- 2.4.7 (2020-02-21): new customizable runners by `g:asyncrun_runner`, see [customize runner](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner).
-- 2.4.0 (2020-02-10): fixed internal terminal issue in msys.
-- 2.3.0 (2020-02-10): new mode aliases, minor issue fix.
-- 2.2.9 (2020-02-10): new terminal mode options: `-safe=1`, `-listed=0` and `-reuse`.
-- 2.2.6 (2020-02-06): new: parameter `-hidden` when using `-mode=term` to set `bufhidden` to `hidden`.
-- 2.2.5 (2020-02-05): more safe to start a terminal.
-- 2.2.4 (2020-02-05): exit when starting terminal failed in current window with `-pos=curwin`.
-- 2.2.3 (2020-02-05): new `-program=wsl` to run command in wsl (windows 10 only).
-- 2.2.2 (2020-02-05): new `-pos=curwin` to open terminal in current window.
-- 2.2.1 (2020-01-20): set noreletivenumber for terminal window.
-- 2.2.0 (2020-01-18): new `-focus=0` option for `-mode=term` to prevent focus change.
-- 2.1.9 (2020-01-12): polish `-mode=term`, omit `number` and `signcolunm` in terminal.
-- 2.1.8 (2020-01-11): new options `errorformat` in `asyncrun#run(...)`.
-- 2.1.4 (2020-01-09): correct command encoding on windows and fixed minor issues.
-- 2.1.0 (2020-01-09): new mode `-mode=term` to run command in a reusable terminal window.
-- 2.0.8 (2019-04-28): handle `tcd` (introduced in 8.1.1218). use grepformat when `-program=grep`.
-- 2.0.7 (2019-01-27): restore `g:asyncrun_stdin` because rg will break if stdin is pipe.
-- 2.0.6 (2019-01-26): more adaptive to handle stdin and remove 'g:asyncrun_stdin'
-- 2.0.5 (2019-01-14): enable stdin by default on windows (fix cmake stdin warning on windows).
-- 2.0.4 (2019-01-13): new option `g:asyncrun_stdin`, set to 1 to enable stdin .
-- 2.0.3 (2019-01-04): new macro `$VIM_PATHNOEXT` (by @PietroPate)
-- 2.0.2 (2018-12-25): new `-strip` and `-append` option to control quickfix (by @bennyyip)
-- 2.0.1 (2018-04-29): new option `g:asyncrun_save` to save files.
-- 2.0.0 (2018-04-27): improve neovim compatability, handle `tcd` command in neovim.
-- 1.3.27 (2018-04-17): AsyncRun now supports range, try: `:%AsyncRun cat`
-- 1.3.26 (2018-04-16): new option `g:asyncrun_wrapper` to enable setup a command prefix
-- 1.3.25 (2018-04-16): handle makeprg/grepprg correctly, accept `%` and `$*` macros. close [#96](https://github.com/skywind3000/asyncrun.vim/issues/96) [#84](https://github.com/skywind3000/asyncrun.vim/issues/84) and [#35](https://github.com/skywind3000/asyncrun.vim/issues/35)
-- 1.3.24 (2018-04-13): remove trailing ^M on windows.
-- 1.3.23 (2018-04-03): back compatible to vim 7.3, can fall back to mode 1 in old vim.
-- 1.3.22 (2018-03-11): new option `g:asyncrun_open` to open quickfix window automatically at given height.
-- 1.3.21 (2018-03-02): fixed: float point reltime issues
-- 1.3.20 (2018-02-08): fixed: [Incorrect background job status](https://github.com/skywind3000/asyncrun.vim/issues/25) (@antoinemadec)
-- 1.3.19 (2017-12-13): new option `g:asyncrun_skip` to skip specific autocmd.
-- 1.3.18 (2017-12-12): fixed: windo breaks commands (especially in neovim).
-- 1.3.17 (2017-08-06): fixed: process hang when mode is 5.
-- 1.3.16 (2017-08-05): fixed: g:asyncrun_mode issue (Joel Taylor)
-- 1.3.15 (2017-07-30): fixed: remove trailing new line in neovim.
-- 1.3.14 (2017-07-27): improve asyncrun#get_root(), allow user indicate the rootmarkers
-- 1.3.13 (2017-07-12): new option (-raw) to use raw output (not match with the errorformat).
-- 1.3.12 (2017-06-25): new macro `<root>` or $(VIM_ROOT) to indicate project root directory.
-- 1.3.11 (2017-05-19): new option (-save=2) to save all modified files.
-- 1.3.10 (2017-05-04): remove trailing `^M` in NeoVim 2.0 on windows 
-- 1.3.9 (2016-12-23): minor bugs fixed, improve performance and compatibility.
-- 1.3.8 (2016-11-17): new autocmd AsyncRunPre/AsyncRunStart/AsyncRunStop, fixed cmd line window conflict. 
-- 1.3.7 (2016-11-13): new option 'g:asyncrun_timer' to prevent gui freeze by massive output.
-- 1.3.6 (2016-11-08): improve performance in quickfix_toggle, fixed small issue in bell ringing.
-- 1.3.5 (2016-11-02): new option "g:asyncrun_auto" to trigger QuickFixCmdPre/QuickFixCmdPost.
-- 1.3.4 (2016-10-28): new option "g:asyncrun_local" to use local value of errorformat rather the global value. 
-- 1.3.3 (2016-10-21): prevent job who reads stdin from getting hanging, fixed an issue in fast exiting jobs.
-- 1.3.2 (2016-10-19): new "-post" option to run a vimscript after the job finished
-- 1.3.1 (2016-10-18): fixed few issues of arguments passing in different modes
-- 1.3.0 (2016-10-17): add support to neovim, better CJK characters handling.
-- 1.2.0 (2016-10-16): refactor, correct arguments parsing, cmd options and &makeprg supports
-- 1.1.1 (2016-10-13): use the vim native &shell and &shellcmdflag config to execute commands.
-- 1.1.0 (2016-10-12): quickfix window scroll only if cursor is on the last line
-- 1.0.3 (2016-10-10): reduce quickfix output latency.
-- 1.0.2 (2016-10-09): fixed an issue in replacing macros in parameters.
-- 1.0.1 (2016-10-07): Add a convenient way to toggle quickfix window (asyncrun#quickfix_toggle)
-- 1.0.0 (2016-09-21): can fall back to sync mode to compatible older vim versions.
-- 0.0.3 (2016-09-15): new arguments now accept environment variables wrapped by $(...)
-- 0.0.2 (2016-09-12): some improvements and more documents for a tiny tutorial.
-- 0.0.1 (2016-09-08): improve arguments parsing
-- 0.0.0 (2016-08-24): initial version
 
 ## Credits
 

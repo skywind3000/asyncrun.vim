@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/03/07 05:57
+" Last Modified: 2020/03/07 11:48
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -195,6 +195,9 @@ let g:asyncrun_script = get(g:, 'asyncrun_script', '')
 " strict to execute vim script
 let g:asyncrun_strict = get(g:, 'asyncrun_strict', 0)
 
+" terminal job name
+let g:asyncrun_name = ''
+
 
 
 "----------------------------------------------------------------------
@@ -303,6 +306,7 @@ let s:async_quick = 0
 let s:async_scroll = 0
 let s:async_congest = 0
 let s:async_efm = &errorformat
+let s:async_term = {}
 
 " check :cbottom available ?
 if s:async_nvim == 0
@@ -1072,27 +1076,141 @@ endfunc
 
 
 "----------------------------------------------------------------------
-" run in a terminal
+" open terminal in current window
 "----------------------------------------------------------------------
-function! s:start_in_terminal(opts)
+function! s:terminal_open(opts)
 	let command = a:opts.cmd
-	let pos = get(a:opts, 'pos', 'bottom')
 	let hidden = get(a:opts, 'hidden', 0)
-	if has('patch-8.1.1') == 0 && has('nvim-0.3') == 0
-		call s:ErrorMsg("Terminal is not available in this vim")
-		return -1
-	endif
-	if has('nvim') == 0 && (has('patch-8.1.2255') || v:version >= 802)
-		let shell = '++shell'
-	else
-		let shell = ''
-	endif
+	let shell = (has('nvim') == 0)? 1 : 0
+	let pos = get(a:opts, 'pos', 'bottom')
+	let pos = (pos == 'background')? 'hide' : pos
 	if get(a:opts, 'safe', get(g:, 'asyncrun_term_safe', 0)) != 0
-		let command = s:ScriptWrite(a:opts.cmd, 0)
+		let command = s:ScriptWrite(command, 0)
 		if stridx(command, ' ') >= 0
 			let command = shellescape(command)
 		endif
-		let shell = ''
+		let shell = 0
+	endif
+	if shell
+		if s:asyncrun_windows != 0
+			let exe = ($ComSpec == '')? 'cmd.exe' : $ComSpec
+			let command = exe . ' /C ' . command
+		else
+			if g:asyncrun_shell != ''
+				let shell = g:asyncrun_shell . ' ' . g:asyncrun_shellflag
+			else
+				let shell = &shell . ' ' . &shellcmdflag
+			endif
+			let command = shell . ' ' . shellescape(command)
+		endif
+	endif
+	if has('nvim') == 0
+		if pos != 'hide'
+			let opts = {'curwin':1, 'norestore':1, 'term_finish':'open'}
+			let opts.term_kill = 'term'
+			let opts.exit_cb = function('s:terminal_exit')
+			try
+				let bid = term_start(command, opts)
+			catch /^.*/
+				call s:ErrorMsg('E37: No write since last change')
+				return -1
+			endtry
+			let jid = (bid > 0)? term_getjob(bid) : -1
+			let success = (bid > 0)? 1 : 0
+		else
+			let opts = {'stoponexit':'term'}
+			let opts.exit_cb = function('s:terminal_exit')
+			let jid = job_start(command, opts)
+			let bid = -1
+			let success = (job_status(jid) != 'fail')? 1 : 0
+		endif
+		let pid = (success)? (job_info(jid)['process']) : -1
+	else
+		let opts = {}
+		let opts.on_exit = function('s:terminal_exit')
+		if pos != 'hide'
+			try
+				enew
+			catch /^.*/
+				call s:ErrorMsg('E37: No write since last change')
+				return -1
+			endtry
+			let jid = termopen(command, opts)
+			let bid = (&bt == 'terminal')? winbufnr(0) : -1
+		else
+			let jid = jobstart(command, opts)
+			let jid = (jid > 0)? jid : -1
+			let bid = -1
+		endif
+		let success = (jid > 0)? 1 : 0
+		let pid = (success)? jid : -1
+	endif
+	if success == 0
+		call s:ErrorMsg('Process creation failed')
+		return -1
+	endif
+	if pos != 'hide'
+		setlocal nonumber signcolumn=no norelativenumber
+		let b:asyncrun_cmd = a:opts.cmd
+		let b:asyncrun_name = get(a:opts, 'name', '')
+		if get(a:opts, 'listed', 1) == 0
+			setlocal nobuflisted
+		endif
+		exec has('nvim')? 'startinsert' : ''
+		if has_key(a:opts, 'hidden')
+			exec 'setlocal bufhidden=' . (hidden? 'hide' : '')
+		endif
+	endif
+	let opts = {}
+	let opts.name = get(a:opts, 'name', '')
+	let opts.post = get(a:opts, 'post', '')
+	let opts.cmd = get(a:opts, 'cmd', '')
+	if has_key(a:opts, 'exit')
+		let opts.exit = a:opts.exit
+	endif
+	let opts.pid = pid
+	let opts.jid = jid
+	let opts.bid = bid
+	let s:async_term[pid] = opts
+	return pid
+endfunc
+
+
+"----------------------------------------------------------------------
+" exit callback
+"----------------------------------------------------------------------
+function! s:terminal_exit(...)
+	if has('nvim') == 0
+		let pid = job_info(a:1)['process']
+	else
+		let pid = a:1
+	endif
+	let code = a:2
+	if !has_key(s:async_term, pid)
+		return -1
+	endif
+	let opts = s:async_term[pid]
+	unlet s:async_term[pid]
+	let g:asyncrun_code = code
+	let g:asyncrun_name = opts.name
+	if opts.post != ''
+		exec opts.post
+	endif
+	if has_key(opts, 'exit')
+		let F = function(opts.exit)
+		call F(opts.name, code)
+	endif
+endfunc
+
+
+"----------------------------------------------------------------------
+" run in a terminal
+"----------------------------------------------------------------------
+function! s:start_in_terminal(opts)
+	let pos = get(a:opts, 'pos', 'bottom')
+	if has('patch-8.1.1') == 0 && has('nvim-0.3') == 0
+		call s:ErrorMsg("Terminal is not available in this vim")
+		return -1
 	endif
 	let avail = -1
 	for ii in range(winnr('$'))
@@ -1146,22 +1264,8 @@ function! s:start_in_terminal(opts)
 				exec 'tabn ' . avail
 			endif
 		endif
-		if has('nvim') == 0
-			let cmd = 'tab term ++noclose ++norestore ++curwin'
-			exec cmd . ' ' . shell . ' ++kill=term ' . command
-		else
-			exec 'term '. command
-		endif
-		if &bt == 'terminal'
-			setlocal nonumber signcolumn=no norelativenumber
-			let b:asyncrun_cmd = a:opts.cmd
-			if get(a:opts, 'listed', 1) == 0
-				setlocal nobuflisted
-			endif
-			exec has('nvim')? 'startinsert' : ''
-			if has_key(a:opts, 'hidden')
-				exec 'setlocal bufhidden=' . (hidden? 'hide' : '')
-			endif
+		let hr = s:terminal_open(a:opts)
+		if hr >= 0
 			if focus == 0
 				exec has('nvim')? 'stopinsert' : ''
 				exec 'tabprevious'
@@ -1169,23 +1273,10 @@ function! s:start_in_terminal(opts)
 		endif
 		return 0
 	elseif pos == 'cur' || pos == 'curwin' || pos == 'current'
-		if has('nvim') == 0
-			let cmd = 'term ++noclose ++norestore ++curwin'
-			exec cmd . ' ' . shell . ' ++kill=term ' . command
-		else
-			exec 'term '. command
-		endif
-		if &bt == 'terminal'
-			setlocal nonumber signcolumn=no norelativenumber
-			let b:asyncrun_cmd = a:opts.cmd
-			if get(a:opts, 'listed', 1) == 0
-				setlocal nobuflisted
-			endif
-			exec has('nvim')? 'startinsert' : ''
-			if has_key(a:opts, 'hidden')
-				exec 'setlocal bufhidden=' . (hidden? 'hide' : '')
-			endif
-		endif
+		let hr = s:terminal_open(a:opts)
+		return 0
+	elseif pos == 'hide' || pos == 'background'
+		let hr = s:terminal_open(a:opts)
 		return 0
 	endif
 	let uid = win_getid()
@@ -1215,24 +1306,8 @@ function! s:start_in_terminal(opts)
 	keepalt noautocmd windo call s:save_restore_view(1)
 	keepalt noautocmd call win_gotoid(origin)
 	noautocmd call win_gotoid(uid)
-	if has('nvim') == 0
-		let cmd = 'term ++noclose ++norestore ++curwin '
-		exec cmd . ' ' . shell . ' ++kill=term ' . command
-	else
-		exec 'term '. command
-	endif
-	if &bt == 'terminal'
-		setlocal nonumber signcolumn=no norelativenumber
-		let b:asyncrun_cmd = a:opts.cmd
-		if get(a:opts, 'listed', 1) == 0
-			setlocal nobuflisted
-		endif
-		exec has('nvim')? 'startinsert' : ''
-		if has_key(a:opts, 'hidden')
-			exec 'setlocal bufhidden=' . (hidden? 'hide' : '')
-		endif
-	endif
-	if focus == 0 && &bt == 'terminal'
+	let hr = s:terminal_open(a:opts)
+	if focus == 0 && hr >= 0
 		exec has('nvim')? 'stopinsert' : ''
 		call win_gotoid(origin)
 	endif
@@ -1729,7 +1804,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.5.5'
+	return '2.6.0'
 endfunc
 
 
