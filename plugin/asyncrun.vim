@@ -1096,12 +1096,16 @@ function! s:terminal_open(opts)
 			let exe = ($ComSpec == '')? 'cmd.exe' : $ComSpec
 			let command = exe . ' /C ' . command
 		else
+			let args = []
 			if g:asyncrun_shell != ''
-				let shell = g:asyncrun_shell . ' ' . g:asyncrun_shellflag
+				let args += split(g:asyncrun_shell)
+				let args += split(g:asyncrun_shellflag)
 			else
-				let shell = &shell . ' ' . &shellcmdflag
+				let args += split(&shell)
+				let args += split(&shellcmdflag)
 			endif
-			let command = shell . ' ' . shellescape(command)
+			let args += [command]
+			let command = args
 		endif
 	endif
 	if has('nvim') == 0
