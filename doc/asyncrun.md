@@ -322,12 +322,12 @@ The visual selection (line-wise) will be taken as stdin.
 You may want your command run in a tmux split or a new gnome-terminal window, for this reason, AsyncRun allows you create new runners:
 
 ```VimL
-function! s:my_runner(command)
-    echo "run: " . a:command
+function! MyRunner(opts)
+    echo "run: " . a:opts.cmd
 endfunction
 
 let g:asyncrun_runner = get(g:, 'asyncrun_runner', {})
-let g:asyncrun_runner.test = { cmd -> s:my_runner(cmd) }
+let g:asyncrun_runner.test = function('MyRunner')
 ```
 
 Then try:

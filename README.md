@@ -344,12 +344,12 @@ The visual selection (line-wise) will be taken as stdin.
 You may want your command run in a tmux split or a new gnome-terminal window, for this reason, AsyncRun allows you create new runners:
 
 ```VimL
-function! s:my_runner(command)
-    echo "run: " . a:command
+function! MyRunner(opts)
+    echo "run: " . a:opts.cmd
 endfunction
 
 let g:asyncrun_runner = get(g:, 'asyncrun_runner', {})
-let g:asyncrun_runner.test = { cmd -> s:my_runner(cmd) }
+let g:asyncrun_runner.test = function('MyRunner')
 ```
 
 Then try:
@@ -433,6 +433,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 ## History
 
+- 2.6.2 (2020-03-08): change runner's argument from string to dict.
 - 2.6.0 (2020-03-07): `-post` can be used in terminal mode.
 - 2.5.5 (2020-03-07): "-mode=term -pos=tab" obeys "-focus=0" now.
 - 2.5.3 (2020-03-02): new `-silent` option to prevent open quickfix, add [command modifier](https://github.com/skywind3000/asyncrun.vim/wiki/Command-Modifier).

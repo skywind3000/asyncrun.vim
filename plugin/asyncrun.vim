@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/03/07 13:00
+" Last Modified: 2020/03/08 09:38
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1406,6 +1406,9 @@ function! s:run(opts)
 				return ''
 			endif
 			let F = g:asyncrun_program[name]
+			if type(F) == type('')
+				let F = function(F)
+			endif
 			unsilent let l:command = F(l:opts)
 		endif
 		if l:command == ''
@@ -1464,7 +1467,13 @@ function! s:run(opts)
 		return ''
 	elseif l:runner != ''
 		let F = g:asyncrun_runner[l:runner]
-		call F(l:command)
+		if type(F) == type('')
+			let F = function(F)
+		endif
+		let obj = deepcopy(l:opts)
+		let obj.cmd = command
+		let obj.src = a:opts.cmd
+		call F(obj)
 		return ''
 	endif
 
@@ -1694,6 +1703,9 @@ function! asyncrun#run(bang, opts, args, ...)
 		return s:async_program_cmd
 	endif
 
+	" update marcros
+	let l:macros['VIM_RUNNAME'] = get(l:opts, 'name', '')
+
 	" update info (current running command text)
 	let g:asyncrun_info = a:args
 
@@ -1809,7 +1821,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.6.1'
+	return '2.6.2'
 endfunc
 
 
