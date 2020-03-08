@@ -173,12 +173,12 @@ There can be some options before your `[cmd]`:
 | `-mode=?` | "async" | specify how to run the command as `-mode=?`, available modes are `"async"` (default), `"bang"` (with `!` command) and `"terminal"` (in internal terminal), see [running modes](#running-modes) for details. |
 | `-cwd=?` | `unset` | initial directory (use current directory if unset), for example use `-cwd=<root>` to run commands in [project root directory](#project-root), or `-cwd=$(VIM_FILEDIR)` to run commands in current buffer's parent directory. |
 | `-save=?` | 0 | use `-save=1` to save current file, `-save=2` to save all modified files before executing. |
-| `-program=?` | `unset` | set to `make` to use `&makeprg`, `grep` to use `&grepprt` and `wsl` to execute commands in WSL (windows 10), see [command modifiers](https://github.com/skywind3000/asyncrun.vim/wiki/Command-Modifier). |
+| `-program=?` | `unset` | set to `make` to use `&makeprg`, `grep` to use `&grepprt` and `wsl` to execute commands in WSL (windows 10), see [command modifiers](#command-modifier). |
 | `-post=?` | `unset` | vimscript to exec after job finished, spaces **must** be escaped to '\ ' |
 | `-auto=?` | `unset` | event name to trigger `QuickFixCmdPre`/`QuickFixCmdPost` [name] autocmd. |
 | `-raw` | `unset` | use raw output if provided, and `&errorformat` will be ignored. |
 | `-strip` | `unset` | remove the heading/trailing messages if provided (omit command and "[Finished in ...]" message). |
-| `-pos=?` | "bottom" | When using internal terminal with `-mode=term`, `-pos` is used to specify where to split the terminal window, it can be one of `"tab"`, `"curwin"`, `"top"`, `"bottom"`, `"left"`, `"right"` and `"external"`. And you can [customize new runners](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner) and pass runner's name to `-pos` option. |
+| `-pos=?` | "bottom" | When using internal terminal with `-mode=term`, `-pos` is used to specify where to split the terminal window, it can be one of `"tab"`, `"curwin"`, `"top"`, `"bottom"`, `"left"`, `"right"` and `"external"`. And you can [customize new runners](#customize-runner) and pass runner's name to `-pos` option. |
 | `-rows=num` | 0 | When using a horizontal split terminal, this value represents the height of terminal window. |
 | `-cols=num` | 0 | When using a vertical split terminal, this value represents the width of terminal window. |
 | `-errorformat=?` | `unset` | errorformat for error matching, if it is unprovided, use current `&errorformat` value. Beware that `%` needs to be escaped into `\%`. |
@@ -186,7 +186,7 @@ There can be some options before your `[cmd]`:
 | `-hidden=?` | 0 | set to `1` to setup `bufhidden` to `hide` for internal terminal |
 | `-silent` | `unset` | provide `-silent` to prevent open quickfix window (will override `g:asyncrun_open` temporarily) |
 
-All options must start with a minus and position **before** `[cmd]`. Since no shell command  string starts with a minus. So they can be distinguished from shell command easily without any ambiguity. 
+All options must start with a minus and position **before** `[cmd]`. Since no shell command string starts with a minus. So they can be distinguished from shell command easily without any ambiguity. 
 
 Don't worry if you do have a shell command starting with '-', Just put a placeholder `@` before your command to tell asyncrun explicitly: "stop parsing options now, the following string is all my command".
 

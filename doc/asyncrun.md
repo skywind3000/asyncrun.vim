@@ -152,12 +152,12 @@ There can be some options before your `[cmd]`:
 - `-mode=?`: specify how to run the command as `-mode=?`, available modes are `"async"` (default), `"bang"` (with `!` command) and `"terminal"` (in internal terminal), see [running modes](#running-modes) for details. 
 - `-cwd=?`: initial directory (use current directory if unset), for example use `-cwd=<root>` to run commands in [project root directory](#project-root), or `-cwd=$(VIM_FILEDIR)` to run commands in current buffer's parent directory. 
 - `-save=?`: use `-save=1` to save current file, `-save=2` to save all modified files before executing. 
-- `-program=?`: set to `make` to use `&makeprg`, `grep` to use `&grepprt` and `wsl` to execute commands in WSL (windows 10), see [command modifiers](https://github.com/skywind3000/asyncrun.vim/wiki/Command-Modifier). 
+- `-program=?`: set to `make` to use `&makeprg`, `grep` to use `&grepprt` and `wsl` to execute commands in WSL (windows 10), see [command modifiers](#command-modifier). 
 - `-post=?`: vimscript to exec after job finished, spaces **must** be escaped to '\ ' 
 - `-auto=?`: event name to trigger `QuickFixCmdPre`/`QuickFixCmdPost` [name] autocmd. 
 - `-raw`: use raw output if provided, and `&errorformat` will be ignored. 
 - `-strip`: remove the heading/trailing messages if provided (omit command and "[Finished in ...]" message). 
-- `-pos=?`: When using internal terminal with `-mode=term`, `-pos` is used to specify where to split the terminal window, it can be one of `"tab"`, `"curwin"`, `"top"`, `"bottom"`, `"left"`, `"right"` and `"external"`. And you can [customize new runners](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner) and pass runner's name to `-pos` option. 
+- `-pos=?`: When using internal terminal with `-mode=term`, `-pos` is used to specify where to split the terminal window, it can be one of `"tab"`, `"curwin"`, `"top"`, `"bottom"`, `"left"`, `"right"` and `"external"`. And you can [customize new runners](#customize-runner) and pass runner's name to `-pos` option. 
 - `-rows=num`: When using a horizontal split terminal, this value represents the height of terminal window. 
 - `-cols=num`: When using a vertical split terminal, this value represents the width of terminal window. 
 - `-errorformat=?`: errorformat for error matching, if it is unprovided, use current `&errorformat` value. Beware that `%` needs to be escaped into `\%`. 
