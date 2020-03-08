@@ -256,7 +256,7 @@ There can be some options before your '[cmd]':
   modified files before executing.
 
 - '-program=?': set to 'make' to use '&makeprg', 'grep' to use '&grepprt' and
-  'wsl' to execute commands in WSL (windows 10), see command modifiers [6].
+  'wsl' to execute commands in WSL (windows 10), see command modifiers.
 
 - '-post=?': vimscript to exec after job finished, spaces **must** be escaped
   to '\ '
@@ -272,7 +272,7 @@ There can be some options before your '[cmd]':
 - '-pos=?': When using internal terminal with '-mode=term', '-pos' is used to
   specify where to split the terminal window, it can be one of '"tab"',
   '"curwin"', '"top"', '"bottom"', '"left"', '"right"' and '"external"'. And
-  you can customize new runners [7] and pass runner's name to '-pos' option.
+  you can customize new runners and pass runner's name to '-pos' option.
 
 - '-rows=num': When using a horizontal split terminal, this value represents
   the height of terminal window.
@@ -329,12 +329,12 @@ Settings ~
 
 - g:asyncrun_exit - script will be executed after finished.
 - g:asyncrun_bell - non-zero to ring a bell after finished.
-- g:asyncrun_mode - specify how to run your command, see here [8].
+- g:asyncrun_mode - specify how to run your command, see here [6].
 - g:asyncrun_encs - set shell encoding if it's different from '&encoding',
-  see encoding [9].
+  see encoding [7].
 - g:asyncrun_trim - non-zero to trim the empty lines in the quickfix window.
 - g:asyncrun_auto - event name to trigger QuickFixCmdPre/QuickFixCmdPost, see
-  FAQ [10].
+  FAQ [8].
 - g:asyncrun_open - above zero to open quickfix window at given height after
   command starts.
 - g:asyncrun_save - non-zero to save current(1) or all(2) modified buffer(s)
@@ -344,7 +344,7 @@ Settings ~
 - g:asyncrun_wrapper - enable to setup a command prefix.
 - g:asyncrun_stdin - non-zero to enable stdin (useful for cmake on windows).
 
-For more information of above options, please visit **option details [11]**.
+For more information of above options, please visit **option details [9]**.
 
 -------------------------------------------------------------------------------
                                                            *asyncrun-variables*
@@ -406,7 +406,7 @@ command:
 - 'bang': same as '!'
 - 'term': open a reusable internal terminal window and run your command
 
-For more information, please see here [8].
+For more information, please see here [6].
 
 -------------------------------------------------------------------------------
                                                    *asyncrun-internal-terminal*
@@ -492,18 +492,21 @@ Customize Runner ~
 You may want your command run in a tmux split or a new gnome-terminal window,
 for this reason, AsyncRun allows you create new runners:
 >
-  function! s:my_runner(command)
-      echo "run: " . a:command
+  function! MyRunner(opts)
+      echo "command to run is: " . a:opts.cmd
   endfunction
   
   let g:asyncrun_runner = get(g:, 'asyncrun_runner', {})
-  let g:asyncrun_runner.test = { cmd -> s:my_runner(cmd) }
+  let g:asyncrun_runner.test = function('MyRunner')
 <
 Then try:
 >
   :AsyncRun -mode=term -pos=test ls -la $(VIM_FILEDIR)
 <
 When '-mode' is 'term' and '-pos' can used to represent runner name.
+
+Runner function has only one argument: 'opts', it contains the options
+extracted from ':AsyncRun' command line, and 'opts.cmd' stores current command.
 
 -------------------------------------------------------------------------------
                                                     *asyncrun-command-modifier*
@@ -542,52 +545,52 @@ Recommend to use Vim 8.0 or later.
                                          *asyncrun-cooperate-with-vim-fugitive*
 Cooperate with vim-fugitive: ~
 
-asyncrun.vim can cooperate with 'vim-fugitive', see here [12].
+asyncrun.vim can cooperate with 'vim-fugitive', see here [10].
 
-  Image: (see reference [13])
+  Image: (see reference [11])
 
 -------------------------------------------------------------------------------
                                                        *asyncrun-language-tips*
 Language Tips ~
 
-- Better way for C/C++ developing with AsyncRun [14]
+- Better way for C/C++ developing with AsyncRun [12]
 
 -------------------------------------------------------------------------------
                                                          *asyncrun-more-topics*
 More Topics ~
 
-- Additional examples (background ctags updating, pdf conversion, ...) [15]
-- Notify user job finished by playing a sound [16]
-- View progress in status line or vim airline [17]
-- Best practice with quickfix window [18]
-- Scroll the quickfix window only if the cursor is on the last line [19]
-- Replace old ':make' command with asyncrun [20]
-- Quickfix encoding problem when using Chinese or Japanese [9]
-- Example for updating and adding cscope files [21]
+- Additional examples (background ctags updating, pdf conversion, ...) [13]
+- Notify user job finished by playing a sound [14]
+- View progress in status line or vim airline [15]
+- Best practice with quickfix window [16]
+- Scroll the quickfix window only if the cursor is on the last line [17]
+- Replace old ':make' command with asyncrun [18]
+- Quickfix encoding problem when using Chinese or Japanese [7]
+- Example for updating and adding cscope files [19]
 - The project root directory of the current file [5]
-- Specify how to run your command [8]
+- Specify how to run your command [6]
 
-Don't forget to read the Frequently Asked Questions [22].
+Don't forget to read the Frequently Asked Questions [20].
 
 -------------------------------------------------------------------------------
                                         *asyncrun-cooperate-with-other-plugins*
 Cooperate with other Plugins ~
 
-- vim-fugitive [12]: perfect cooperation, asyncrun gets Gfetch/Gpush running
+- vim-fugitive [10]: perfect cooperation, asyncrun gets Gfetch/Gpush running
   in background
 
-- errormarker [23]: perfect cooperation, errormarker will display the signs
+- errormarker [21]: perfect cooperation, errormarker will display the signs
   on the error or warning lines
 
-- airline [24]: very well, airline will display status of background jobs
+- airline [22]: very well, airline will display status of background jobs
 
-- sprint [25]: nice plugin who uses asyncrun to provide an IDE's run button
+- sprint [23]: nice plugin who uses asyncrun to provide an IDE's run button
   to runs your code
 
-- netrw [26]: netrw can save remote files on background now. Experimental,
+- netrw [24]: netrw can save remote files on background now. Experimental,
   take your own risk
 
-See: Cooperate with famous plugins [23]
+See: Cooperate with famous plugins [21]
 
 -------------------------------------------------------------------------------
                                                              *asyncrun-credits*
@@ -608,26 +611,24 @@ References ~
 [3] doc/screenshot.gif
 [4] https://github.com/skywind3000/asyncrun.vim/wiki/FAQ#cant-see-the-realtime-output-when-running-a-python-script
 [5] https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root
-[6] https://github.com/skywind3000/asyncrun.vim/wiki/Command-Modifier
-[7] https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner
-[8] https://github.com/skywind3000/asyncrun.vim/wiki/Specify-how-to-run-your-command
-[9] https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-encoding-problem-when-using-Chinese-or-Japanese
-[10] https://github.com/skywind3000/asyncrun.vim/wiki/FAQ#can-asyncrunvim-trigger-an-autocommand-quickfixcmdpost-to-get-some-plugin-like-errormaker-processing-the-content-in-quickfix-
-[11] https://github.com/skywind3000/asyncrun.vim/wiki/Options
-[12] https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-famous-plugins#fugitive
-[13] https://raw.githubusercontent.com/skywind3000/asyncrun.vim/master/doc/cooperate_with_fugitive.gif
-[14] https://github.com/skywind3000/asyncrun.vim/wiki/Better-way-for-C-and-Cpp-development-in-Vim-8
-[15] https://github.com/skywind3000/asyncrun.vim/wiki/Additional-Examples
-[16] https://github.com/skywind3000/asyncrun.vim/wiki/Playing-Sound
-[17] https://github.com/skywind3000/asyncrun.vim/wiki/Display-Progress-in-Status-Line-or-Airline
-[18] https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-Best-Practice
-[19] https://github.com/skywind3000/asyncrun.vim/wiki/Scroll-the-quickfix-window-only-if-cursor-is-on-the-last-line
-[20] https://github.com/skywind3000/asyncrun.vim/wiki/Replace-old-make-command-with-AsyncRun
-[21] https://github.com/skywind3000/asyncrun.vim/wiki/Example-for-updating-and-adding-cscope
-[22] https://github.com/skywind3000/asyncrun.vim/wiki/FAQ
-[23] https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-famous-plugins
-[24] https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-famous-plugins#vim-airline
-[25] https://github.com/pedsm/sprint
-[26] https://github.com/skywind3000/asyncrun.vim/wiki/Get-netrw-using-asyncrun-to-save-remote-files
+[6] https://github.com/skywind3000/asyncrun.vim/wiki/Specify-how-to-run-your-command
+[7] https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-encoding-problem-when-using-Chinese-or-Japanese
+[8] https://github.com/skywind3000/asyncrun.vim/wiki/FAQ#can-asyncrunvim-trigger-an-autocommand-quickfixcmdpost-to-get-some-plugin-like-errormaker-processing-the-content-in-quickfix-
+[9] https://github.com/skywind3000/asyncrun.vim/wiki/Options
+[10] https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-famous-plugins#fugitive
+[11] https://raw.githubusercontent.com/skywind3000/asyncrun.vim/master/doc/cooperate_with_fugitive.gif
+[12] https://github.com/skywind3000/asyncrun.vim/wiki/Better-way-for-C-and-Cpp-development-in-Vim-8
+[13] https://github.com/skywind3000/asyncrun.vim/wiki/Additional-Examples
+[14] https://github.com/skywind3000/asyncrun.vim/wiki/Playing-Sound
+[15] https://github.com/skywind3000/asyncrun.vim/wiki/Display-Progress-in-Status-Line-or-Airline
+[16] https://github.com/skywind3000/asyncrun.vim/wiki/Quickfix-Best-Practice
+[17] https://github.com/skywind3000/asyncrun.vim/wiki/Scroll-the-quickfix-window-only-if-cursor-is-on-the-last-line
+[18] https://github.com/skywind3000/asyncrun.vim/wiki/Replace-old-make-command-with-AsyncRun
+[19] https://github.com/skywind3000/asyncrun.vim/wiki/Example-for-updating-and-adding-cscope
+[20] https://github.com/skywind3000/asyncrun.vim/wiki/FAQ
+[21] https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-famous-plugins
+[22] https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-famous-plugins#vim-airline
+[23] https://github.com/pedsm/sprint
+[24] https://github.com/skywind3000/asyncrun.vim/wiki/Get-netrw-using-asyncrun-to-save-remote-files
 
 vim: ft=help
