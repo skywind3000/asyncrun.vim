@@ -345,7 +345,7 @@ You may want your command run in a tmux split or a new gnome-terminal window, fo
 
 ```VimL
 function! MyRunner(opts)
-    echo "run: " . a:opts.cmd
+    echo "command to run is: " . a:opts.cmd
 endfunction
 
 let g:asyncrun_runner = get(g:, 'asyncrun_runner', {})
@@ -359,6 +359,8 @@ Then try:
 ```
 
 When `-mode` is `term` and `-pos` can used to represent runner name.
+
+Runner function has only one argument: `opts`, it contains the options extracted from `:AsyncRun` command line, and `opts.cmd` stores current command. 
 
 ### Command Modifier
 
