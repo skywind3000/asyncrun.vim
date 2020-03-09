@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/03/08 09:38
+" Last Modified: 2020/03/09 15:37
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1363,6 +1363,11 @@ function! s:run(opts)
 			let l:mode = 0
 			let l:opts.raw = 1
 		endif
+	elseif has_key(l:opts, 'pos')
+		let pos = get(l:opts, 'pos', '')
+		if has_key(g:asyncrun_runner, pos)
+			let l:runner = pos
+		endif
 	endif
 
 	" process makeprg/grepprg in -program=?
@@ -1821,7 +1826,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.6.2'
+	return '2.6.3'
 endfunc
 
 
