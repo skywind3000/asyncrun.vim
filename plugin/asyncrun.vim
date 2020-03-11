@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/03/09 16:39
+" Last Modified: 2020/03/11 14:52
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1238,9 +1238,12 @@ function! s:start_in_terminal(opts)
 		endif
 	endfor
 	let focus = get(a:opts, 'focus', 1)
-	if pos == 'tab'
+	if pos ==? 'tab'
 		if get(a:opts, 'reuse', 0) == 0
 			exec "tab split"
+			if pos ==# 'TAB'
+				exec "-tabmove"
+			endif
 		else
 			let avail = -1
 			for i in range(tabpagenr('$'))
@@ -1265,6 +1268,9 @@ function! s:start_in_terminal(opts)
 			endfor
 			if avail < 0
 				exec "tab split"
+				if pos ==# 'TAB'
+					exec "-tabmove"
+				endif
 			else
 				exec 'tabn ' . avail
 			endif
@@ -1821,7 +1827,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.6.5'
+	return '2.6.6'
 endfunc
 
 
