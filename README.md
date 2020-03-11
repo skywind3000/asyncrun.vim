@@ -284,7 +284,7 @@ AsyncRun is capable to run commands in Vim/NeoVim's internal terminal with the `
 - `-pos=left`: open the terminal on the left side.
 - `-pos=right`: open the terminal on the right side.
 - `-pos=hide`: don't open a window, run in background.
-- `-pos=external`: use an external terminal (windows only).
+- `-pos=external`: use an external terminal (Windows only).
 
 Examples:
 

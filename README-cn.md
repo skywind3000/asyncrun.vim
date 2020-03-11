@@ -47,6 +47,8 @@
     - [内置终端](#内置终端)
     - [Quickfix window](#quickfix-window)
     - [Range 支持](#range-支持)
+    - [自定义 Runner](#自定义-runner)
+    - [命令修改器](#命令修改器)
     - [运行需求](#运行需求)
     - [同 fugitive 协作](#同-fugitive-协作)
 - [语言参考](#语言参考)
@@ -282,7 +284,10 @@ AsyncRun 可以用 `-mode=?` 参数指定运行模式，不指定的话，将会
 - `-pos=bottom`: 在下方打开终端。
 - `-pos=left`: 在左边打开终端。
 - `-pos=right`: 在右边打开终端。
-- `-pos=external': 使用外部终端（仅支持 windows）。
+- `-pos=hidden`: 不打开终端窗口，隐藏在后台运行。
+- `-pos=external`: 使用外部终端（仅支持 Windows）。
+
+建议 Windows 下面直接用 `-pos=external`。
 
 例子:
 
@@ -329,6 +334,53 @@ AsyncRun 可以指定一个当前 buffer 的文本范围，用作命令的 stdin
 
 选中区域的文本 (行模式) 作为标准输入。
 
+### 自定义 Runner
+
+你可能还希望更多的执行方式，比如在新的 tmux 或者 gnore-terminal 的窗口里运行，AsyncRun 允许你自定义 runner：
+
+```VimL
+function! MyRunner(opts)
+    echo "command to run is: " . a:opts.cmd
+endfunction
+
+let g:asyncrun_runner = get(g:, 'asyncrun_runner', {})
+let g:asyncrun_runner.test = function('MyRunner')
+```
+
+然后试试：
+
+```VimL
+:AsyncRun -mode=term -pos=test ls -la $(VIM_FILEDIR)
+```
+
+当 `-mode` 的值是 `term` 时，可以用 `-pos` 来表示自定义 runner 的名字（除了保留的几个外）。
+
+Runner 函数只有一个参数：`opts`，是一个字典，里面保存着 `:AsyncRun` 命令行里传过来的值，同时 `opts.cmd` 记录着需要运行的命令。
+
+### 命令修改器
+
+命令修改器可以在你运行前修改你的命令内容：
+
+```VimL
+let g:asyncrun_program = get(g:, 'asyncrun_program', {})
+let g:asyncrun_program.nice = { opts -> 'nice -5' . opts.cmd }
+```
+
+上面的代码定义了一个叫做 `nice` 的修改器，在调用时指明 `-program=nice` 时：
+
+```VimL
+:AsyncRun -program=nice ls -la
+```
+
+原先命令 `ls -la` 就会被替换成： `nice -5 ls -la`。
+
+这个功能其实非常有用，前面的 `-program=msys` 或者 `-program=wsl` 都是用命令修改器实现的，比如它会把 `ls` 命令变成：
+
+```
+c:\windows\sysnative\wsl.exe ls
+```
+
+并替换类似 `$(WSL_FILENAME)` 以及 `$(WSL_FILEPATH)` 的宏，你的命令就能在 wsl 下运行了。
 
 ### 运行需求
 
