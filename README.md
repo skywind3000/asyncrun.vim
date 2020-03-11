@@ -296,9 +296,9 @@ Examples:
 :AsyncRun -mode=term -pos=curwin -hidden python "$(VIM_FILEPATH)"
 ```
 
-The `-pos` field accepts an uppercase `TAB`, to create tab on the left of current tab.
+When using internal terminal in a split window, AsyncRun will firstly reuse a finished previous terminal window if it exists, if not, AsyncRun will create a new terminal window in given position. Tab based terminal can also be reusable if `-reuse` is provided.
 
-When using internal terminal, AsyncRun will firstly reuse a finished previous terminal window if it exists, if not, AsyncRun will create a new terminal window in given position.
+The `-pos` field accepts an uppercase `TAB`, to create tab on the left of current tab. If internal terminal still cannot fully fit your needs, you may want to [Customize Runner](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner).
 
 ### Terminal Name
 
