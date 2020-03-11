@@ -273,7 +273,9 @@ Examples:
 :AsyncRun -mode=term -pos=curwin -hidden python "$(VIM_FILEPATH)"
 ```
 
-When using a split (`-pos` is one of `top`, `bottom`, `left` and `right`), AsyncRun will firstly reuse a finished previous terminal window if it exists, if not, AsyncRun will create a new terminal window in given position.
+The `-pos` field accepts an uppercase `TAB`, to create tab on the left of current tab. When using internal terminal in a split window, AsyncRun will firstly reuse a finished previous terminal window if it exists, if not, a new terminal window will be created in given position. Tab based terminal can also be reusable if `-reuse` is provided.
+
+Except the quickfix and internal terminal, AsyncRun is capable to run command in another tmux split or a new gnome-terminal window/tab with the advantage of [customizable runners](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner).
 
 ### Terminal Name
 
@@ -339,6 +341,9 @@ Then try:
 When `-mode` is `term` and `-pos` can used to represent runner name.
 
 Runner function has only one argument: `opts`, it contains the options extracted from `:AsyncRun` command line, and `opts.cmd` stores current command. 
+
+For more examples about `tmux` and `gnome-terminal` runners please visit project wiki: [customize runner](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner).
+
 
 ### Command Modifier
 
