@@ -301,7 +301,7 @@ AsyncRun 可以用 `-mode=?` 参数指定运行模式，不指定的话，将会
 
 当你用内置终端时，AsyncRun 会先检查是否有之前已经运行结束的终端窗口，有的话会复用，没有的话，才会新建一个 split。可以使用 `-pos=TAB`，大写的 tab 表示在当前 tab 的左边打开内置终端 tab。
 
-如果这些运行模式还不能满足你，你可以 [自定义运行模式](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner)。
+除了 quickfix 和内置终端外，AsyncRun 还可以在另一个 tmux 窗口或者一个新的 gnome-terminal 窗口/tab 中运行程序，感兴趣可以参考 [自定义运行模式](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner) 中的例子。
 
 ### Quickfix window
 
@@ -356,6 +356,10 @@ let g:asyncrun_runner.test = function('MyRunner')
 当 `-mode` 的值是 `term` 时，可以用 `-pos` 来表示自定义 runner 的名字（除了保留的几个外）。
 
 Runner 函数只有一个参数：`opts`，是一个字典，里面保存着 `:AsyncRun` 命令行里传过来的值，同时 `opts.cmd` 记录着需要运行的命令。
+
+关于更多 tmux / gnome-terminal 的 runner 例子，参考 [自定义运行模式](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner) 。
+
+
 
 ### 命令修改器
 
