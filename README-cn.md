@@ -299,7 +299,7 @@ AsyncRun 可以用 `-mode=?` 参数指定运行模式，不指定的话，将会
 :AsyncRun -mode=term -pos=curwin -hidden python "$(VIM_FILEPATH)"
 ```
 
-当你用 split 窗口打开终端时 (`-pos` 为 `top`, `bottom`, `left` 和 `right` 的其中之一)，AsyncRun 会先检查是否有之前已经运行结束的终端窗口，有的话会复用，没有的话，才会新建一个 split。
+当你用内置终端时，AsyncRun 会先检查是否有之前已经运行结束的终端窗口，有的话会复用，没有的话，才会新建一个 split。可以使用 `-pos=TAB`，大写的 tab 表示在当前 tab 的左边打开内置终端 tab。
 
 如果这些运行模式还不能满足你，你可以 [自定义运行模式](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner)。
 
