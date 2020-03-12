@@ -514,7 +514,7 @@ When '-mode' is 'term' and '-pos' can used to represent runner name.
 Runner function has only one argument: 'opts', it contains the options
 extracted from ':AsyncRun' command line, and 'opts.cmd' stores current command.
 
-For more examples about 'tmux' and 'gnome-terminal' runners please visit
+For examples like 'tmux', 'gnome-terminal' and other runners please visit
 project wiki: customize runner [10].
 
 -------------------------------------------------------------------------------
