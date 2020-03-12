@@ -357,7 +357,7 @@ let g:asyncrun_runner.test = function('MyRunner')
 
 Runner 函数只有一个参数：`opts`，是一个字典，里面保存着 `:AsyncRun` 命令行里传过来的值，同时 `opts.cmd` 记录着需要运行的命令。
 
-关于更多 tmux / gnome-terminal 的 runner 例子，参考 [自定义运行模式](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner) 。
+关于更多 tmux / gnome-terminal 的 runner 例子，以及更多运行模式，参考 [自定义运行模式](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner) 。
 
 
 
