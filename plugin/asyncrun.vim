@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/03/22 16:00
+" Last Modified: 2020/03/23 13:18
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1006,11 +1006,7 @@ function! s:find_root(path, markers, strict)
 			let prev = pivot
 			for marker in a:markers
 				let newname = s:path_join(pivot, marker)
-				if stridx(newname, '*') >= 0 || stridx(newname, '?') >= 0
-					if glob(newname) != ''
-						return pivot
-					endif
-				elseif stridx(newname, '[') >= 0 || stridx(newname, ']') >= 0
+				if newname =~ '[\*\?\[\]]'
 					if glob(newname) != ''
 						return pivot
 					endif
@@ -1837,7 +1833,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.6.8'
+	return '2.6.9'
 endfunc
 
 
