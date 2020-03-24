@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/03/23 13:18
+" Last Modified: 2020/03/25 02:40
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -236,6 +236,18 @@ function! s:chdir(path)
 		let cmd = haslocaldir()? ((haslocaldir() == 1)? 'lcd' : 'tcd') : 'cd'
 	endif
 	silent execute cmd . ' '. fnameescape(a:path)
+endfunc
+
+" safe shell escape for neovim
+function! s:shellescape(path)
+	if s:asyncrun_windows == 0
+		return shellescape(a:path)
+	endif
+	let hr = shellescape(a:path)
+	if &ssl != 0
+		let hr = s:StringReplace(hr, "'", '"')
+	endif
+	return hr
 endfunc
 
 " save/restore view
@@ -663,7 +675,7 @@ function! s:AsyncRun_Job_Start(cmd)
 			if s:async_nvim == 0
 				let l:args += [l:tmp]
 			else
-				let l:args = shellescape(l:tmp)
+				let l:args = s:shellescape(l:tmp)
 			endif
 		endif
 	elseif type(a:cmd) == 3
@@ -1094,7 +1106,7 @@ function! s:terminal_open(opts)
 	if get(a:opts, 'safe', get(g:, 'asyncrun_term_safe', 0)) != 0
 		let command = s:ScriptWrite(command, 0)
 		if stridx(command, ' ') >= 0
-			let command = shellescape(command)
+			let command = s:shellescape(command)
 		endif
 		let shell = 0
 	endif
@@ -1397,7 +1409,7 @@ function! s:run(opts)
 				call s:ErrorMsg("not find wsl in your system")
 				return
 			endif
-			let cmd = shellescape(substitute(tt, '\\', '\/', 'g'))
+			let cmd = s:shellescape(substitute(tt, '\\', '\/', 'g'))
 			let dist = get(l:opts, 'dist', get(g:, 'asyncrun_dist', ''))
 			if dist != ''
 				let cmd = cmd . ' -d ' . dist
@@ -1521,9 +1533,9 @@ function! s:run(opts)
 		let l:makesave = &l:makeprg
 		let l:script = s:ScriptWrite(l:command, 0)
 		if s:asyncrun_windows != 0
-			let &l:makeprg = shellescape(l:script)
+			let &l:makeprg = s:shellescape(l:script)
 		else
-			let &l:makeprg = 'source '. shellescape(l:script)
+			let &l:makeprg = 'source '. s:shellescape(l:script)
 		endif
 		let l:efm1 = &g:efm
 		let l:efm2 = &l:efm
@@ -1624,17 +1636,17 @@ function! s:run(opts)
 			let $VIM_COMMAND = l:command
 			let l:command = script . ' ' . l:command
 			if s:asyncrun_windows
-				let ccc = shellescape(s:ScriptWrite(l:command, 0))
+				let ccc = s:shellescape(s:ScriptWrite(l:command, 0))
 				silent exec '!start /b cmd /C '. ccc
 			else
 				call system(l:command . ' &')
 			endif
 		elseif s:asyncrun_windows
 			if l:mode == 4
-				let l:ccc = shellescape(s:ScriptWrite(l:command, 1))
+				let l:ccc = s:shellescape(s:ScriptWrite(l:command, 1))
 				silent exec '!start cmd /C '. l:ccc
 			else
-				let l:ccc = shellescape(s:ScriptWrite(l:command, 0))
+				let l:ccc = s:shellescape(s:ScriptWrite(l:command, 0))
 				silent exec '!start /b cmd /C '. l:ccc
 			endif
 			redraw
@@ -1833,7 +1845,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.6.9'
+	return '2.7.0'
 endfunc
 
 
@@ -1898,7 +1910,7 @@ function! s:program_msys(opts)
 	let bash = s:StringReplace(bash, '/', "\\")
 	let path = asyncrun#path_win2unix(fnamemodify(script, ':p'), mount)
 	let flag = ' --login ' . (get(a:opts, 'inter', '')? '-i' : '')
-	let text = shellescape(bash) . flag . ' "' . path . '"'
+	let text = s:shellescape(bash) . flag . ' "' . path . '"'
 	let lines += ['call ' . text . "\r"]
 	call writefile(lines, tmpname)
 	let command = a:opts.cmd
