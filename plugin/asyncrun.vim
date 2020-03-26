@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/03/25 02:40
+" Last Modified: 2020/03/26 10:20
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -931,7 +931,9 @@ function! s:ScriptWrite(command, pause)
 		redir END
 	endif
 	if s:asyncrun_windows == 0
-		call setfperm(tmpname, 'rwxrwxrws')
+		if exists('*setfperm')
+			silent! call setfperm(tmpname, 'rwxrwxrws')
+		endif
 	endif
 	return tmpname
 endfunc
@@ -1845,7 +1847,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.7.0'
+	return '2.7.1'
 endfunc
 
 
