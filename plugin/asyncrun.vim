@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/04/07 20:09
+" Last Modified: 2020/04/07 20:18
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1682,14 +1682,18 @@ endfunc
 " get workspace
 "----------------------------------------------------------------------
 function! asyncrun#workspace()
+	let workspace = ''
 	if exists('b:asyncrun_workspace')
-		return b:asyncrun_workspace
+		let workspace = b:asyncrun_workspace
 	elseif exists('t:asyncrun_workspace')
-		return t:asyncrun_workspace
+		let workspace = t:asyncrun_workspace
 	elseif exists('g:asyncrun_workspace')
-		return g:asyncrun_workspace
+		let workspace = g:asyncrun_workspace
 	endif
-	return getcwd()
+	if workspace == '-'
+		return getcwd()
+	endif
+	return (workspace != '')? workspace : getcwd()
 endfunc
 
 
