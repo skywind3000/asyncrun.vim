@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/04/07 20:18
+" Last Modified: 2020/04/08 02:58
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1725,9 +1725,11 @@ function! asyncrun#run(bang, opts, args, ...)
 	let l:macros['VIM_PRONAME'] = fnamemodify(l:macros['VIM_ROOT'], ':t')
 	let l:macros['VIM_DIRNAME'] = fnamemodify(l:macros['VIM_CWD'], ':t')
 	let l:macros['VIM_WORKSPACE'] = asyncrun#workspace()
+	let l:macros['VIM_PWD'] = l:macros['VIM_CWD']
 	let l:macros['<cwd>'] = l:macros['VIM_CWD']
 	let l:macros['<root>'] = l:macros['VIM_ROOT']
 	let l:macros['<workspace>'] = l:macros['VIM_WORKSPACE']
+	let l:macros['<pwd>'] = l:macros['VIM_PWD']
 	let l:retval = ''
 
 	" handle: empty extension
@@ -1874,7 +1876,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.7.2'
+	return '2.7.3'
 endfunc
 
 
