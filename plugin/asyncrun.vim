@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/04/08 02:58
+" Last Modified: 2020/04/09 09:59
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -43,7 +43,6 @@
 "     $VIM_MODE      - Execute via 0:!, 1:makeprg, 2:system(), 3:silent
 "     $VIM_COLUMNS   - How many columns in vim's screen
 "     $VIM_LINES     - How many lines in vim's screen
-"     $VIM_WORKSPACE - Current workspace folder
 "
 "     Parameters also accept these environment variables wrapped by
 "     "$(...)", and "$(VIM_FILEDIR)" will be expanded as file directory.
@@ -1009,9 +1008,6 @@ endfunc
 function! s:find_root(path, markers, strict)
 	function! s:guess_root(filename, markers)
 		let fullname = asyncrun#fullname(a:filename)
-		if exists('b:asyncrun_root')
-			return b:asyncrun_root
-		endif
 		if fullname =~ '^fugitive:/'
 			if exists('b:git_dir')
 				return fnamemodify(b:git_dir, ':h')
@@ -1043,6 +1039,15 @@ function! s:find_root(path, markers, strict)
 		endwhile
         return ''
 	endfunc
+	if a:path == '%' || a:path == ''
+		if exists('b:asyncrun_root') && b:asyncrun_root != ''
+			return b:asyncrun_root
+		elseif exists('t:asyncrun_root') && t:asyncrun_root != ''
+			return t:asyncrun_root
+		elseif exists('g:asyncrun_root') && g:asyncrun_root != ''
+			return g:asyncrun_root
+		endif
+	endif
 	let root = s:guess_root(a:path, a:markers)
 	if root != ''
 		return asyncrun#fullname(root)
@@ -1679,25 +1684,6 @@ endfunc
 
 
 "----------------------------------------------------------------------
-" get workspace
-"----------------------------------------------------------------------
-function! asyncrun#workspace()
-	let workspace = ''
-	if exists('b:asyncrun_workspace')
-		let workspace = b:asyncrun_workspace
-	elseif exists('t:asyncrun_workspace')
-		let workspace = t:asyncrun_workspace
-	elseif exists('g:asyncrun_workspace')
-		let workspace = g:asyncrun_workspace
-	endif
-	if workspace == '-'
-		return getcwd()
-	endif
-	return (workspace != '')? workspace : getcwd()
-endfunc
-
-
-"----------------------------------------------------------------------
 " asyncrun - run
 "----------------------------------------------------------------------
 function! asyncrun#run(bang, opts, args, ...)
@@ -1724,11 +1710,9 @@ function! asyncrun#run(bang, opts, args, ...)
     let l:macros['VIM_HOME'] = expand(split(&rtp, ',')[0])
 	let l:macros['VIM_PRONAME'] = fnamemodify(l:macros['VIM_ROOT'], ':t')
 	let l:macros['VIM_DIRNAME'] = fnamemodify(l:macros['VIM_CWD'], ':t')
-	let l:macros['VIM_WORKSPACE'] = asyncrun#workspace()
 	let l:macros['VIM_PWD'] = l:macros['VIM_CWD']
 	let l:macros['<cwd>'] = l:macros['VIM_CWD']
 	let l:macros['<root>'] = l:macros['VIM_ROOT']
-	let l:macros['<workspace>'] = l:macros['VIM_WORKSPACE']
 	let l:macros['<pwd>'] = l:macros['VIM_PWD']
 	let l:retval = ''
 
@@ -1876,7 +1860,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.7.3'
+	return '2.7.4'
 endfunc
 
 
