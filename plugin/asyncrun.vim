@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/04/09 09:59
+" Last Modified: 2020/04/09 11:13
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1039,7 +1039,7 @@ function! s:find_root(path, markers, strict)
 		endwhile
         return ''
 	endfunc
-	if a:path == '%' || a:path == ''
+	if a:path == '%'
 		if exists('b:asyncrun_root') && b:asyncrun_root != ''
 			return b:asyncrun_root
 		elseif exists('t:asyncrun_root') && t:asyncrun_root != ''
@@ -1860,7 +1860,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.7.4'
+	return '2.7.5'
 endfunc
 
 
