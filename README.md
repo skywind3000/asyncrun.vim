@@ -178,9 +178,10 @@ There can be some options before your `[cmd]`:
 | `-auto=?` | `unset` | event name to trigger `QuickFixCmdPre`/`QuickFixCmdPost` [name] autocmd. |
 | `-raw` | `unset` | use raw output if provided, and `&errorformat` will be ignored. |
 | `-strip` | `unset` | remove the heading/trailing messages if provided (omit command and "[Finished in ...]" message). |
-| `-pos=?` | "bottom" | When using internal terminal with `-mode=term`, `-pos` is used to specify where to split the terminal window, it can be one of `"tab"`, `"curwin"`, `"top"`, `"bottom"`, `"left"`, `"right"` and `"external"`. And you can [customize new runners](#customize-runner) and pass runner's name to `-pos` option. |
+| `-pos=?` | "bottom" | When using internal terminal with `-mode=term`, `-pos` is used to specify where to split the terminal window, it can be one of `"tab"`, `"curwin"`, `"top"`, `"bottom"`, `"left"`, `"right"`, `"topedge"`, `"bottomedge"`, `"leftedge"`, `"rightedge"` and `"external"`. And you can [customize new runners](#customize-runner) and pass runner's name to `-pos` option. |
 | `-rows=num` | 0 | When using a horizontal split terminal, this value represents the height of terminal window. |
 | `-cols=num` | 0 | When using a vertical split terminal, this value represents the width of terminal window. |
+| `-unique=?` | 0 | When using the internal terminal with `-mode=term`, `-unique=1` allows only one terminal window in the current tab page that was spawned using this flag to exist at a time (any existing terminal in the current tab page spawned with `-unique=1` will be closed).
 | `-errorformat=?` | `unset` | errorformat for error matching, if it is unprovided, use current `&errorformat` value. Beware that `%` needs to be escaped into `\%`. |
 | `-focus=?` | 1 | set to `0` to prevent focus changing when `-mode=term` |
 | `-hidden=?` | 0 | set to `1` to setup `bufhidden` to `hide` for internal terminal |
@@ -283,6 +284,10 @@ AsyncRun is capable to run commands in Vim/NeoVim's internal terminal with the `
 - `-pos=bottom`: open the terminal below the current window.
 - `-pos=left`: open the terminal on the left side.
 - `-pos=right`: open the terminal on the right side.
+- `-pos=topedge`: open the terminal above all other windows.
+- `-pos=bottomedge`: open the terminal below all other windows.
+- `-pos=leftedge`: open the terminal to the left of all other windows.
+- `-pos=rightedge`: open the terminal to the right of all other windows.
 - `-pos=hide`: don't open a window, run in background.
 - `-pos=external`: use an external terminal (Windows only).
 
@@ -292,6 +297,7 @@ Examples:
 :AsyncRun -mode=term -pos=tab python "$(VIM_FILEPATH)"
 :AsyncRun -mode=term -pos=bottom -rows=10 python "$(VIM_FILEPATH)"
 :AsyncRun -mode=term -pos=right -cols=80 python "$(VIM_FILEPATH)"
+:AsyncRun -mode=term -pos=bottomedge -rows=10 -unique=1 bash
 :AsyncRun -mode=term -pos=curwin python "$(VIM_FILEPATH)"
 :AsyncRun -mode=term -pos=curwin -hidden python "$(VIM_FILEPATH)"
 ```

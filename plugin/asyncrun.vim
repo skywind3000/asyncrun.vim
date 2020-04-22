@@ -103,6 +103,10 @@
 "     :AsyncRun -mode=term -pos=bottom -rows=15 bash
 "     :AsyncRun -mode=term -pos=left -cols=40 bash
 "     :AsyncRun -mode=term -pos=right -cols=40 bash
+"     :AsyncRun -mode=term -pos=topedge -rows=15 -unique=1 bash
+"     :AsyncRun -mode=term -pos=bottomedge -rows=15 -unique=1 bash
+"     :AsyncRun -mode=term -pos=leftedge -cols=40 -unique=1 bash
+"     :AsyncRun -mode=term -pos=rightedge -cols=40 -unique=1 bash
 "
 " Additional:
 "     AsyncRun uses quickfix window to show job outputs, in order to
@@ -1208,6 +1212,9 @@ function! s:terminal_open(opts)
 	let opts.jid = jid
 	let opts.bid = bid
 	let s:async_term[pid] = opts
+	if get(a:opts, 'unique', 0)
+		execute "let s:termid." . tabpagenr() . " = " . win_getid()
+	endif
 	return pid
 endfunc
 
@@ -1328,7 +1335,36 @@ function! s:start_in_terminal(opts)
 	if avail < 0 || get(a:opts, 'reuse', 1) == 0
 		let rows = get(a:opts, 'rows', '')
 		let cols = get(a:opts, 'cols', '')
-		if pos == 'top'
+		if get(a:opts, 'unique', 0)
+			if !exists("s:termid")
+				let s:termid = {}
+			endif
+			let s:info = {}
+			augroup UniqueTermLeave
+				autocmd!
+				autocmd TabLeave * let s:info.last_winnr = winnr('$') |
+							\ let s:info.last_tab = tabpagenr('$')
+				autocmd BufWinLeave * if get(s:info, 'last_winnr', -1) == 1 |
+							\ execute "unlet s:termid.".s:info.last_tab |
+							\ endif
+				autocmd BufWinLeave * if (winnr() ==
+							\ win_id2win(get(s:termid, tabpagenr()))) |
+							\ execute "unlet s:termid.".tabpagenr() |
+							\ endif
+			augroup END
+			if has_key(s:termid, tabpagenr())
+				execute win_id2win(get(s:termid, tabpagenr()))."quit!"
+			endif
+		endif
+		if pos == "topedge" || pos == "te"
+			exec "topleft " . rows . "split"
+		elseif pos == "bottomedge" || pos == "be"
+			exec "botright " . rows . "split"
+		elseif pos == "leftedge" || pos == "le"
+			exec "topleft " . cols . "vs"
+		elseif pos == "rightedge" || pos == "re"
+			exec "botright " . cols . "vs"
+		elseif pos == 'top'
 			exec "leftabove " . rows . "split"	
 		elseif pos == 'bottom' || pos == 'bot'
 			exec "rightbelow " . rows . "split"
