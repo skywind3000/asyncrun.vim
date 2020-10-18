@@ -232,7 +232,7 @@
 ### Autocmd
 
 ```VimL
-autocmd User AsyncRunPre   - 运行前出发
+autocmd User AsyncRunPre   - 运行前触发
 autocmd User AsyncRunStart - 命令成功开始了触发
 autocmd User AsyncRunStop  - 命令结束时触发
 ```
