@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/12/29 21:56
+" Last Modified: 2020/12/29 22:16
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -815,6 +815,7 @@ function! s:AsyncRun_Job_Stop(how)
 		if s:async_nvim == 0
 			if job_status(s:async_job) == 'run'
 				if job_stop(s:async_job, l:how)
+					call s:AutoCmd('Interrupt')
 					return 0
 				else
 					return -2
@@ -824,6 +825,7 @@ function! s:AsyncRun_Job_Stop(how)
 			endif
 		else
 			if s:async_job > 0
+				call s:AutoCmd('Interrupt')
 				silent! call jobstop(s:async_job)
 			endif
 		endif
@@ -1860,7 +1862,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.7.6'
+	return '2.7.7'
 endfunc
 
 
