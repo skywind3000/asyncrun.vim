@@ -26,7 +26,7 @@
 
 # 例子
 
-![](https://skywind3000.github.io/images/p/asyncrun/screenshot.gif)
+![](https://skywind3000.gitlab.io/images/p/asyncrun/screenshot.gif)
 
 异步运行 gcc/grep 的演示，别忘记在运行前使用 `:copen` 命令打开 vim 的 quickfix 窗口，否则你看不到具体输出，还可以设置 `g:asyncrun_open=6` 来自动打开。
 
@@ -396,7 +396,7 @@ Vim 7.4.1829 是最低的运行版本，如果低于此版本，运行模式将�
 
 asyncrun.vim 可以同 `vim-fugitive` 协作，为 fugitive 提供异步支持，具体见 [here](https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-famous-plugins#fugitive).
 
-![](https://skywind3000.github.io/images/p/asyncrun/cooperate_with_fugitive.gif)
+![](https://skywind3000.gitlab.io/images/p/asyncrun/cooperate_with_fugitive.gif)
 
 
 ## 语言参考
