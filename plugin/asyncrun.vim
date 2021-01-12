@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2020/12/29 22:16
+" Last Modified: 2021/01/12 19:44
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -903,7 +903,7 @@ function! s:ExtractOpt(command)
 endfunc
 
 " write script to a file and return filename
-function! s:ScriptWrite(command, pause)
+function! asyncrun#script_write(command, pause)
 	let tmpname = fnamemodify(tempname(), ':h') . '\asyncrun.cmd'
 	let command = a:command
 	if s:asyncrun_windows != 0
@@ -939,6 +939,12 @@ function! s:ScriptWrite(command, pause)
 	endif
 	return tmpname
 endfunc
+
+" write script to a file and return filename
+function! s:ScriptWrite(command, pause)
+	return asyncrun#script_write(a:command, a:pause)
+endfunc
+
 
 " full file name
 function! asyncrun#fullname(f)
@@ -1862,7 +1868,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.7.7'
+	return '2.7.8'
 endfunc
 
 
