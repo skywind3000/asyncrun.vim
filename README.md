@@ -43,7 +43,7 @@ Remember to open vim's quickfix window by `:copen` (or setting  `g:asyncrun_open
 - [Manual](#manual)
     - [AsyncRun - Run shell command](#asyncrun---run-shell-command)
     - [AsyncStop - Stop the running job](#asyncstop---stop-the-running-job)
-    - [Function (API)](#function-api)
+    - [Function API](#function-api)
     - [Settings](#settings)
     - [Variables](#variables)
     - [Autocmd](#autocmd)
@@ -343,7 +343,7 @@ The visual selection (line-wise) will be taken as stdin.
 
 ### Customize Runner
 
-You may want your command run in a tmux split or a new gnome-terminal window, for this reason, AsyncRun allows you create new runners:
+AsyncRun allows you to define new runners to specify how to run your command. It can be useful when you want your command run in a tmux split or a new gnome-terminal window:
 
 ```VimL
 function! MyRunner(opts)
@@ -362,9 +362,11 @@ Then try:
 
 When `-mode` is `term` and `-pos` can used to represent runner name.
 
-Runner function has only one argument: `opts`, it contains the options extracted from `:AsyncRun` command line, and `opts.cmd` stores current command. 
+Runner function has only one argument: `opts`, it contains the options extracted from `:AsyncRun` command line, and `opts.cmd` stores current command.
 
-For examples like `tmux`, `gnome-terminal` and other runners please visit project wiki: [customize runner](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner).
+There is a separated plugin [asyncrun.extra](https://github.com/skywind3000/asyncrun.extra) which provide extra runners to run commands in `gnome-terminal`, `tmux`, `floaterm` and more. You can check this to see if it can fit your needs.
+
+If you want to create new runners please visit project wiki: [customize runner](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner).
 
 
 ### Command Modifier
