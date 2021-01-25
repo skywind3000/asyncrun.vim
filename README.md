@@ -343,7 +343,7 @@ The visual selection (line-wise) will be taken as stdin.
 
 ### Customize Runner
 
-AsyncRun allows you to define new runners to specify how to run your command. It can be useful when you want your command run in a tmux split or a new gnome-terminal window:
+AsyncRun allows you to define new runners to specify how to run your command. It can be useful when you want your commands run in a tmux split or a new gnome-terminal window:
 
 ```VimL
 function! MyRunner(opts)
