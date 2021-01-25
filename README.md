@@ -10,6 +10,7 @@ This plugin takes the advantage of new apis in Vim 8 (and NeoVim) to enable you 
 - Customizable runners and command modifiers brings you dark power of asyncrun.
 - Fast and lightweight, just a single self-contained `asyncrun.vim` source file.  
 - Provide corresponding user experience in vim, neovim, gvim and macvim.
+- Separated extension [asyncrun.extra](https://github.com/skywind3000/asyncrun.extra) to provide extra runners.
 
 If that doesn't excite you, then perhaps this GIF screen capture below will change your mind.
 
@@ -300,6 +301,8 @@ The `-pos` field accepts an uppercase `TAB`, to create tab on the left of curren
 
 Except the quickfix and internal terminal, AsyncRun is capable to run command in another tmux split or a new gnome-terminal window/tab with the advantage of [customizable runners](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner).
 
+More extra runners can be found in the extension [asyncrun.extra](https://github.com/skywind3000/asyncrun.extra).
+
 ### Terminal Name
 
 There can be many commands running in the internal terminal, you can specify a name for each of them and receive it in `g:asyncrun_name`:
@@ -364,7 +367,7 @@ When `-mode` is `term` and `-pos` can used to represent runner name.
 
 Runner function has only one argument: `opts`, it contains the options extracted from `:AsyncRun` command line, and `opts.cmd` stores current command.
 
-There is a separated plugin [asyncrun.extra](https://github.com/skywind3000/asyncrun.extra) which provide extra runners to run commands in `gnome-terminal`, `tmux`, `floaterm` and more. You can check this to see if it can fit your needs.
+There is a separated extension [asyncrun.extra](https://github.com/skywind3000/asyncrun.extra) which provide extra runners to run commands in `gnome-terminal`, `tmux`, `floaterm` and more. You can check this to see if it can fit your needs.
 
 If you want to create new runners please visit project wiki: [customize runner](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner).
 
