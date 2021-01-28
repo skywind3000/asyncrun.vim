@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2021/01/12 19:44
+" Last Modified: 2021/01/28 18:02
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1387,6 +1387,7 @@ function! s:run(opts)
 	let l:modemap['external'] = 4
 	let l:modemap['quickfix'] = 0
 	let l:modemap['vim'] = 2
+	let l:modemap['wait'] = 3
 
 	let l:mode = get(l:modemap, l:mode, l:mode)
 
@@ -1599,6 +1600,11 @@ function! s:run(opts)
 			call s:AutoCmd('Stop')
 		endif
 	elseif l:mode == 3
+		let autocmd = get(opts, 'autocmd', 0)
+		if autocmd != 0
+			call s:AutoCmd('Pre')
+			call s:AutoCmd('Start')
+		endif
 		if s:asyncrun_windows == 0
 			let l:retval = system(l:command)
 			let g:asyncrun_shell_error = v:shell_error
@@ -1650,6 +1656,9 @@ function! s:run(opts)
 		let g:asyncrun_text = opts.text
 		if opts.post != ''
 			exec opts.post
+		endif
+		if autocmd != 0
+			call s:AutoCmd('Stop')
 		endif
 	elseif l:mode <= 5
 		let script = get(g:, 'asyncrun_script', '')
@@ -1868,7 +1877,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.7.8'
+	return '2.7.9'
 endfunc
 
 
