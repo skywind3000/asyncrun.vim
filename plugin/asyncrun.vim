@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2021/02/02 19:30
+" Last Modified: 2021/02/03 01:48
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -919,7 +919,13 @@ function! asyncrun#script_write(command, pause)
 		let lines = ['#! ' . shell]
 		let lines += [command]
 		if a:pause != 0
-			let lines += ['read -n1 -rsp "press any key to confinue ..."']
+			if executable('bash')
+				let pause = 'read -n1 -rsp "press any key to continue ..."'
+				let lines += ['bash -c ''' . pause . '''']
+			else
+				let lines += ['echo "press enter to continue ..."']
+				let lines += ['sh -c "read _tmp_"']
+			endif
 		endif
 		let tmpname = fnamemodify(tempname(), ':h') . '/asyncrun.sh'
 	endif
@@ -1874,7 +1880,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.8.0'
+	return '2.8.1'
 endfunc
 
 
