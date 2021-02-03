@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2021/02/03 01:48
+" Last Modified: 2021/02/03 12:49
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1156,6 +1156,10 @@ function! s:terminal_open(opts)
 			let opts = {'curwin':1, 'norestore':1, 'term_finish':'open'}
 			let opts.term_kill = 'term'
 			let opts.exit_cb = function('s:terminal_exit')
+			let close = get(a:opts, 'close', 0)
+			if close
+				let opts.term_finish = 'close'
+			endif
 			try
 				let bid = term_start(command, opts)
 			catch /^.*/
@@ -1880,7 +1884,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.8.1'
+	return '2.8.2'
 endfunc
 
 

@@ -186,6 +186,7 @@ There can be some options before your `[cmd]`:
 | `-focus=?` | 1 | set to `0` to prevent focus changing when `-mode=term` |
 | `-hidden=?` | 0 | set to `1` to setup `bufhidden` to `hide` for internal terminal |
 | `-silent` | `unset` | provide `-silent` to prevent open quickfix window (will override `g:asyncrun_open` temporarily) |
+| `-close` | `unset` | when using `-mode=term`, close the terminal automatically when terminal process finished |
 
 All options must start with a minus and position **before** `[cmd]`. Since no shell command string starts with a minus. So they can be distinguished from shell command easily without any ambiguity. 
 
@@ -279,6 +280,7 @@ For more information, please see [here](https://github.com/skywind3000/asyncrun.
 AsyncRun is capable to run commands in Vim/NeoVim's internal terminal with the `-mode=term` option. You can specify how to open the terminal window by `-pos=?`, available positions are:
 
 - `-pos=tab`: open the terminal in a new tab.
+- `-pos=TAB`: open the terminal in a new tab on the left of current tab.
 - `-pos=curwin`: open the terminal in the current window.
 - `-pos=top`: open the terminal above the current window.
 - `-pos=bottom`: open the terminal below the current window.
@@ -291,6 +293,7 @@ Examples:
 
 ```VimL
 :AsyncRun -mode=term -pos=tab python "$(VIM_FILEPATH)"
+:AsyncRun -mode=term -pos=TAB -close -cwd=<root> lazygit
 :AsyncRun -mode=term -pos=bottom -rows=10 python "$(VIM_FILEPATH)"
 :AsyncRun -mode=term -pos=right -cols=80 python "$(VIM_FILEPATH)"
 :AsyncRun -mode=term -pos=curwin python "$(VIM_FILEPATH)"
