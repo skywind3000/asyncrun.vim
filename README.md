@@ -280,7 +280,7 @@ For more information, please see [here](https://github.com/skywind3000/asyncrun.
 AsyncRun is capable to run commands in Vim/NeoVim's internal terminal with the `-mode=term` option. You can specify how to open the terminal window by `-pos=?`, available positions are:
 
 - `-pos=tab`: open the terminal in a new tab.
-- `-pos=TAB`: open the terminal in a new tab on the left of current tab.
+- `-pos=TAB`: open the terminal in a new tab on the left side.
 - `-pos=curwin`: open the terminal in the current window.
 - `-pos=top`: open the terminal above the current window.
 - `-pos=bottom`: open the terminal below the current window.
