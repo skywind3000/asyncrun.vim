@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2021/02/11 22:24
+" Last Modified: 2021/02/14 19:14
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -971,6 +971,8 @@ function! asyncrun#fullname(f)
 		if &bt == 'terminal' || &bt == 'nofile'
 			let f = ''
 		endif
+	elseif f =~ '^\~[\/\\]'
+		let f = expand(f)
 	endif
 	let f = fnamemodify(f, ':p')
 	if s:asyncrun_windows
@@ -1884,7 +1886,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.8.3'
+	return '2.8.4'
 endfunc
 
 
