@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016, 2017, 2018, 2019, 2020
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2021/02/14 19:14
+" Last Modified: 2021/03/28 22:06
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1121,9 +1121,9 @@ endfunc
 
 
 "----------------------------------------------------------------------
-" open terminal in current window
+" init terminal in current window
 "----------------------------------------------------------------------
-function! s:terminal_open(opts)
+function! s:terminal_init(opts)
 	let command = a:opts.cmd
 	let hidden = get(a:opts, 'hidden', 0)
 	let shell = (has('nvim') == 0)? 1 : 0
@@ -1162,6 +1162,11 @@ function! s:terminal_open(opts)
 			if close
 				let opts.term_finish = 'close'
 			endif
+			if has('patch-8.1.0230')
+				if a:opts.cwd != ''
+					let opts.cwd = a:opts.cwd
+				endif
+			endif
 			try
 				let bid = term_start(command, opts)
 			catch /^.*/
@@ -1173,6 +1178,9 @@ function! s:terminal_open(opts)
 		else
 			let opts = {'stoponexit':'term'}
 			let opts.exit_cb = function('s:terminal_exit')
+			if a:opts.cwd != ''
+				let opts.cwd = a:opts.cwd
+			endif
 			let jid = job_start(command, opts)
 			let bid = -1
 			let success = (job_status(jid) != 'fail')? 1 : 0
@@ -1181,6 +1189,9 @@ function! s:terminal_open(opts)
 	else
 		let opts = {}
 		let opts.on_exit = function('s:terminal_exit')
+		if a:opts.cwd != ''
+			let opts.cwd = a:opts.cwd
+		endif
 		if pos != 'hide'
 			try
 				enew
@@ -1226,6 +1237,22 @@ function! s:terminal_open(opts)
 	let opts.bid = bid
 	let s:async_term[pid] = opts
 	return pid
+endfunc
+
+
+"----------------------------------------------------------------------
+" init terminal in current window
+"----------------------------------------------------------------------
+function! s:terminal_open(opts)
+	let previous = getcwd()
+	if a:opts.cwd != ''
+		call s:chdir(a:opts.cwd)
+	endif
+	let hr = s:terminal_init(a:opts)
+	if a:opts.cwd != ''
+		call s:chdir(previous)
+	endif
+	return hr
 endfunc
 
 
@@ -1886,7 +1913,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.8.4'
+	return '2.8.5'
 endfunc
 
 
