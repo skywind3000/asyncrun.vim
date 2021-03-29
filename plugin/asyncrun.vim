@@ -1129,7 +1129,7 @@ function! s:terminal_init(opts)
 	let shell = (has('nvim') == 0)? 1 : 0
 	let pos = get(a:opts, 'pos', 'bottom')
 	let pos = (pos == 'background')? 'hide' : pos
-	let cwd = a:opts.cwd
+	let cwd = get(a:opts, 'cwd', '')
 	let cwd = (cwd != '' && isdirectory(cwd))? cwd : ''
 	if get(a:opts, 'safe', get(g:, 'asyncrun_term_safe', 0)) != 0
 		let command = s:ScriptWrite(command, 0)
