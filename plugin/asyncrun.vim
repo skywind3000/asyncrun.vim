@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2021
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2021/12/15 03:45
+" Last Modified: 2021/12/15 04:45
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1779,6 +1779,12 @@ function! asyncrun#run(bang, opts, args, ...)
 		let l:macros['VIM_FILEEXT'] = ''
 	endif
 
+	" fire AsyncRunInit autocmd
+	if get(s:, 'asyncrun_init', 0) == 0
+		call s:AutoCmd('Init')
+		let s:asyncrun_init = 1
+	endif
+
 	" extract options
 	let [l:command, l:opts] = s:ExtractOpt(s:StringStrip(a:args))
 
@@ -1918,7 +1924,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.8.7'
+	return '2.8.8'
 endfunc
 
 
