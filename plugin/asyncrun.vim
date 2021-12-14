@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2021
 " Homepage: http://www.vim.org/scripts/script.php?script_id=5431
 "
-" Last Modified: 2021/12/15 04:45
+" Last Modified: 2021/12/15 05:24
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -194,6 +194,9 @@ let g:asyncrun_script = get(g:, 'asyncrun_script', '')
 
 " strict to execute vim script
 let g:asyncrun_strict = get(g:, 'asyncrun_strict', 0)
+
+" events
+let g:asyncrun_event = get(g:, 'asyncrun_event', {})
 
 " terminal job name
 let g:asyncrun_name = ''
@@ -1404,6 +1407,33 @@ endfunc
 
 
 "----------------------------------------------------------------------
+" invoke event
+"----------------------------------------------------------------------
+function! s:DispatchEvent(name, ...)
+	if has_key(g:asyncrun_event, a:name)
+		let l:F = g:asyncrun_event[a:name]
+		if type(l:F) == type('')
+			let test = l:F
+			unlet l:F
+			let l:F = function(test)
+		endif
+		if a:0 == 0
+			call l:F()
+		else
+			let args = []
+			for index in range(a:0)
+				let args += ['a:' . (index + 1)]
+			endfor
+			let text = join(args, ',')
+			let cmd = 'call l:F(' . text . ')'
+			exec cmd
+		endif
+		unlet l:F
+	endif
+endfunc
+
+
+"----------------------------------------------------------------------
 " run command
 "----------------------------------------------------------------------
 function! s:run(opts)
@@ -1435,6 +1465,7 @@ function! s:run(opts)
 		let l:opts.raw = 1
 	elseif type(l:mode) == 0 && l:mode == 6
 		let pos = get(l:opts, 'pos', '')
+		call s:DispatchEvent('runner', pos)
 		if has_key(g:asyncrun_runner, pos)
 			let l:runner = pos
 		elseif pos == 'bang' || pos == 'vim'
@@ -1779,11 +1810,9 @@ function! asyncrun#run(bang, opts, args, ...)
 		let l:macros['VIM_FILEEXT'] = ''
 	endif
 
-	" fire AsyncRunInit autocmd
-	if get(s:, 'asyncrun_init', 0) == 0
-		call s:AutoCmd('Init')
-		let s:asyncrun_init = 1
-	endif
+	" call init scripts
+	call s:DispatchEvent('init')
+	call s:AutoCmd('Init')
 
 	" extract options
 	let [l:command, l:opts] = s:ExtractOpt(s:StringStrip(a:args))
@@ -1924,7 +1953,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.8.8'
+	return '2.8.9'
 endfunc
 
 
