@@ -54,7 +54,7 @@ Remember to open vim's quickfix window by `:copen` (or setting  `g:asyncrun_open
     - [Variables](#variables)
     - [Autocmd](#autocmd)
     - [Project Root](#project-root)
-    - [Running modes](#running-modes)
+    - [Running Modes](#running-modes)
     - [Internal Terminal](#internal-terminal)
     - [Terminal Name](#terminal-name)
     - [Quickfix window](#quickfix-window)
@@ -269,7 +269,7 @@ The first `make` will run in the vim's current directory (which `:pwd` returns),
 
 The project root is the nearest ancestor directory of the current file which contains one of these directories or files: `.svn`, `.git`, `.hg`, `.root` or `.project`. If none of the parent directories contains these root markers, the directory of the current file is used as the project root. The root markers can also be configurated, see [Project Root](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root).
 
-### Running modes
+### Running Modes
 
 The default behavior is to run async command and output to quickfix window. However there is a `-mode=?` option can allow you specify how to run your command:
 
@@ -293,7 +293,7 @@ AsyncRun is capable to run commands in Vim/NeoVim's internal terminal with the `
 - `-pos=left`: open the terminal on the left side.
 - `-pos=right`: open the terminal on the right side.
 - `-pos=hide`: don't open a window, run in background.
-- `-pos=external`: use an external terminal (Windows only).
+- `-pos=external`: use an external terminal (Windows & Gnome only).
 
 Examples:
 
@@ -331,7 +331,7 @@ Setting `g:asyncrun_open` to 8 will open quickfix window automatically at 8 line
 
 ### Extra Runners
 
-Except the default quickfix and internal terminal behavior, AsyncRun is capable to run command in another tmux split or a new gnome-terminal window/tab with the advantage of extra runners.
+Besides the default quickfix and internal terminal behavior, there are many extra runners which allow you to run commands in a new gnome-terminal window/tab, a floaterm window, or a side-by-side tmux pane.
 
 By default, AsyncRun is shipped with some popular runners:
 
@@ -348,11 +348,16 @@ By default, AsyncRun is shipped with some popular runners:
 e.g.
 
 ```VimL
-:AsyncRun -mode=term -pos=floaterm   ls -la
 :AsyncRun -mode=term -pos=gnome      ls -la
+:AsyncRun -mode=term -pos=floaterm   ls -la
 :AsyncRun -mode=term -pos=tmux       ls -la
 ```
 
+screenshot:
+
+![](https://github.com/skywind3000/images/raw/master/p/asyncrun_extra/p_gnome_gvim.gif)
+
+All runners are customizable, you can modify or define your own runners, see [customize runner](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner).
 
 ### Range support
 
@@ -400,7 +405,9 @@ When `-mode` is `term` and `-pos` can used to represent runner name.
 
 Runner function has only one argument: `opts`, it contains the options extracted from `:AsyncRun` command line, and `opts.cmd` stores current command.
 
-If you want to create new runners please visit project wiki: [customize runner](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner).
+**Another way** to create a runner is to simply create a `.vim` file in the `autoload/asyncrun/runner/` folder of your run-time-path (see the [examples](autoload/asyncrun/runner)).
+
+For more information, please visit project wiki: [customize runner](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner).
 
 
 ### Command Modifier
