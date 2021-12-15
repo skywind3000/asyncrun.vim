@@ -40,17 +40,23 @@ Remember to open vim's quickfix window by `:copen` (or setting  `g:asyncrun_open
 
 <!-- TOC -->
 
-- [Tutorials](#tutorials)
-- [Manual](#manual)
+- [Preface](#preface)
+- [News](#news)
+- [Install](#install)
+- [Example](#example)
+- [Contents](#contents)
+  - [Tutorials](#tutorials)
+  - [Manual](#manual)
     - [AsyncRun - Run shell command](#asyncrun---run-shell-command)
     - [AsyncStop - Stop the running job](#asyncstop---stop-the-running-job)
-    - [Function API](#function-api)
+    - [Function (API)](#function-api)
     - [Settings](#settings)
     - [Variables](#variables)
     - [Autocmd](#autocmd)
     - [Project Root](#project-root)
     - [Running modes](#running-modes)
     - [Internal Terminal](#internal-terminal)
+    - [Customize Runners](#customize-runners)
     - [Terminal Name](#terminal-name)
     - [Quickfix window](#quickfix-window)
     - [Range support](#range-support)
@@ -58,11 +64,11 @@ Remember to open vim's quickfix window by `:copen` (or setting  `g:asyncrun_open
     - [Command Modifier](#command-modifier)
     - [Requirements](#requirements)
     - [Cooperate with vim-fugitive:](#cooperate-with-vim-fugitive)
-- [Language Tips](#language-tips)
-- [More Topics](#more-topics)
-- [Cooperate with other Plugins](#cooperate-with-other-plugins)
-- [History](#history)
-- [Credits](#credits)
+  - [Language Tips](#language-tips)
+  - [More Topics](#more-topics)
+  - [Cooperate with other Plugins](#cooperate-with-other-plugins)
+  - [History](#history)
+  - [Credits](#credits)
 
 <!-- /TOC -->
 
@@ -302,9 +308,32 @@ Examples:
 
 The `-pos` field accepts an uppercase `TAB`, to create tab on the left of current tab. When using internal terminal in a split window, AsyncRun will firstly reuse a finished previous terminal window if it exists, if not, a new terminal window will be created in given position. Tab based terminal can also be reusable if `-reuse` is provided.
 
+### Customize Runners
+
 Except the quickfix and internal terminal, AsyncRun is capable to run command in another tmux split or a new gnome-terminal window/tab with the advantage of [customizable runners](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner).
 
-More extra runners can be found in the extension [asyncrun.extra](https://github.com/skywind3000/asyncrun.extra).
+By default, AsyncRun is shipped with some popular runners:
+
+| Runner | Description | Requirement | link |
+|-|-|-|-|
+| `gnome` | run in a new gnome terminal | gnome-terminal | [gnome.vim](autoload/asyncrun/runner/gnome.vim) |
+| `gnome_tab` | run in a new gnome terminal tab | gnome-terminal | [gnome_tab.vim](autoload/asyncrun/runner/gnome_tab.vim) |
+| `xterm` | run in a xterm window | xterm | [xterm.vim](autoload/asyncrun/runner/xterm.vim) |
+| `tmux` | run in a separated tmux pane | [Vimux](https://github.com/preservim/vimux) | [tmux.vim](autoload/asyncrun/runner/tmux.vim) |
+| `floaterm` | run in a new floaterm window | [floaterm](https://github.com/voldikss/vim-floaterm) | [floaterm.vim](autoload/asyncrun/runner/floaterm.vim) |
+| `floaterm_reuse` | run in a reusable floaterm window | [floaterm](https://github.com/voldikss/vim-floaterm) | [floaterm_reuse.vim](autoload/asyncrun/runner/floaterm.vim) |
+| `quickui` | run in a quickui window | [vim-quickui](https://github.com/skywind3000/vim-quickui) | [quickui.vim](autoload/asyncrun/runner/quickui.vim) |
+
+e.g.
+
+```VimL
+:AsyncRun -mode=term -pos=floaterm   ls -la
+:AsyncRun -mode=term -pos=gnome      ls -la
+:AsyncRun -mode=term -pos=tmux       ls -la
+```
+
+
+
 
 ### Terminal Name
 
