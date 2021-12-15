@@ -34,8 +34,13 @@
 
 <!-- TOC -->
 
-- [快速入门](#快速入门)
-- [使用手册](#使用手册)
+- [特性说明](#特性说明)
+- [新闻](#新闻)
+- [安装](#安装)
+- [例子](#例子)
+- [内容目录](#内容目录)
+  - [快速入门](#快速入门)
+  - [使用手册](#使用手册)
     - [AsyncRun - 运行 shell 命令](#asyncrun---运行-shell-命令)
     - [AsyncStop - 停止正在运行的任务](#asyncstop---停止正在运行的任务)
     - [函数接口](#函数接口)
@@ -47,14 +52,16 @@
     - [内置终端](#内置终端)
     - [Quickfix window](#quickfix-window)
     - [Range 支持](#range-支持)
+  - [高级话题](#高级话题)
+    - [额外的 Runner](#额外的-runner)
     - [自定义 Runner](#自定义-runner)
     - [命令修改器](#命令修改器)
     - [运行需求](#运行需求)
     - [同 fugitive 协作](#同-fugitive-协作)
-- [语言参考](#语言参考)
-- [更多话题](#更多话题)
-- [插件协作](#插件协作)
-- [Credits](#credits)
+  - [语言参考](#语言参考)
+  - [更多话题](#更多话题)
+  - [插件协作](#插件协作)
+  - [Credits](#credits)
 
 <!-- /TOC -->
 
@@ -334,6 +341,24 @@ AsyncRun 可以指定一个当前 buffer 的文本范围，用作命令的 stdin
 
 选中区域的文本 (行模式) 作为标准输入。
 
+## 高级话题
+
+AsyncRun 提供足够的可能性和灵活性让你指定运行命令的各处细节。
+
+### 额外的 Runner
+
+除去上面的 Quickfix 和内置终端外，AsyncRun 还允许你自定义各种 runner 来为命令提供新的运行方式，本项目已经自带一批 runner：
+
+| Runner | 描 述 | 依 赖 | 链 接 |
+|-|-|-|-|
+| `gnome` | 在新的 Gnome 终端里运行 | gnome-terminal | [gnome.vim](autoload/asyncrun/runner/gnome.vim) |
+| `gnome_tab` | 在另一个 Gnome 终端的 Tab 里运行 | gnome-terminal | [gnome_tab.vim](autoload/asyncrun/runner/gnome_tab.vim) |
+| `xterm` | 在新的 xterm 窗口内运行 | xterm | [xterm.vim](autoload/asyncrun/runner/xterm.vim) |
+| `tmux` | 在一个新的 tmux 的 pane 里运行 | [Vimux](https://github.com/preservim/vimux) | [tmux.vim](autoload/asyncrun/runner/tmux.vim) |
+| `floaterm` | 在 floaterm 的新窗口里运行 | [floaterm](https://github.com/voldikss/vim-floaterm) | [floaterm.vim](autoload/asyncrun/runner/floaterm.vim) |
+| `floaterm_reuse` | 再一个可复用的 floaterm 窗口内运行 | [floaterm](https://github.com/voldikss/vim-floaterm) | [floaterm_reuse.vim](autoload/asyncrun/runner/floaterm.vim) |
+| `quickui` | 在 quickui 的浮窗里运行 | [vim-quickui](https://github.com/skywind3000/vim-quickui) | [quickui.vim](autoload/asyncrun/runner/quickui.vim) |
+
 ### 自定义 Runner
 
 你可能还希望更多的执行方式，比如在新的 tmux 或者 gnore-terminal 的窗口里运行，AsyncRun 允许你自定义 runner：
@@ -358,7 +383,6 @@ let g:asyncrun_runner.test = function('MyRunner')
 Runner 函数只有一个参数：`opts`，是一个字典，里面保存着 `:AsyncRun` 命令行里传过来的值，同时 `opts.cmd` 记录着需要运行的命令。
 
 关于更多 tmux / gnome-terminal 的 runner 例子，以及更多运行模式，参考 [自定义运行模式](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner) 。
-
 
 
 ### 命令修改器

@@ -58,6 +58,7 @@ Remember to open vim's quickfix window by `:copen` (or setting  `g:asyncrun_open
     - [Internal Terminal](#internal-terminal)
     - [Terminal Name](#terminal-name)
     - [Quickfix window](#quickfix-window)
+  - [Advanced Topics](#advanced-topics)
     - [Extra Runners](#extra-runners)
     - [Range support](#range-support)
     - [Customize Runner](#customize-runner)
@@ -328,6 +329,9 @@ AsyncRun displays its output in quickfix window, so if you don't use `:copen {he
 
 Setting `g:asyncrun_open` to 8 will open quickfix window automatically at 8 lines height after command starts.
 
+## Advanced Topics
+
+AsyncRun provides enough flexibility and possibility to customize various details of how to run a command. 
 
 ### Extra Runners
 
@@ -335,7 +339,7 @@ Besides the default quickfix and internal terminal behavior, there are many extr
 
 By default, AsyncRun is shipped with some popular runners:
 
-| Runner | Description | Requirement | link |
+| Runner | Description | Requirement | Link |
 |-|-|-|-|
 | `gnome` | run in a new gnome terminal | gnome-terminal | [gnome.vim](autoload/asyncrun/runner/gnome.vim) |
 | `gnome_tab` | run in a new gnome terminal tab | gnome-terminal | [gnome_tab.vim](autoload/asyncrun/runner/gnome_tab.vim) |
@@ -472,11 +476,12 @@ Don't forget to read the [Frequently Asked Questions](https://github.com/skywind
 
 | Name | Description |
 |------|-------------|
+| [asynctasks](https://github.com/skywind3000/asynctasks.vim) | Introduce vscode's task system to vim (powered by AsyncRun). |
 | [vim-fugitive](https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-famous-plugins#fugitive)  | perfect cooperation, asyncrun gets Gfetch/Gpush running in background |
 | [errormarker](https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-famous-plugins) | perfect cooperation, errormarker will display the signs on the error or warning lines |
 | [airline](https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-famous-plugins#vim-airline) | very well, airline will display status of background jobs |
 | [sprint](https://github.com/pedsm/sprint) | nice plugin who uses asyncrun to provide an IDE's run button to runs your code |
-| [netrw](https://github.com/skywind3000/asyncrun.vim/wiki/Get-netrw-using-asyncrun-to-save-remote-files) | netrw can save remote files on background now. Experimental, take your own risk | 
+
 
 
 See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-famous-plugins)
