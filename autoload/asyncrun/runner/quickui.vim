@@ -17,7 +17,7 @@ endfunc
 function! asyncrun#runner#quickui#run(argv)
 	let argv = a:argv
 	let opts = {}
-	let opts.pause = (get(argv, 'pause', 1) == 0)? 0 : 1
+	let opts.pause = (get(argv, 'close', 0) == 0)? 1 : 0
 	let opts.color = 'QuickBG'
 	" unsilent echom argv
 	if has_key(argv, 'post')
