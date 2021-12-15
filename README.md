@@ -56,9 +56,9 @@ Remember to open vim's quickfix window by `:copen` (or setting  `g:asyncrun_open
     - [Project Root](#project-root)
     - [Running modes](#running-modes)
     - [Internal Terminal](#internal-terminal)
-    - [Extra Runners](#extra-runners)
     - [Terminal Name](#terminal-name)
     - [Quickfix window](#quickfix-window)
+    - [Extra Runners](#extra-runners)
     - [Range support](#range-support)
     - [Customize Runner](#customize-runner)
     - [Command Modifier](#command-modifier)
@@ -308,6 +308,27 @@ Examples:
 
 The `-pos` field accepts an uppercase `TAB`, to create tab on the left of current tab. When using internal terminal in a split window, AsyncRun will firstly reuse a finished previous terminal window if it exists, if not, a new terminal window will be created in given position. Tab based terminal can also be reusable if `-reuse` is provided.
 
+
+
+### Terminal Name
+
+There can be many commands running in the internal terminal, you can specify a name for each of them and receive it in `g:asyncrun_name`:
+
+```VimL
+:AsyncRun -mode=term -pos=hide -name=123 -post=echo\ g:asyncrun_name  ls -la
+```
+
+When this process finished, script defined in `-post` will be executed and your command name will display by `echo`. Another variable `g:asyncrun_code` stores exit code.
+
+### Quickfix window
+
+AsyncRun displays its output in quickfix window, so if you don't use `:copen {height}` to open quickfix window, you won't see any output. For convenience there is an option `g:asyncrun_open` for you:
+
+    :let g:asyncrun_open = 8
+
+Setting `g:asyncrun_open` to 8 will open quickfix window automatically at 8 lines height after command starts.
+
+
 ### Extra Runners
 
 Except the default quickfix and internal terminal behavior, AsyncRun is capable to run command in another tmux split or a new gnome-terminal window/tab with the advantage of extra runners.
@@ -332,26 +353,6 @@ e.g.
 :AsyncRun -mode=term -pos=tmux       ls -la
 ```
 
-
-
-
-### Terminal Name
-
-There can be many commands running in the internal terminal, you can specify a name for each of them and receive it in `g:asyncrun_name`:
-
-```VimL
-:AsyncRun -mode=term -pos=hide -name=123 -post=echo\ g:asyncrun_name  ls -la
-```
-
-When this process finished, script defined in `-post` will be executed and your command name will display by `echo`. Another variable `g:asyncrun_code` stores exit code.
-
-### Quickfix window
-
-AsyncRun displays its output in quickfix window, so if you don't use `:copen {height}` to open quickfix window, you won't see any output. For convenience there is an option `g:asyncrun_open` for you:
-
-    :let g:asyncrun_open = 8
-
-Setting `g:asyncrun_open` to 8 will open quickfix window automatically at 8 lines height after command starts.
 
 ### Range support
 
