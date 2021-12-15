@@ -1,9 +1,9 @@
 " asyncrun.vim - Run shell commands in background and output to quickfix
 "
 " Maintainer: skywind3000 (at) gmail.com, 2016-2021
-" Homepage: http://www.vim.org/scripts/script.php?script_id=5431
+" Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2021/12/15 05:24
+" Last Modified: 2021/12/16 00:19
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1218,6 +1218,7 @@ function! s:terminal_init(opts)
 		call s:ErrorMsg('Process creation failed')
 		return -1
 	endif
+	let info = {}
 	if pos != 'hide'
 		setlocal nonumber signcolumn=no norelativenumber
 		let b:asyncrun_cmd = a:opts.cmd
@@ -1229,18 +1230,21 @@ function! s:terminal_init(opts)
 		if has_key(a:opts, 'hidden')
 			exec 'setlocal bufhidden=' . (hidden? 'hide' : '')
 		endif
+		if exists('*win_getid')
+			let info.winid = win_getid()
+		endif
 	endif
-	let opts = {}
-	let opts.name = get(a:opts, 'name', '')
-	let opts.post = get(a:opts, 'post', '')
-	let opts.cmd = get(a:opts, 'cmd', '')
+	let info.name = get(a:opts, 'name', '')
+	let info.post = get(a:opts, 'post', '')
+	let info.cmd = get(a:opts, 'cmd', '')
 	if has_key(a:opts, 'exit')
-		let opts.exit = a:opts.exit
+		let info.exit = a:opts.exit
 	endif
-	let opts.pid = pid
-	let opts.jid = jid
-	let opts.bid = bid
-	let s:async_term[pid] = opts
+	let info.pid = pid
+	let info.jid = jid
+	let info.bid = bid
+	let info.close = get(a:opts, 'close', 0)
+	let s:async_term[pid] = info
 	return pid
 endfunc
 
@@ -1274,16 +1278,24 @@ function! s:terminal_exit(...)
 	if !has_key(s:async_term, pid)
 		return -1
 	endif
-	let opts = s:async_term[pid]
+	let info = s:async_term[pid]
 	unlet s:async_term[pid]
 	let g:asyncrun_code = code
-	let g:asyncrun_name = opts.name
-	if opts.post != ''
-		exec opts.post
+	let g:asyncrun_name = info.name
+	if has('nvim') != 0
+		if info.close != 0
+			if has_key(info, 'winid')
+				call nvim_win_close(info.winid, 1)
+			endif
+		endif
 	endif
-	if has_key(opts, 'exit')
-		let F = function(opts.exit)
-		call F(opts.name, code)
+	if info.post != ''
+		exec info.post
+	endif
+	if has_key(info, 'exit')
+		let l:F = function(info.exit)
+		call l:F(info.name, code)
+		unlet l:F
 	endif
 endfunc
 
@@ -1953,7 +1965,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.8.9'
+	return '2.9.1'
 endfunc
 
 

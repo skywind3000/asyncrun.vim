@@ -17,8 +17,9 @@ endfunc
 function! asyncrun#runner#quickui#run(argv)
 	let argv = a:argv
 	let opts = {}
-	let opts.pause = 1
+	let opts.pause = (get(argv, 'pause', 1) == 0)? 0 : 1
 	let opts.color = 'QuickBG'
+	" unsilent echom argv
 	if has_key(argv, 'post')
 		let s:post_script = argv.post
 		let opts.callback = function('s:callback')

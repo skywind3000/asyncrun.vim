@@ -308,7 +308,7 @@ Examples:
 :AsyncRun -mode=term -pos=curwin -hidden python "$(VIM_FILEPATH)"
 ```
 
-The `-pos` field accepts an uppercase `TAB`, to create tab on the left of current tab. When using internal terminal in a split window, AsyncRun will firstly reuse a finished previous terminal window if it exists, if not, a new terminal window will be created in given position. Tab based terminal can also be reusable if `-reuse` is provided.
+The `-pos` field accepts an uppercase `TAB`, to create a tab on the left of the current tab. When using internal terminal in a split window, AsyncRun will firstly reuse a finished previous terminal window if it exists, if not, a new terminal window will be created in given position. Tab based terminal can also be reusable if `-reuse` is provided.
 
 
 
@@ -489,7 +489,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 
 # History
 
-- 2.8.9 (2021-12-15): extra runners to run command in a tmux, or floaterm window.
+- 2.9.1 (2021-12-15): extra runners to run command in a tmux, or floaterm window.
 - 2.6.2 (2020-03-08): change runner's argument from string to dict.
 - 2.6.0 (2020-03-07): `-post` can be used in terminal mode.
 - 2.5.5 (2020-03-07): "-mode=term -pos=tab" obeys "-focus=0" now.
