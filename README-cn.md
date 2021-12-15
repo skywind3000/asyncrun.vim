@@ -361,6 +361,20 @@ AsyncRun 提供足够的可能性和灵活性让你指定运行命令的各处�
 | `floaterm_reuse` | 再一个可复用的 floaterm 窗口内运行 | [floaterm](https://github.com/voldikss/vim-floaterm) | [floaterm_reuse.vim](autoload/asyncrun/runner/floaterm.vim) |
 | `quickui` | 在 quickui 的浮窗里运行 | [vim-quickui](https://github.com/skywind3000/vim-quickui) | [quickui.vim](autoload/asyncrun/runner/quickui.vim) |
 
+比如：
+
+```VimL
+:AsyncRun -mode=term -pos=gnome      ls -la
+:AsyncRun -mode=term -pos=floaterm   ls -la
+:AsyncRun -mode=term -pos=tmux       ls -la
+```
+
+下面是 `gnome` 这个 runner 的效果：
+
+![](https://github.com/skywind3000/images/raw/master/p/asyncrun_extra/p_gnome_gvim.gif)
+
+所有 runner 皆可定制，你可以很方便的开发新 runner，详细见 [customize runner](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner)。
+
 ### 自定义 Runner
 
 你可能还希望更多的执行方式，比如在新的 tmux 或者 gnore-terminal 的窗口里运行，AsyncRun 允许你自定义 runner：

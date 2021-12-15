@@ -358,7 +358,7 @@ e.g.
 :AsyncRun -mode=term -pos=tmux       ls -la
 ```
 
-screenshot:
+Screenshot for `gnome` runner:
 
 ![](https://github.com/skywind3000/images/raw/master/p/asyncrun_extra/p_gnome_gvim.gif)
 
