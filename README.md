@@ -10,7 +10,7 @@ This plugin takes the advantage of new apis in Vim 8 (and NeoVim) to enable you 
 - Customizable runners and command modifiers brings you dark power of asyncrun.
 - Fast and lightweight, just a single self-contained `asyncrun.vim` source file.  
 - Provide corresponding user experience in vim, neovim, gvim and macvim.
-- Separated extension [asyncrun.extra](https://github.com/skywind3000/asyncrun.extra) to provide extra runners.
+- Extra runners to run command in a new gnome/floaterm/tmux window.
 
 If that doesn't excite you, then perhaps this GIF screen capture below will change your mind.
 
