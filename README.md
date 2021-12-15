@@ -18,6 +18,7 @@ If that doesn't excite you, then perhaps this GIF screen capture below will chan
 
 # News
 
+- 2021/12/15 new extra runners to run command in a tmux, or floaterm window.
 - 2020/02/18 [asynctasks](https://github.com/skywind3000/asynctasks.vim) uses asyncrun to introduce vscode's task system to vim.
 - 2020/01/21 run command in internal terminal with `-mode=term` see [here](#internal-terminal).
 - 2018/04/17 AsyncRun now supports command range, try: `:%AsyncRun cat`.
@@ -68,8 +69,8 @@ Remember to open vim's quickfix window by `:copen` (or setting  `g:asyncrun_open
   - [Language Tips](#language-tips)
   - [More Topics](#more-topics)
   - [Cooperate with other Plugins](#cooperate-with-other-plugins)
-  - [History](#history)
-  - [Credits](#credits)
+- [History](#history)
+- [Credits](#credits)
 
 <!-- /TOC -->
 
@@ -486,8 +487,9 @@ Don't forget to read the [Frequently Asked Questions](https://github.com/skywind
 
 See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-famous-plugins)
 
-## History
+# History
 
+- 2.8.9 (2021-12-15): extra runners to run command in a tmux, or floaterm window.
 - 2.6.2 (2020-03-08): change runner's argument from string to dict.
 - 2.6.0 (2020-03-07): `-post` can be used in terminal mode.
 - 2.5.5 (2020-03-07): "-mode=term -pos=tab" obeys "-focus=0" now.
@@ -558,7 +560,7 @@ See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim
 - 0.0.1 (2016-09-08): improve arguments parsing
 - 0.0.0 (2016-08-24): initial version
 
-## Credits
+# Credits
 
 Trying best to provide the most simply and convenience experience in the asynchronous-jobs. 
 

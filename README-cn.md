@@ -16,6 +16,8 @@
 
 # 新闻
 
+- 2021/12/15 新的 runner 机制，扩展 AsyncRun 的能力，在 tmux/floaterm 中运行命令。
+- 2020/02/18 [asynctasks](https://github.com/skywind3000/asynctasks.vim) 使用 AsyncRun 为 Vim 提供了一套类似 vscode 的任务机制，更好的构建、测试和运行项目。
 - 2020/01/21 使用 `-mode=term` 在内置终端里运行你的命令，见 [内置终端](#内置终端)。
 - 2018/04/17 支持 range 了，可以 Vim 中选中一段文本，然后 `:%AsyncRun cat`。
 - 2017/06/26 新增参数 `-cwd=<root>` 可以指定在项目的根目录运行命令，见 [project-root](#项目根目录)。
@@ -60,8 +62,8 @@
     - [同 fugitive 协作](#同-fugitive-协作)
   - [语言参考](#语言参考)
   - [更多话题](#更多话题)
-  - [插件协作](#插件协作)
-  - [Credits](#credits)
+- [插件协作](#插件协作)
+- [Credits](#credits)
 
 <!-- /TOC -->
 
@@ -442,7 +444,7 @@ asyncrun.vim 可以同 `vim-fugitive` 协作，为 fugitive 提供异步支持�
 
 Don't forget to read the [Frequently Asked Questions](https://github.com/skywind3000/asyncrun.vim/wiki/FAQ).
 
-## 插件协作
+# 插件协作
 
 | Name | Description |
 |------|-------------|
@@ -455,7 +457,7 @@ Don't forget to read the [Frequently Asked Questions](https://github.com/skywind
 
 See: [Cooperate with famous plugins](https://github.com/skywind3000/asyncrun.vim/wiki/Cooperate-with-famous-plugins)
 
-## Credits
+# Credits
 
 Trying best to provide the most simply and convenience experience in the asynchronous-jobs. 
 
