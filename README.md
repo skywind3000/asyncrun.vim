@@ -60,7 +60,7 @@ Remember to open vim's quickfix window by `:copen` (or setting  `g:asyncrun_open
     - [Terminal Name](#terminal-name)
     - [Quickfix window](#quickfix-window)
     - [Range support](#range-support)
-    - [Customize Runner](#customize-runner)
+    - [Extra Runner](#extra-runner)
     - [Command Modifier](#command-modifier)
     - [Requirements](#requirements)
     - [Cooperate with vim-fugitive:](#cooperate-with-vim-fugitive)
@@ -376,7 +376,7 @@ text between line 10-20 will be taken as the stdin of python. code in that range
 
 The visual selection (line-wise) will be taken as stdin.
 
-### Customize Runner
+### Extra Runner
 
 AsyncRun allows you to define new runners to specify how to run your command. It can be useful when you want your commands run in a tmux split or a new gnome-terminal window:
 
