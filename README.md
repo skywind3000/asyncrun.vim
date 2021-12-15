@@ -56,11 +56,11 @@ Remember to open vim's quickfix window by `:copen` (or setting  `g:asyncrun_open
     - [Project Root](#project-root)
     - [Running modes](#running-modes)
     - [Internal Terminal](#internal-terminal)
-    - [Customize Runners](#customize-runners)
+    - [Extra Runners](#extra-runners)
     - [Terminal Name](#terminal-name)
     - [Quickfix window](#quickfix-window)
     - [Range support](#range-support)
-    - [Extra Runner](#extra-runner)
+    - [Customize Runner](#customize-runner)
     - [Command Modifier](#command-modifier)
     - [Requirements](#requirements)
     - [Cooperate with vim-fugitive:](#cooperate-with-vim-fugitive)
@@ -308,9 +308,9 @@ Examples:
 
 The `-pos` field accepts an uppercase `TAB`, to create tab on the left of current tab. When using internal terminal in a split window, AsyncRun will firstly reuse a finished previous terminal window if it exists, if not, a new terminal window will be created in given position. Tab based terminal can also be reusable if `-reuse` is provided.
 
-### Customize Runners
+### Extra Runners
 
-Except the quickfix and internal terminal, AsyncRun is capable to run command in another tmux split or a new gnome-terminal window/tab with the advantage of [customizable runners](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner).
+Except the default quickfix and internal terminal behavior, AsyncRun is capable to run command in another tmux split or a new gnome-terminal window/tab with the advantage of extra runners.
 
 By default, AsyncRun is shipped with some popular runners:
 
@@ -376,7 +376,7 @@ text between line 10-20 will be taken as the stdin of python. code in that range
 
 The visual selection (line-wise) will be taken as stdin.
 
-### Extra Runner
+### Customize Runner
 
 AsyncRun allows you to define new runners to specify how to run your command. It can be useful when you want your commands run in a tmux split or a new gnome-terminal window:
 
@@ -398,8 +398,6 @@ Then try:
 When `-mode` is `term` and `-pos` can used to represent runner name.
 
 Runner function has only one argument: `opts`, it contains the options extracted from `:AsyncRun` command line, and `opts.cmd` stores current command.
-
-There is a separated extension [asyncrun.extra](https://github.com/skywind3000/asyncrun.extra) which provide extra runners to run commands in `gnome-terminal`, `tmux`, `floaterm` and more. You can check this to see if it can fit your needs.
 
 If you want to create new runners please visit project wiki: [customize runner](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner).
 
