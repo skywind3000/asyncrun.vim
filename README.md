@@ -393,8 +393,7 @@ AsyncRun allows you to define new runners to specify how to run your command. It
 
 ```VimL
 function! MyRunner(opts)
-    let dir = (opts.cwd == '')? '.' : opts.cwd
-    echo "command to run is: " . a:opts.cmd . ' from: ' . dir
+    echo "command to run is: " . a:opts.cmd
 endfunction
 
 let g:asyncrun_runner = get(g:, 'asyncrun_runner', {})
