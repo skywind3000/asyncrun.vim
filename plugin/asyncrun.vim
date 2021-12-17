@@ -1143,7 +1143,7 @@ function! asyncrun#translate(program, command)
 	endif
 	let l:command = s:StringStrip(l:command)
 	let s:async_program_cmd = ''
-	silent exec 'AsyncRun -program=parse @ '. l:command
+	silent exec 'AsyncRun -program=<parse> @ '. l:command
 	let l:command = s:async_program_cmd
 	return l:command
 endfunc
@@ -1869,9 +1869,13 @@ function! asyncrun#run(bang, opts, args, ...)
 	endif
 
 	" parse makeprg/grepprg and return
-	if l:opts.program == 'parse'
+	if l:opts.program == '<parse>'
 		let s:async_program_cmd = l:command
 		return s:async_program_cmd
+	elseif l:opts.program == '<display>'
+		let l:opts.cmd = l:command
+		echo l:opts
+		return ''
 	endif
 
 	" update marcros
@@ -1940,6 +1944,11 @@ function! asyncrun#run(bang, opts, args, ...)
 	let l:opts.mode = get(l:opts, 'mode', g:asyncrun_mode)
 	let l:opts.errorformat = get(l:opts, 'errorformat', &errorformat)
 	let s:async_scroll = (a:bang == '!')? 0 : 1
+
+	" check scroll
+	if has_key(l:opts, 'scroll')
+		let s:async_scroll = (l:opts.scroll == '0')? 0 : 1
+	endif
 
 	" check if need to save
 	let l:save = get(l:opts, 'save', '')
