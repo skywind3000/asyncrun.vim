@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2021
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2021/12/16 00:19
+" Last Modified: 2021/12/18 03:57
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -137,7 +137,7 @@ let g:asyncrun_hook = get(g:, 'asyncrun_hook', '')
 let g:asyncrun_last = get(g:, 'asyncrun_last', 0)
 
 " speed for each timer
-let g:asyncrun_timer = get(g:, 'asyncrun_timer', 25)
+let g:asyncrun_timer = get(g:, 'asyncrun_timer', 50)
 
 " previous exit code
 let g:asyncrun_code = get(g:, 'asyncrun_code', '')
@@ -171,6 +171,9 @@ let g:asyncrun_runner = get(g:, 'asyncrun_runner', {})
 
 " command modifier for '-program=xxx'
 let g:asyncrun_program = get(g:, 'asyncrun_program', {})
+
+" command translator for '-program=xxx'
+let g:asyncrun_translator = get(g:, 'asyncrun_translator', {})
 
 " silent the autocmds ?
 let g:asyncrun_silent = get(g:, 'asyncrun_silent', 1)
@@ -748,6 +751,11 @@ function! s:AsyncRun_Job_Start(cmd)
 		let l:callbacks['on_exit'] = function('s:AsyncRun_Job_NeoVim')
 		let s:neovim_stdout = ''
 		let s:neovim_stderr = ''
+		if s:async_info.range <= 0 
+			if g:asyncrun_stdin == 0 && has('nvim-0.6.0')
+				let l:callbacks.stdin = 'null'
+			endif
+		endif
 		let s:async_job = jobstart(l:args, l:callbacks)
 		let l:success = (s:async_job > 0)? 1 : 0
 		if l:success != 0
@@ -762,9 +770,9 @@ function! s:AsyncRun_Job_Start(cmd)
 				endif
 			endif
 			if exists('*chanclose')
-				call chanclose(s:async_job, 'stdin')
+				silent! call chanclose(s:async_job, 'stdin')
 			elseif exists('*jobclose')
-				call jobclose(s:async_job, 'stdin')
+				silent! call jobclose(s:async_job, 'stdin')
 			endif
 		endif
 	endif
@@ -1122,6 +1130,24 @@ function! asyncrun#path_win2unix(winpath, prefix)
 	endif
 endfunc
 
+" translate makeprg/grepprg format
+function! asyncrun#translate(program, command)
+	let l:program = a:program
+	let l:command = a:command
+	if l:program =~# '\$\*'
+		let l:command = s:StringReplace(l:program, '\$\*', l:command)
+	elseif l:command != ''
+		let l:command = l:program . ' ' . l:command
+	else
+		let l:command = l:program
+	endif
+	let l:command = s:StringStrip(l:command)
+	let s:async_program_cmd = ''
+	silent exec 'AsyncRun -program=parse @ '. l:command
+	let l:command = s:async_program_cmd
+	return l:command
+endfunc
+
 
 "----------------------------------------------------------------------
 " init terminal in current window
@@ -1477,7 +1503,9 @@ function! s:run(opts)
 		let l:opts.raw = 1
 	elseif type(l:mode) == 0 && l:mode == 6
 		let pos = get(l:opts, 'pos', '')
-		call s:DispatchEvent('runner', pos)
+		if pos != ''
+			call s:DispatchEvent('runner', pos)
+		endif
 		if has_key(g:asyncrun_runner, pos)
 			let l:runner = pos
 		elseif pos == 'bang' || pos == 'vim'
@@ -1522,21 +1550,30 @@ function! s:run(opts)
 			call s:ErrorMsg("only available for Windows")
 			return ''
 		endif
+	elseif has_key(g:asyncrun_translator, l:opts.program)
+		let name = l:opts.program
+		let l:program = g:asyncrun_translator[name]
 	elseif l:opts.program != ''
 		let name = l:opts.program
+		if name != ''
+			call s:DispatchEvent('program', name)
+		endif
 		let test = ['cygwin', 'msys', 'mingw32', 'mingw64']
-		if index(test, name) >= 0
+		let test += ['clang64', 'clang32']
+		if has_key(g:asyncrun_program, name) != 0
+			let l:F = g:asyncrun_program[name]
+			if type(l:F) == type('')
+				let t = l:F
+				unlet l:F
+				let l:F = function(t)
+			endif
+			unsilent let l:command = l:F(l:opts)
+			unlet l:F
+		elseif index(test, name) >= 0
 			unsilent let l:command = s:program_msys(l:opts)
 		else
-			if has_key(g:asyncrun_program, name) == 0
-				call s:ErrorMsg(name . " not found in g:asyncrun_program")
-				return ''
-			endif
-			let F = g:asyncrun_program[name]
-			if type(F) == type('')
-				let F = function(F)
-			endif
-			unsilent let l:command = F(l:opts)
+			call s:ErrorMsg(name . " not found in g:asyncrun_program")
+			return ''
 		endif
 		if l:command == ''
 			return ''
@@ -1545,17 +1582,7 @@ function! s:run(opts)
 	endif
 
 	if l:program != ''
-		if l:program =~# '\$\*'
-			let l:command = s:StringReplace(l:program, '\$\*', l:command)
-		elseif l:command != ''
-			let l:command = l:program . ' ' . l:command
-		else
-			let l:command = l:program
-		endif
-		let l:command = s:StringStrip(l:command)
-		let s:async_program_cmd = ''
-		silent exec 'AsyncRun -program=parse @ '. l:command
-		let l:command = s:async_program_cmd
+		let l:command = asyncrun#translate(l:program, l:command)
 	endif
 
 	if l:command =~ '^\s*$'
@@ -1965,7 +1992,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.9.1'
+	return '2.9.2'
 endfunc
 
 
@@ -1973,7 +2000,7 @@ endfunc
 " Commands
 "----------------------------------------------------------------------
 command! -bang -nargs=+ -range=0 -complete=file AsyncRun
-			\ call asyncrun#run('<bang>', '', <q-args>, <count>, <line1>, <line2>)
+		\ call asyncrun#run('<bang>', '', <q-args>, <count>, <line1>, <line2>)
 
 command! -bar -bang -nargs=0 AsyncStop call asyncrun#stop('<bang>')
 
@@ -1989,6 +2016,7 @@ function! s:program_msys(opts)
 		call s:ErrorMsg('program ' . program . ' is only for windows')
 		return ''
 	endif
+	let check = ['msys', 'mingw32', 'mingw64', 'clang32', 'clang64']
 	let lines = ["@echo off\r"]
 	let lines += ["set CHERE_INVOKING=enabled_from_arguments\r"]
 	if program == 'cygwin'
@@ -2008,7 +2036,7 @@ function! s:program_msys(opts)
 		endif
 		let mount = '/cygdrive'
 		let prefix = 'CYGWIN_'
-	elseif program == 'msys' || program == 'mingw32' || program == 'mingw64'
+	elseif index(check, program) >= 0
 		let home = get(g:, 'asyncrun_msys', '')
 		if home == ''
 			call s:ErrorMsg('g:asyncrun_msys needs to set to msys root')
