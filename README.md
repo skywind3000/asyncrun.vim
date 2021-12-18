@@ -358,7 +358,7 @@ By default, AsyncRun is shipped with some popular runners:
 | `floaterm` | run in a new floaterm window | [floaterm](https://github.com/voldikss/vim-floaterm) | [floaterm.vim](autoload/asyncrun/runner/floaterm.vim) |
 | `floaterm_reuse` | run in a reusable floaterm window | [floaterm](https://github.com/voldikss/vim-floaterm) | [floaterm_reuse.vim](autoload/asyncrun/runner/floaterm.vim) |
 | `quickui` | run in a quickui window | [vim-quickui](https://github.com/skywind3000/vim-quickui) | [quickui.vim](autoload/asyncrun/runner/quickui.vim) |
-| `toggleterm` | run in a toggleterm window | [toggleterm.nvim](https://github.com/akinsho/toggleterm.nvim) (nvim only) | [toggleterm.vim](autoload/asyncrun/runner/toggleterm.vim) |
+| `toggleterm` | run in a toggleterm window | [toggleterm.nvim](https://github.com/akinsho/toggleterm.nvim) | [toggleterm.vim](autoload/asyncrun/runner/toggleterm.vim) |
 
 
 e.g.
