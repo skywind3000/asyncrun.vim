@@ -1,16 +1,15 @@
 # Preface
 
-This plugin takes the advantage of new apis in Vim 8 (and NeoVim) to enable you to run shell commands in background and read output in the quickfix window in realtime:
+This plugin takes the advantage of new APIs in Vim 8 (and NeoVim) to enable you to run shell commands in the background and read the output in the quickfix window in realtime:
 
 - Easy to use, start your background command by `:AsyncRun` (just like old `!` cmd).
-- Command is done in the background, no need to wait for the entire process to finish.
-- Output are displayed in the quickfix window, errors are matched with `errorformat`.
+- The command is running in the background, no need to wait for the entire process to finish.
+- Output is displayed in the quickfix window, errors are matched with `errorformat`.
 - You can explore the error output immediately or keep working in vim while executing.
-- Ring the bell or play a sound to notify you job finished while you're focusing on editing.
-- Customizable runners and command modifiers brings you dark power of asyncrun.
+- Ring the bell or play a sound to notify your job is finished while you're focusing on editing.
+- Customizable runners and command modifiers bring you the dark power of asyncrun.
 - Fast and lightweight, just a single self-contained `asyncrun.vim` source file.  
-- Provide corresponding user experience in vim, neovim, gvim and macvim.
-- Extra runners to run command in a new `gnome`/`floaterm`/`tmux` window.
+- Provide corresponding user experience in vim, neovim, gvim, and macvim.
 
 If that doesn't excite you, then perhaps this GIF screen capture below will change your mind.
 
@@ -81,14 +80,14 @@ Remember to open vim's quickfix window by `:copen` (or setting  `g:asyncrun_open
 	:AsyncRun gcc "$(VIM_FILEPATH)" -o "$(VIM_FILEDIR)/$(VIM_FILENOEXT)"
 	:AsyncRun g++ -O3 "$(VIM_FILEPATH)" -o "$(VIM_FILEDIR)/$(VIM_FILENOEXT)" -lpthread 
 
-This command will run gcc in the background and output to the quickfix window in realtime. Macro '`$(VIM_FILEPATH)`' stands for filename with full path and '`$(VIM_FILENOEXT)`' represents filename without extension.
+This command will run gcc in the background and output to the quickfix window in real time. Macro '`$(VIM_FILEPATH)`' stands for filename with full path and '`$(VIM_FILENOEXT)`' represents filename without extension.
 
 **Async run make**
 
     :AsyncRun make
 	:AsyncRun make -f makefile
 
-Remember to open quickfix window by `:copen` before using `AsyncRun` command, if you don't open it, you will not see any output.
+Remember to open the quickfix window by `:copen` before using the `AsyncRun` command, if you don't open it, you will not see any output.
 
 **Grep key word**
 
@@ -101,7 +100,7 @@ when `!` is included, auto-scroll in quickfix will be disabled. `<cword>` repres
 
     :AsyncRun go build "$(VIM_FILEDIR)"
 
-Macro '`$(VIM_FILEDIR)`' stands for current file dir. 
+Macro '`$(VIM_FILEDIR)`' stands for the current file dir. 
 
 **Lookup man page**
 
@@ -115,7 +114,7 @@ Macro '`$(VIM_FILEDIR)`' stands for current file dir.
 
     :AsyncRun -cwd=<root> git push origin master
 
-Use `-cwd=???` to specify the working directory, macro `<root>` or `$(VIM_ROOT)` represents current [Project Root](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root).
+Use `-cwd=?` to specify the working directory, macro `<root>` or `$(VIM_ROOT)` represents current [Project Root](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root).
 
 **Setup `<F7>` to compile file**
 
@@ -137,7 +136,7 @@ This will run python in the internal-terminal (vim 8.2 or nvim-0.4.0 is required
 
 **A good assistant to asyncrun**
 
-[asynctasks.vim](https://github.com/skywind3000/asynctasks.vim) a plugin built upon asyncrun, an easy way to use asyncrun. It allows you to manage your building, testing and deploying tasks in a global or project local configuration, and run them by their names.
+[asynctasks.vim](https://github.com/skywind3000/asynctasks.vim) a plugin built upon asyncrun, an easy way to use asyncrun. It allows you to manage your building, testing, and deploying tasks in a global or project local configuration, and run them by their names.
 
 ## Manual
 
@@ -149,7 +148,7 @@ There are two vim commands: `:AsyncRun` and `:AsyncStop` to control async jobs.
 :AsyncRun[!] [options] {cmd} ...
 ```
 
-run shell command in background and output to quickfix. when `!` is included, auto-scroll in quickfix will be disabled. Parameters are splited by space, if a parameter contains space, it should be **quoted** or escaped as backslash + space (unix only).
+Run shell command in the background and output to quickfix. when `!` is included, auto-scroll in quickfix will be disabled. Parameters are split by space, if a parameter contains space, it should be **quoted** or escaped as backslash + space (Unix only).
 
 Macro variables in the parameters will be expanded before executing:
 
@@ -182,7 +181,7 @@ Some macros variables have their short names starting with '`<`' :
     <cfile> - Current file name under cursor
     <root>  - Project root directory
 
-They are also acceptable. So, you can use both `$(VIM_ROOT)` or its alias `<root>` to represent [Project Root](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root) of the current file. Macro variables can be quoted with `"..."` in the command string when file name contains spaces, but they **should not** be quoted in the `-cwd=?` option.
+They are also acceptable. So, you can use both `$(VIM_ROOT)` or its alias `<root>` to represent [Project Root](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root) of the current file. Macro variables can be quoted with `"..."` in the command string when file name contains spaces (like normal shell command escaping), but they **should not** be quoted in the `-cwd=?` option.
 
 There can be some options before your `[cmd]`:
 
@@ -264,7 +263,7 @@ autocmd User AsyncRunStop  - triggered when job finished
 
 Note, `AsyncRunPre` is always likely to be invoked, but `AsyncRunStart` and `AsyncRunStop` will only be invoked if the job starts successfully. 
 
-When previous job is still running or vim job slot is full, AsyncRun may fail. In this circumstance, `AsyncRunPre` will be invoked but `AsyncRunStart` and `AsyncRunStop` will have no chance to trigger.
+When the previous job is still running or vim job slot is full, AsyncRun may fail. In this circumstance, `AsyncRunPre` will be invoked but `AsyncRunStart` and `AsyncRunStop` will have no chance to trigger.
 
 ### Project Root
 
