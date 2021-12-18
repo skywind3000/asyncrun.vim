@@ -341,7 +341,7 @@ Setting `g:asyncrun_open` to 8 will open quickfix window automatically at 8 line
 
 ## Advanced Topics
 
-AsyncRun provides enough flexibility and possibility to customize various details of how to run a command. 
+AsyncRun provides enough flexibility and possibility to customize various details of how to run a command.
 
 ### Extra Runners
 
@@ -398,7 +398,7 @@ The visual selection (line-wise) will be taken as stdin.
 
 ### Customize Runner
 
-AsyncRun allows you to define new runners to specify how to run your command. It can be useful when you want your commands run in a tmux split or a new gnome-terminal window:
+User-defined runners allow you to customize how to run your command by creating a new runner. It can be useful when you want your commands run in a tmux split or a new gnome-terminal window:
 
 ```VimL
 function! MyRunner(opts)
