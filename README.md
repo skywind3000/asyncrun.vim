@@ -182,7 +182,7 @@ Some macros variables have their short names starting with '`<`' :
     <cfile> - Current file name under cursor
     <root>  - Project root directory
 
-They are also acceptable. So, you can use both `$(VIM_ROOT)` or its alias `<root>` to represent [Project Root](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root) of the current file. Macro variables can be quoted with `"..."` in the command string when file name may contain spaces, but they **should not** be quoted in the `-cwd=?` option.
+They are also acceptable. So, you can use both `$(VIM_ROOT)` or its alias `<root>` to represent [Project Root](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root) of the current file. Macro variables can be quoted with `"..."` in the command string when file name contains spaces, but they **should not** be quoted in the `-cwd=?` option.
 
 There can be some options before your `[cmd]`:
 
