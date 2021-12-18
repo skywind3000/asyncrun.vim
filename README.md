@@ -10,7 +10,7 @@ This plugin takes the advantage of new apis in Vim 8 (and NeoVim) to enable you 
 - Customizable runners and command modifiers brings you dark power of asyncrun.
 - Fast and lightweight, just a single self-contained `asyncrun.vim` source file.  
 - Provide corresponding user experience in vim, neovim, gvim and macvim.
-- Extra runners to run command in a new gnome/floaterm/tmux window.
+- Extra runners to run command in a new `gnome`/`floaterm`/`tmux` window.
 
 If that doesn't excite you, then perhaps this GIF screen capture below will change your mind.
 
@@ -21,15 +21,15 @@ If that doesn't excite you, then perhaps this GIF screen capture below will chan
 - 2021/12/15 new extra runners to run command in a tmux, or floaterm window.
 - 2020/02/18 [asynctasks](https://github.com/skywind3000/asynctasks.vim) uses asyncrun to introduce vscode's task system to vim.
 - 2020/01/21 run command in internal terminal with `-mode=term` see [here](#internal-terminal).
-- 2018/04/17 AsyncRun now supports command range, try: `:%AsyncRun cat`.
-- 2018/04/16 better makeprg/grepprg handling, accepts `%` and `$*` macros now.
-- 2018/03/11 new option [g:asyncrun_open](#quickfix-window) to open quickfix window after job starts.
-- 2017/07/12 new option `-raw=1` to use raw output (not match with the errorformat)
-- 2017/06/26 new option `-cwd=<root>` to change working directory to project root, see [here](#project-root). 
+- 2020/04/17 AsyncRun now supports command range, try: `:%AsyncRun cat`.
 
 # Install
 
-Copy `asyncrun.vim` to your `~/.vim/plugin` or use Vundle to install it from `skywind3000/asyncrun.vim` .
+Install with vim-plug:
+
+```VimL
+Plug 'skywind3000/asyncrun.vim'
+```
 
 # Example
 
