@@ -78,10 +78,10 @@ Remember to open vim's quickfix window by `:copen` (or setting  `g:asyncrun_open
 
 **Async run gcc to compile current file**
 
-	:AsyncRun gcc % -o %<
-	:AsyncRun g++ -O3 "%" -o "%<" -lpthread 
+	:AsyncRun gcc "$(VIM_FILEPATH)" -o "$(VIM_FILEDIR)/$(VIM_FILENOEXT)"
+	:AsyncRun g++ -O3 "$(VIM_FILEPATH)" -o "$(VIM_FILEDIR)/$(VIM_FILENOEXT)" -lpthread 
 
-This command will run gcc in the background and output to the quickfix window in realtime. Macro '`%`' stands for filename and '`%<`' represents filename without extension.
+This command will run gcc in the background and output to the quickfix window in realtime. Macro '`$(VIM_FILEPATH)`' stands for filename with full path and '`$(VIM_FILENOEXT)`' represents filename without extension.
 
 **Async run make**
 
@@ -99,9 +99,9 @@ when `!` is included, auto-scroll in quickfix will be disabled. `<cword>` repres
 
 **Compile go project**
 
-    :AsyncRun go build "%:p:h"
+    :AsyncRun go build "$(VIM_FILEDIR)"
 
-Macro '`%:p:h`' stands for current file dir. 
+Macro '`$(VIM_FILEDIR)`' stands for current file dir. 
 
 **Lookup man page**
 
@@ -111,17 +111,29 @@ Macro '`%:p:h`' stands for current file dir.
 
     :AsyncRun git push origin master
 
+**Git push from project root**
+
+    :AsyncRun -cwd=<root> git push origin master
+
+Use `-cwd=???` to specify the working directory, macro `<root>` or `$(VIM_ROOT)` represents current [Project Root](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root).
+
 **Setup `<F7>` to compile file**
 
-    :noremap <F7> :AsyncRun gcc "%" -o "%<" <cr> 
+    :noremap <F7> :AsyncRun gcc "$(VIM_FILEPATH)" -o "$(VIM_FILEDIR)/$(VIM_FILENAME)" <cr> 
 
 File name may contain spaces, therefore, it's safe to quote them.
 
 **Run a python script**
 
-    :AsyncRun -raw python %
+    :AsyncRun -cwd=$(VIM_FILEDIR) python "$(VIM_FILEPATH)"
 
-New option `-raw` will display the raw output (without matching to errorformat), you need the latest AsyncRun (after 1.3.13) to use this option. Remember to put `let $PYTHONUNBUFFERED=1` in your `.vimrc` to disable python stdout buffering, see [here](https://github.com/skywind3000/asyncrun.vim/wiki/FAQ#cant-see-the-realtime-output-when-running-a-python-script).
+New option `-raw` will display the raw output (without matching to errorformat). Remember to put `let $PYTHONUNBUFFERED=1` in your `.vimrc` to disable python stdout buffering, see [here](https://github.com/skywind3000/asyncrun.vim/wiki/FAQ#cant-see-the-realtime-output-when-running-a-python-script).
+
+**Run a python script in a new terminal**
+
+    :AsyncRun -cwd=$(VIM_FILEDIR) -mode=term -pos=TAB  python "$(VIM_FILEPATH)"
+
+This will run python in the internal-terminal (vim 8.2 or nvim-0.4.0 is required) in a new tabpage.
 
 **A good assistant to asyncrun**
 
@@ -139,41 +151,41 @@ There are two vim commands: `:AsyncRun` and `:AsyncStop` to control async jobs.
 
 run shell command in background and output to quickfix. when `!` is included, auto-scroll in quickfix will be disabled. Parameters are splited by space, if a parameter contains space, it should be **quoted** or escaped as backslash + space (unix only).
 
-Parameters accept macros start with '`%`', '`#`' or '`<`' :
+Macro variables in the parameters will be expanded before executing:
 
-    %:p     - File name of current buffer with full path
-    %:t     - File name of current buffer without path
-    %:p:h   - File path of current buffer without file name
-    %:e     - File extension of current buffer
-    %:t:r   - File name of current buffer without path and extension
-    %       - File name relativize to current directory
-    %:h:.   - File path relativize to current directory
+    $(VIM_FILEPATH)  - File name of current buffer with full path
+    $(VIM_FILENAME)  - File name of current buffer without path
+    $(VIM_FILEDIR)   - Full path of current buffer without the file name
+    $(VIM_FILEEXT)   - File extension of current buffer
+    $(VIM_FILENOEXT) - File name of current buffer without path and extension
+    $(VIM_PATHNOEXT) - Current file name with full path but without extension
+    $(VIM_CWD)       - Current directory
+    $(VIM_RELDIR)    - File path relativize to current directory
+    $(VIM_RELNAME)   - File name relativize to current directory 
+    $(VIM_ROOT)      - Project root directory
+    $(VIM_CWORD)     - Current word under cursor
+    $(VIM_CFILE)     - Current filename under cursor
+    $(VIM_GUI)       - Is running under gui ?
+    $(VIM_VERSION)   - Value of v:version
+    $(VIM_COLUMNS)   - How many columns in vim's screen
+    $(VIM_LINES)     - How many lines in vim's screen
+    $(VIM_SVRNAME)   - Value of v:servername for +clientserver usage
+    $(VIM_PRONAME)   - Name of current project root directory
+    $(VIM_DIRNAME)   - Name of current directory
+
+Environment variables with same name, like `$VIM_FILENAME`, are also initialized. Thus your child process can access them with `getenv(xxx)` at any time.
+
+
+Some macros variables have their short names starting with '`<`' :
+
     <cwd>   - Current directory
     <cword> - Current word under cursor
     <cfile> - Current file name under cursor
     <root>  - Project root directory
 
-Environment variables are set before executing:
+They are also acceptable. So, you can use both `$(VIM_ROOT)` or its alias `<root>` to represent [Project Root](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root) of the current file. 
 
-    $VIM_FILEPATH  - File name of current buffer with full path
-    $VIM_FILENAME  - File name of current buffer without path
-    $VIM_FILEDIR   - Full path of current buffer without the file name
-    $VIM_FILEEXT   - File extension of current buffer
-    $VIM_FILENOEXT - File name of current buffer without path and extension
-    $VIM_PATHNOEXT - Current file name with full path but without extension
-    $VIM_CWD       - Current directory
-    $VIM_RELDIR    - File path relativize to current directory
-    $VIM_RELNAME   - File name relativize to current directory 
-    $VIM_ROOT      - Project root directory
-    $VIM_CWORD     - Current word under cursor
-    $VIM_CFILE     - Current filename under cursor
-    $VIM_GUI       - Is running under gui ?
-    $VIM_VERSION   - Value of v:version
-    $VIM_COLUMNS   - How many columns in vim's screen
-    $VIM_LINES     - How many lines in vim's screen
-    $VIM_SVRNAME   - Value of v:servername for +clientserver usage 
-
-These environment variables wrapped by `$(...)` (eg. `$(VIM_FILENAME)`) will also be expanded in the parameters. Macro `$(VIM_ROOT)` and `<root>` (new in version 1.3.12) indicate the [Project Root](https://github.com/skywind3000/asyncrun.vim/wiki/Project-Root) of the current file. 
+Macro variables can be quoted with `"..."` in the command string when file name may contain spaces, but they **should not** be quoted in the `-cwd=?` option.
 
 There can be some options before your `[cmd]`:
 
@@ -195,8 +207,9 @@ There can be some options before your `[cmd]`:
 | `-hidden=?` | 0 | set to `1` to setup `bufhidden` to `hide` for internal terminal |
 | `-silent` | `unset` | provide `-silent` to prevent open quickfix window (will override `g:asyncrun_open` temporarily) |
 | `-close` | `unset` | when using `-mode=term`, close the terminal automatically when terminal process finished |
+| `-scroll=?` | `unset` | set to `0` to prevent quickfix auto-scrolling |
 
-All options must start with a minus and position **before** `[cmd]`. Since no shell command string starts with a minus. So they can be distinguished from shell command easily without any ambiguity. 
+All options must start with a minus and position **before** `[cmd]`. Since no shell command string starting with a minus. So they can be distinguished from shell command easily without any ambiguity. 
 
 Don't worry if you do have a shell command starting with '-', Just put a placeholder `@` before your command to tell asyncrun explicitly: "stop parsing options now, the following string is all my command".
 
