@@ -202,7 +202,7 @@ There can be some options before your `[cmd]`:
 | `-focus=?` | 1 | set to `0` to prevent focus changing when `-mode=term` |
 | `-hidden=?` | 0 | set to `1` to setup `bufhidden` to `hide` for internal terminal |
 | `-silent` | `unset` | provide `-silent` to prevent open quickfix window (will override `g:asyncrun_open` temporarily) |
-| `-close` | `unset` | when using `-mode=term`, close the terminal automatically when terminal process finished |
+| `-close` | `unset` | when using `-mode=term`, close the terminal automatically when terminal process is finished |
 | `-scroll=?` | `unset` | set to `0` to prevent quickfix auto-scrolling |
 | `-once=?` | `unset` | set to `1` to buffer output and flush when job is finished |
 
