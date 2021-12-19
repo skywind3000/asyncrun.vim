@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2021
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2021/12/18 03:57
+" Last Modified: 2021/12/20 03:43
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1191,7 +1191,7 @@ function! s:terminal_init(opts)
 			let opts.exit_cb = function('s:terminal_exit')
 			let close = get(a:opts, 'close', 0)
 			if close
-				let opts.term_finish = 'close'
+				" let opts.term_finish = 'close'
 			endif
 			if has('patch-8.1.0230')
 				if cwd != ''
@@ -1308,10 +1308,11 @@ function! s:terminal_exit(...)
 	unlet s:async_term[pid]
 	let g:asyncrun_code = code
 	let g:asyncrun_name = info.name
-	if has('nvim') != 0
-		if info.close != 0
-			if has_key(info, 'winid')
-				call nvim_win_close(info.winid, 1)
+	if info.close != 0
+		let bid = info.bid
+		if bid >= 0
+			if getbufvar(bid, '&bt', '') == 'terminal'
+				silent! exec "bd! " . bid
 			endif
 		endif
 	endif
@@ -2001,7 +2002,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.9.2'
+	return '2.9.4'
 endfunc
 
 
