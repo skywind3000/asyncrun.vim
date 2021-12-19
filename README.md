@@ -204,6 +204,7 @@ There can be some options before your `[cmd]`:
 | `-silent` | `unset` | provide `-silent` to prevent open quickfix window (will override `g:asyncrun_open` temporarily) |
 | `-close` | `unset` | when using `-mode=term`, close the terminal automatically when terminal process finished |
 | `-scroll=?` | `unset` | set to `0` to prevent quickfix auto-scrolling |
+| `-once=?` | `unset` | set to `1` to buffer output and flush when job is finished |
 
 All options must start with a minus and position **before** `[cmd]`. Since no shell command string starting with a minus. So they can be distinguished from shell command easily without any ambiguity. 
 
