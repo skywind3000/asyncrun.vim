@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2021
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2021/12/20 03:43
+" Last Modified: 2021/12/20 04:44
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -389,7 +389,7 @@ function! s:AsyncRun_Job_CheckScroll()
 endfunc
 
 " invoked on timer or finished
-function! s:AsyncRun_Job_Update(count)
+function! s:AsyncRun_Job_Update(count, ...)
 	let l:iconv = (g:asyncrun_encs != "")? 1 : 0
 	let l:count = 0
 	let l:total = 0
@@ -397,6 +397,7 @@ function! s:AsyncRun_Job_Update(count)
 	let l:check = s:AsyncRun_Job_CheckScroll()
 	let l:efm1 = &g:efm
 	let l:efm2 = &l:efm
+	let once = (a:0 < 1)? get(g:, 'asyncrun_once', 0) : (a:1)
 	if g:asyncrun_encs == &encoding
 		let l:iconv = 0
 	endif
@@ -408,6 +409,9 @@ function! s:AsyncRun_Job_Update(count)
 	if s:async_info.raw == 1
 		let l:raw = 1
 	endif
+	if once != 0
+		let array = []
+	endif
 	while s:async_tail < s:async_head
 		let l:text = s:async_output[s:async_tail]
 		if l:iconv != 0
@@ -417,18 +421,26 @@ function! s:AsyncRun_Job_Update(count)
 			endtry
 		endif
 		let l:text = substitute(l:text, '\r$', '', 'g')
-		if l:text != ''
-			if l:raw == 0
-				if and(g:asyncrun_skip, 1) == 0
-					caddexpr l:text
+		if once == 0
+			if l:text != ''
+				if l:raw == 0
+					if and(g:asyncrun_skip, 1) == 0
+						caddexpr l:text
+					else
+						noautocmd caddexpr l:text
+					endif
 				else
-					noautocmd caddexpr l:text
+					call setqflist([{'text':l:text}], 'a')
 				endif
-			else
-				call setqflist([{'text':l:text}], 'a')
+			elseif g:asyncrun_trim == 0
+				call setqflist(l:empty, 'a')
 			endif
-		elseif g:asyncrun_trim == 0
-			call setqflist(l:empty, 'a')
+		else
+			if l:text != ''
+				let array += [l:text]
+			elseif g:asyncrun_trim == 0
+				let array += [l:text]
+			endif
 		endif
 		let l:total += 1
 		unlet s:async_output[s:async_tail]
@@ -438,6 +450,23 @@ function! s:AsyncRun_Job_Update(count)
 			break
 		endif
 	endwhile
+	if once != 0
+		if l:raw == 0
+			if and(g:asyncrun_skip, 1) == 0
+				caddexpr array
+			else
+				noautocmd caddexpr array
+			endif
+		else
+			let items = []
+			for text in array
+				let items += [{'text': text}]
+			endfor
+			call setqflist(items, 'a')
+			unlet items
+		endif
+		unlet array
+	endif
 	if g:asyncrun_local != 0
 		if l:efm1 != &g:efm | let &g:efm = l:efm1 | endif
 		if l:efm2 != &l:efm | let &l:efm = l:efm2 | endif
@@ -485,8 +514,13 @@ function! g:AsyncRun_Job_OnTimer(id)
 			call job_status(s:async_job)
 		endif
 	endif
-	call s:AsyncRun_Job_Update(limit)
+	if s:async_info.once == 0
+		call s:AsyncRun_Job_Update(limit)
+	endif
 	if and(s:async_state, 7) == 7
+		if s:async_info.once != 0
+			call s:AsyncRun_Job_Update(-1, 1)
+		endif
 		if s:async_head == s:async_tail
 			call s:AsyncRun_Job_OnFinish()
 		endif
@@ -504,7 +538,9 @@ function! s:AsyncRun_Job_OnCallback(channel, text)
 	let s:async_output[s:async_head] = a:text
 	let s:async_head += 1
 	if s:async_congest != 0
-		call s:AsyncRun_Job_Update(-1)
+		if s:async_info.once == 0
+			call s:AsyncRun_Job_Update(-1)
+		endif
 	endif
 endfunc
 
@@ -522,7 +558,7 @@ function! s:AsyncRun_Job_OnFinish()
 		call timer_stop(s:async_timer)
 		unlet s:async_timer
 	endif
-	call s:AsyncRun_Job_Update(-1)
+	call s:AsyncRun_Job_Update(-1, s:async_info.once)
 	let l:current = localtime()
 	let l:last = l:current - s:async_start
 	let l:check = s:AsyncRun_Job_CheckScroll()
@@ -1658,6 +1694,7 @@ function! s:run(opts)
 		let s:async_info.range_buf = opts.range_buf
 		let s:async_info.strip = opts.strip
 		let s:async_info.append = opts.append
+		let s:async_info.once = get(opts, 'once', 0)
 		if s:AsyncRun_Job_Start(l:command) != 0
 			call s:AutoCmd('Error')
 		endif
@@ -2002,7 +2039,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.9.4'
+	return '2.9.5'
 endfunc
 
 
