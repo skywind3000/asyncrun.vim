@@ -205,6 +205,7 @@ There can be some options before your `[cmd]`:
 | `-close` | `unset` | when using `-mode=term`, close the terminal automatically when terminal process is finished |
 | `-scroll=?` | `unset` | set to `0` to prevent quickfix auto-scrolling |
 | `-once=?` | `unset` | set to `1` to buffer output and flush when job is finished |
+| `-encoding=?` | `unset` | specify command encoding independently (overshadow `g:asyncrun_encs`) |
 
 All options must start with a minus and position **before** `[cmd]`. Since no shell command string starting with a minus. So they can be distinguished from shell command easily without any ambiguity. 
 
