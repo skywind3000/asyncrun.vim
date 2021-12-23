@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2021
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2021/12/24 03:34
+" Last Modified: 2021/12/24 05:22
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1436,7 +1436,11 @@ function! s:start_in_terminal(opts)
 		if hr >= 0
 			if focus == 0
 				exec has('nvim')? 'stopinsert' : ''
-				exec 'tabprevious'
+				if pos ==# 'TAB'
+					exec 'tabnext'
+				else
+					exec 'tabprevious'
+				endif
 			endif
 		endif
 		return 0
@@ -2042,7 +2046,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.9.6'
+	return '2.9.7'
 endfunc
 
 
