@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2021
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2021/12/20 04:44
+" Last Modified: 2021/12/24 03:34
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -390,7 +390,9 @@ endfunc
 
 " invoked on timer or finished
 function! s:AsyncRun_Job_Update(count, ...)
-	let l:iconv = (g:asyncrun_encs != "")? 1 : 0
+	let encoding = s:async_info.encoding
+	let encoding = (encoding != '')? encoding : (g:asyncrun_encs)
+	let l:iconv = (encoding != "")? 1 : 0
 	let l:count = 0
 	let l:total = 0
 	let l:empty = [{'text':''}]
@@ -398,7 +400,7 @@ function! s:AsyncRun_Job_Update(count, ...)
 	let l:efm1 = &g:efm
 	let l:efm2 = &l:efm
 	let once = (a:0 < 1)? get(g:, 'asyncrun_once', 0) : (a:1)
-	if g:asyncrun_encs == &encoding
+	if encoding == &encoding
 		let l:iconv = 0
 	endif
 	if g:asyncrun_local != 0
@@ -416,7 +418,7 @@ function! s:AsyncRun_Job_Update(count, ...)
 		let l:text = s:async_output[s:async_tail]
 		if l:iconv != 0
 			try
-				let l:text = iconv(l:text, g:asyncrun_encs, &encoding)
+				let l:text = iconv(l:text, encoding, &encoding)
 			catch /.*/
 			endtry
 		endif
@@ -922,7 +924,7 @@ function! s:ExtractOpt(command)
 		if cmd =~ '^-\w\+='
 			let val = matchstr(cmd, '^-\w\+=\zs\%(\\.\|\S\)*')
 		else
-			let val = (opt == 'cwd')? '' : 1
+			let val = (opt == 'cwd' || opt == 'encoding')? '' : 1
 		endif
 		let opts[opt] = substitute(val, '\\\(\s\)', '\1', 'g')
 		let cmd = substitute(cmd, '^-\w\+\%(=\%(\\.\|\S\)*\)\=\s*', '', '')
@@ -1695,6 +1697,7 @@ function! s:run(opts)
 		let s:async_info.strip = opts.strip
 		let s:async_info.append = opts.append
 		let s:async_info.once = get(opts, 'once', 0)
+		let s:async_info.encoding = get(opts, 'encoding', g:asyncrun_encs)
 		if s:AsyncRun_Job_Start(l:command) != 0
 			call s:AutoCmd('Error')
 		endif
@@ -2039,7 +2042,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.9.5'
+	return '2.9.6'
 endfunc
 
 
