@@ -360,7 +360,7 @@ AsyncRun 提供足够的可能性和灵活性让你指定运行命令的各处�
 
 ### 额外的 Runner
 
-除去上面的 Quickfix 和内置终端外，AsyncRun 还允许你自定义各种 runner 来为命令提供新的运行方式，本项目已经自带一批 runner：
+除去默认的 Quickfix 和 internal-terminal 外，AsyncRun 还允许你自定义各种 runner 来为命令提供新的运行方式，本项目已经自带一批 runner：
 
 | Runner | 描 述 | 依 赖 | 链 接 |
 |-|-|-|-|

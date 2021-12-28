@@ -58,9 +58,9 @@ Remember to open vim's quickfix window by `:copen` (or setting  `g:asyncrun_open
     - [Internal Terminal](#internal-terminal)
     - [Terminal Name](#terminal-name)
     - [Quickfix window](#quickfix-window)
+    - [Range support](#range-support)
   - [Advanced Topics](#advanced-topics)
     - [Extra Runners](#extra-runners)
-    - [Range support](#range-support)
     - [Customize Runner](#customize-runner)
     - [Command Modifier](#command-modifier)
     - [Requirements](#requirements)
@@ -341,41 +341,6 @@ AsyncRun displays its output in quickfix window, so if you don't use `:copen {he
 
 Setting `g:asyncrun_open` to 8 will open quickfix window automatically at 8 lines height after command starts.
 
-## Advanced Topics
-
-AsyncRun provides enough flexibility and possibility to customize various details of how to run a command.
-
-### Extra Runners
-
-Besides the default quickfix and internal terminal behavior, there are many extra runners which allow you to run commands in a new gnome-terminal window/tab, a floaterm window, or a side-by-side tmux pane.
-
-By default, AsyncRun is shipped with some popular runners:
-
-| Runner | Description | Requirement | Link |
-|-|-|-|-|
-| `gnome` | run in a new gnome terminal | gnome-terminal | [gnome.vim](autoload/asyncrun/runner/gnome.vim) |
-| `gnome_tab` | run in a new gnome terminal tab | gnome-terminal | [gnome_tab.vim](autoload/asyncrun/runner/gnome_tab.vim) |
-| `xterm` | run in a xterm window | xterm | [xterm.vim](autoload/asyncrun/runner/xterm.vim) |
-| `tmux` | run in a separated tmux pane | [Vimux](https://github.com/preservim/vimux) | [tmux.vim](autoload/asyncrun/runner/tmux.vim) |
-| `floaterm` | run in a new floaterm window | [floaterm](https://github.com/voldikss/vim-floaterm) | [floaterm.vim](autoload/asyncrun/runner/floaterm.vim) |
-| `floaterm_reuse` | run in a reusable floaterm window | [floaterm](https://github.com/voldikss/vim-floaterm) | [floaterm_reuse.vim](autoload/asyncrun/runner/floaterm.vim) |
-| `quickui` | run in a quickui window | [vim-quickui](https://github.com/skywind3000/vim-quickui) | [quickui.vim](autoload/asyncrun/runner/quickui.vim) |
-| `toggleterm` | run in a toggleterm window | [toggleterm.nvim](https://github.com/akinsho/toggleterm.nvim) | [toggleterm.vim](autoload/asyncrun/runner/toggleterm.vim) |
-
-
-e.g.
-
-```VimL
-:AsyncRun -mode=term -pos=gnome      ls -la
-:AsyncRun -mode=term -pos=floaterm   ls -la
-:AsyncRun -mode=term -pos=tmux       ls -la
-```
-
-Screenshot for `gnome` runner:
-
-![](https://github.com/skywind3000/images/raw/master/p/asyncrun_extra/p_gnome_gvim.gif)
-
-All runners are customizable, you can modify or define your own runners, see [customize runner](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner).
 
 ### Range support
 
@@ -399,6 +364,43 @@ text between line 10-20 will be taken as the stdin of python. code in that range
 ```
 
 The visual selection (line-wise) will be taken as stdin.
+
+
+## Advanced Topics
+
+AsyncRun provides enough flexibility and possibility to customize various details of how to run a command.
+
+### Extra Runners
+
+Besides the default quickfix and internal terminal mechanism, the user-defined runners allow you to run commands in any way you want. eg. in a new gnome-terminal window/tab, a floaterm window, or a side-by-side tmux split.
+
+By default, AsyncRun is shipped with some popular runners:
+
+| Runner | Description | Requirement | Link |
+|-|-|-|-|
+| `gnome` | run in a new gnome terminal | gnome-terminal | [gnome.vim](autoload/asyncrun/runner/gnome.vim) |
+| `gnome_tab` | run in a new gnome terminal tab | gnome-terminal | [gnome_tab.vim](autoload/asyncrun/runner/gnome_tab.vim) |
+| `xterm` | run in a xterm window | xterm | [xterm.vim](autoload/asyncrun/runner/xterm.vim) |
+| `tmux` | run in a separated tmux split | [Vimux](https://github.com/preservim/vimux) | [tmux.vim](autoload/asyncrun/runner/tmux.vim) |
+| `floaterm` | run in a new floaterm window | [floaterm](https://github.com/voldikss/vim-floaterm) | [floaterm.vim](autoload/asyncrun/runner/floaterm.vim) |
+| `floaterm_reuse` | run in a reusable floaterm window | [floaterm](https://github.com/voldikss/vim-floaterm) | [floaterm_reuse.vim](autoload/asyncrun/runner/floaterm.vim) |
+| `quickui` | run in a quickui window | [vim-quickui](https://github.com/skywind3000/vim-quickui) | [quickui.vim](autoload/asyncrun/runner/quickui.vim) |
+| `toggleterm` | run in a toggleterm window | [toggleterm.nvim](https://github.com/akinsho/toggleterm.nvim) | [toggleterm.vim](autoload/asyncrun/runner/toggleterm.vim) |
+
+
+e.g.
+
+```VimL
+:AsyncRun -mode=term -pos=gnome      ls -la
+:AsyncRun -mode=term -pos=floaterm   ls -la
+:AsyncRun -mode=term -pos=tmux       ls -la
+```
+
+Screenshot for `gnome` runner:
+
+![](https://github.com/skywind3000/images/raw/master/p/asyncrun_extra/p_gnome_gvim.gif)
+
+All runners are customizable, you can modify or define your own runners, see [customize runner](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner).
 
 ### Customize Runner
 
