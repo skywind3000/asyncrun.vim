@@ -17,7 +17,7 @@ If that doesn't excite you, then perhaps this GIF screen capture below will chan
 
 # News
 
-- 2021/12/15 new extra runners to run command in a tmux, or floaterm window.
+- 2021/12/15 new [extra runners](#extra-runners) to run command in a tmux, or floaterm window.
 - 2020/02/18 [asynctasks](https://github.com/skywind3000/asynctasks.vim) uses asyncrun to introduce vscode's task system to vim.
 - 2020/01/21 run command in internal terminal with `-mode=term` see [here](#internal-terminal).
 - 2020/04/17 AsyncRun now supports command range, try: `:%AsyncRun cat`.
