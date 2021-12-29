@@ -405,7 +405,7 @@ All runners are customizable, you can modify or define your own runners, see the
 
 ### Customize Runner
 
-User-defined runners allow you to customize how to run your command by creating a new runner. It can be useful when you want your commands run in a tmux split or a new gnome-terminal window:
+User-defined runners allow you to specify how the command will run by creating a new runner. It can be useful when you want your commands run in a tmux split or a new gnome-terminal window:
 
 ```VimL
 function! MyRunner(opts)
