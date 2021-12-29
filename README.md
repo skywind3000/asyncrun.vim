@@ -401,7 +401,7 @@ Screenshot for `gnome` runner:
 
 ![](https://github.com/skywind3000/images/raw/master/p/asyncrun_extra/p_gnome_gvim.gif)
 
-All runners are customizable, you can modify or define your own runners, see [customize runner](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner).
+All runners are customizable, you can modify or define your own runners, see the next section "customize runner".
 
 ### Customize Runner
 

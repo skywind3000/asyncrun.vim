@@ -385,7 +385,7 @@ AsyncRun 提供足够的可能性和灵活性让你指定运行命令的各处�
 
 ![](https://github.com/skywind3000/images/raw/master/p/asyncrun_extra/p_gnome_gvim.gif)
 
-所有 runner 皆可定制，你可以很方便的开发新 runner，详细见 [customize runner](https://github.com/skywind3000/asyncrun.vim/wiki/Customize-Runner)。
+所有 runner 皆可定制，你可以很方便的开发新 runner，详细见下一节 “自定义 Runner”。
 
 ### 自定义 Runner
 
