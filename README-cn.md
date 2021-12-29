@@ -364,8 +364,8 @@ AsyncRun 提供足够的可能性和灵活性让你指定运行命令的各处�
 
 | Runner | 描 述 | 依 赖 | 链 接 |
 |-|-|-|-|
-| `gnome` | 在新的 Gnome 终端里运行 | gnome-terminal | [gnome.vim](autoload/asyncrun/runner/gnome.vim) |
-| `gnome_tab` | 在另一个 Gnome 终端的 Tab 里运行 | gnome-terminal | [gnome_tab.vim](autoload/asyncrun/runner/gnome_tab.vim) |
+| `gnome` | 在新的 Gnome 终端里运行 | GNome | [gnome.vim](autoload/asyncrun/runner/gnome.vim) |
+| `gnome_tab` | 在另一个 Gnome 终端的 Tab 里运行 | GNome | [gnome_tab.vim](autoload/asyncrun/runner/gnome_tab.vim) |
 | `xterm` | 在新的 xterm 窗口内运行 | xterm | [xterm.vim](autoload/asyncrun/runner/xterm.vim) |
 | `tmux` | 在一个新的 tmux 的 pane 里运行 | [Vimux](https://github.com/preservim/vimux) | [tmux.vim](autoload/asyncrun/runner/tmux.vim) |
 | `floaterm` | 在 floaterm 的新窗口里运行 | [floaterm](https://github.com/voldikss/vim-floaterm) | [floaterm.vim](autoload/asyncrun/runner/floaterm.vim) |
