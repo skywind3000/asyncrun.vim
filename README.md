@@ -378,8 +378,8 @@ By default, AsyncRun is shipped with some popular runners:
 
 | Runner | Description | Requirement | Link |
 |-|-|-|-|
-| `gnome` | run in a new gnome terminal | GNome | [gnome.vim](autoload/asyncrun/runner/gnome.vim) |
-| `gnome_tab` | run in a new gnome terminal tab | GNome | [gnome_tab.vim](autoload/asyncrun/runner/gnome_tab.vim) |
+| `gnome` | run in a new gnome terminal | GNOME | [gnome.vim](autoload/asyncrun/runner/gnome.vim) |
+| `gnome_tab` | run in a new gnome terminal tab | GNOME | [gnome_tab.vim](autoload/asyncrun/runner/gnome_tab.vim) |
 | `xterm` | run in a xterm window | xterm | [xterm.vim](autoload/asyncrun/runner/xterm.vim) |
 | `tmux` | run in a separated tmux split | [Vimux](https://github.com/preservim/vimux) | [tmux.vim](autoload/asyncrun/runner/tmux.vim) |
 | `floaterm` | run in a new floaterm window | [floaterm](https://github.com/voldikss/vim-floaterm) | [floaterm.vim](autoload/asyncrun/runner/floaterm.vim) |
