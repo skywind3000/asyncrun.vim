@@ -14,13 +14,17 @@ if has('win32') || has('win64') || has('win16') || has('win95')
 endif
 
 function! asyncrun#runner#external#run(opts)
-	let d = ['gnome', 'xterm']
+	let d = ['gnome', 'xfce', 'konsole', 'xterm']
 	let p = get(g:, 'asyncrun_external', d)
 	for n in p
 		if n == 'gnome' && executable('gnome-terminal')
 			return asyncrun#runner#gnome#run(a:opts)
 		elseif n == 'xterm' && executable('xterm')
 			return asyncrun#runner#xterm#run(a:opts)
+		elseif n == 'konsole' && executable('konsole')
+			return asyncrun#runner#konsole#run(a:opts)
+		elseif n == 'xfce' && executable('xfce4-terminal')
+			return asyncrun#runner#xfce#run(a:opts)
 		endif
 	endfor
 endfunc
