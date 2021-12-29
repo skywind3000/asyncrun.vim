@@ -387,7 +387,7 @@ By default, AsyncRun is shipped with some popular runners:
 | `quickui` | run in a quickui window | [vim-quickui](https://github.com/skywind3000/vim-quickui) | [quickui.vim](autoload/asyncrun/runner/quickui.vim) |
 | `toggleterm` | run in a toggleterm window | [toggleterm.nvim](https://github.com/akinsho/toggleterm.nvim) | [toggleterm.vim](autoload/asyncrun/runner/toggleterm.vim) |
 | `xfce` | run in a new xfce terminal | xfce4-terminal | [xfce.vim](autoload/asyncrun/runner/xfce.vim) |
-
+| `konsole` | run in a new konsole terminal | KDE | [konsole.vim](autoload/asyncrun/runner/konsole.vim) |
 
 e.g.
 

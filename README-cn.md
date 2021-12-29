@@ -373,6 +373,7 @@ AsyncRun 提供足够的可能性和灵活性让你指定运行命令的各处�
 | `quickui` | 在 quickui 的浮窗里运行 | [vim-quickui](https://github.com/skywind3000/vim-quickui) | [quickui.vim](autoload/asyncrun/runner/quickui.vim) |
 | `toggleterm` | 使用 toggleterm 窗口运行 | [toggleterm.nvim](https://github.com/akinsho/toggleterm.nvim) | [toggleterm.vim](autoload/asyncrun/runner/toggleterm.vim) |
 | `xfce` | 在 xfce 终端中运行 | xfce4-terminal | [xfce.vim](autoload/asyncrun/runner/xfce.vim) |
+| `konsole` | 在 KDE 的自带终端里运行 | KDE | [konsole.vim](autoload/asyncrun/runner/konsole.vim) |
 
 比如：
 
