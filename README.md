@@ -388,8 +388,8 @@ By default, AsyncRun is shipped with some popular runners:
 | `toggleterm` | run in a toggleterm window | [toggleterm.nvim](https://github.com/akinsho/toggleterm.nvim) | [toggleterm.vim](autoload/asyncrun/runner/toggleterm.vim) |
 | `xfce` | run in a new xfce terminal | xfce4-terminal | [xfce.vim](autoload/asyncrun/runner/xfce.vim) |
 | `konsole` | run in a new konsole terminal | KDE | [konsole.vim](autoload/asyncrun/runner/konsole.vim) |
-| `macos` | run in a macOS system terminal | macos | [macos.vim](autoload/asyncrun/runner/macos.vim) |
-| `iterm` | run in a new iterm2 tab | macos + iTerm2 | [iterm.vim](autoload/asyncrun/runner/iterm.vim) |
+| `macos` | run in a macOS system terminal | macOS | [macos.vim](autoload/asyncrun/runner/macos.vim) |
+| `iterm` | run in a new iTerm2 tab | macOS + iTerm2 | [iterm.vim](autoload/asyncrun/runner/iterm.vim) |
 
 e.g.
 
