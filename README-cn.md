@@ -374,8 +374,8 @@ AsyncRun 提供足够的可能性和灵活性让你指定运行命令的各处�
 | `toggleterm` | 使用 toggleterm 窗口运行 | [toggleterm.nvim](https://github.com/akinsho/toggleterm.nvim) | [toggleterm.vim](autoload/asyncrun/runner/toggleterm.vim) |
 | `xfce` | 在 xfce 终端中运行 | xfce4-terminal | [xfce.vim](autoload/asyncrun/runner/xfce.vim) |
 | `konsole` | 在 KDE 的自带终端里运行 | KDE | [konsole.vim](autoload/asyncrun/runner/konsole.vim) |
-| `macos` | 在 macOS 的系统终端内运行 | macos | [konsole.vim](autoload/asyncrun/runner/macos.vim) |
-| `iterm` | 在 iTerm2 的 tab 中运行 | macos + iTerm2 | [konsole.vim](autoload/asyncrun/runner/iterm.vim) |
+| `macos` | 在 macOS 的系统终端内运行 | macos | [macos.vim](autoload/asyncrun/runner/macos.vim) |
+| `iterm` | 在 iTerm2 的 tab 中运行 | macos + iTerm2 | [iterm.vim](autoload/asyncrun/runner/iterm.vim) |
 
 比如：
 
