@@ -205,7 +205,7 @@ There can be some options before your `[cmd]`:
 | `-cols=num` | 0 | When using a vertical split terminal, this value represents the width of terminal window. |
 | `-focus=?` | 1 | set to `0` to prevent focus changing when `-mode=term` |
 | `-hidden=?` | 0 | set to `1` to setup `bufhidden` to `hide` for internal terminal |
-| `-listed` | 1 | when using `-mode=term`, set to 0 to hide the terminal in the buffer list |
+| `-listed=?` | 1 | when using `-mode=term`, set to 0 to hide the terminal in the buffer list |
 | `-close` | `unset` | when using `-mode=term`, close the terminal automatically when terminal process is finished |
 
 All options must start with a minus and position **before** `[cmd]`. Since no shell command string starting with a minus. So they can be distinguished from shell command easily without any ambiguity. 
