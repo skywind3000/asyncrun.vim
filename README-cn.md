@@ -387,7 +387,9 @@ AsyncRun 提供足够的可能性和灵活性让你指定运行命令的各处�
 
 下面是 `gnome` 这个 runner 的效果：
 
-![](https://github.com/skywind3000/images/raw/master/p/asyncrun_extra/p_gnome_gvim.gif)
+![](https://raw.githubusercontent.com/skywind3000/images/master/p/asyncrun/runner-gnome2.png)
+
+当你在 GVim 中使用 `gnome`, `konsole` 或者 `xfce` 之类的 runner 来运行程序，你会觉得就跟 IDE 里面启动命令行程序是一样的感觉。
 
 所有 runner 皆可定制，你可以很方便的开发新 runner，详细见下一节 “自定义 Runner”。
 

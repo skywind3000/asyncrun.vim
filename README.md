@@ -401,7 +401,13 @@ e.g.
 
 Screenshot for `gnome` runner:
 
-![](https://github.com/skywind3000/images/raw/master/p/asyncrun_extra/p_gnome_gvim.gif)
+<!-- 
+![](https://github.com/skywind3000/images/raw/master/p/asyncrun_extra/p_gnome_gvim.gif) 
+-->
+
+![](https://raw.githubusercontent.com/skywind3000/images/master/p/asyncrun/runner-gnome2.png)
+
+When using `gnome`, `konsole`, or `xfce` runner in GVim, you get exactly the same experience like starting a command-line program from IDEs. 
 
 All runners are customizable, you can modify or define your own runners, see the next section "customize runner".
 
