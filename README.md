@@ -185,7 +185,7 @@ They are also acceptable. So, you can use both `$(VIM_ROOT)` or its alias `<root
 
 There can be some options before your `[cmd]`:
 
-| Option | Default Value | Description |
+| Option | Default | Description |
 |:-|:-:|-|
 | `-mode=?` | "async" | specify how to run the command as `-mode=?`, available modes are `"async"` (default), `"bang"` (with `!` command) and `"terminal"` (in internal terminal), see [running modes](#running-modes) for details. |
 | `-cwd=?` | `unset` | initial directory (use current directory if unset), for example use `-cwd=<root>` to run commands in [project root directory](#project-root), or `-cwd=$(VIM_FILEDIR)` to run commands in current buffer's parent directory. |
