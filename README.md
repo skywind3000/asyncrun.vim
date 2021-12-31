@@ -198,7 +198,7 @@ There can be some options before your `[cmd]`:
 | `-errorformat=?` | `unset` | errorformat for error matching, if it is unprovided, use current `&errorformat` value. Beware that `%` needs to be escaped into `\%`. |
 | `-silent` | `unset` | provide `-silent` to prevent open quickfix window (will override `g:asyncrun_open` temporarily) |
 | `-scroll=?` | `unset` | set to `0` to prevent quickfix auto-scrolling |
-| `-once=?` | `unset` | set to `1` to buffer output and flush when job is finished, useful when there are multi-line patterns in your `errorformat` |
+| `-once` | `unset` | provide to buffer all output and flush when job is finished, useful when there are multi-line patterns in your `errorformat` |
 | `-encoding=?` | `unset` | specify command encoding independently (overshadow `g:asyncrun_encs`) |
 | `-pos=?` | "bottom" | When using internal terminal with `-mode=term`, `-pos` is used to specify where to split the terminal window, it can be one of `"tab"`, `"curwin"`, `"top"`, `"bottom"`, `"left"`, `"right"` and `"external"`. And you can [customize new runners](#customize-runner) and pass runner's name to `-pos` option. |
 | `-rows=num` | 0 | When using a horizontal split terminal, this value represents the height of terminal window. |
