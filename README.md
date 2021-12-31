@@ -201,6 +201,7 @@ There can be some options before your `[cmd]`:
 | `-errorformat=?` | `unset` | errorformat for error matching, if it is unprovided, use current `&errorformat` value. Beware that `%` needs to be escaped into `\%`. |
 | `-focus=?` | 1 | set to `0` to prevent focus changing when `-mode=term` |
 | `-hidden=?` | 0 | set to `1` to setup `bufhidden` to `hide` for internal terminal |
+| `-listed` | 1 | when using `-mode=term`, set to 0 to hide the terminal in the buffer list |
 | `-silent` | `unset` | provide `-silent` to prevent open quickfix window (will override `g:asyncrun_open` temporarily) |
 | `-close` | `unset` | when using `-mode=term`, close the terminal automatically when terminal process is finished |
 | `-scroll=?` | `unset` | set to `0` to prevent quickfix auto-scrolling |
@@ -319,8 +320,19 @@ Examples:
 :AsyncRun -mode=term -pos=curwin -hidden python "$(VIM_FILEPATH)"
 ```
 
-The `-pos` field accepts an uppercase `TAB`, to create a tab on the left of the current tab. When using internal terminal in a split window, AsyncRun will firstly reuse a finished previous terminal window if it exists, if not, a new terminal window will be created in given position. Tab based terminal can also be reusable if `-reuse` is provided.
+Internal terminal related options:
 
+| Option | Default Value | Description |
+|-|-|-|
+| `-pos=?` | "bottom" | When using internal terminal with `-mode=term`, `-pos` is used to specify where to split the terminal window, it can be one of `"tab"`, `"curwin"`, `"top"`, `"bottom"`, `"left"`, `"right"` and `"external"`. And you can [customize new runners](#customize-runner) and pass runner's name to `-pos` option. |
+| `-rows=num` | 0 | When using a horizontal split terminal, this value represents the height of terminal window. |
+| `-cols=num` | 0 | When using a vertical split terminal, this value represents the width of terminal window. |
+| `-focus=?` | 1 | set to `0` to prevent focus changing when `-mode=term` |
+| `-close` | `unset` | when using `-mode=term`, close the terminal automatically when terminal process is finished |
+| `-hidden=?` | 0 | set to `1` to setup `bufhidden` to `hide` for internal terminal |
+| `-listed=?` | 1 | when using `-mode=term`, set to 0 to hide the terminal in the buffer list |
+
+The `-pos` field accepts an uppercase `TAB`, to create a tab on the left of the current tab. When using internal terminal in a split window, AsyncRun will firstly reuse a finished previous terminal window if it exists, if not, a new terminal window will be created in given position. Tab based terminal can also be reusable if `-reuse` is provided.
 
 
 ### Terminal Name
