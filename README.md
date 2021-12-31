@@ -322,7 +322,7 @@ Examples:
 
 Internal terminal related options:
 
-| Option | Default Value | Description |
+| Option | Default | Description |
 |:-:|:-:|-|
 | `-pos=?` | "bottom" | When using internal terminal with `-mode=term`, `-pos` is used to specify where to split the terminal window, it can be one of `"tab"`, `"curwin"`, `"top"`, `"bottom"`, `"left"`, `"right"` and `"external"`. |
 | `-rows=num` | 0 | When using a horizontal split terminal, this value represents the height of terminal window. |
