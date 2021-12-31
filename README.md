@@ -186,7 +186,7 @@ They are also acceptable. So, you can use both `$(VIM_ROOT)` or its alias `<root
 There can be some options before your `[cmd]`:
 
 | Option | Default Value | Description |
-|-|-|-|
+|:-|:-:|-|
 | `-mode=?` | "async" | specify how to run the command as `-mode=?`, available modes are `"async"` (default), `"bang"` (with `!` command) and `"terminal"` (in internal terminal), see [running modes](#running-modes) for details. |
 | `-cwd=?` | `unset` | initial directory (use current directory if unset), for example use `-cwd=<root>` to run commands in [project root directory](#project-root), or `-cwd=$(VIM_FILEDIR)` to run commands in current buffer's parent directory. |
 | `-save=?` | 0 | use `-save=1` to save current file, `-save=2` to save all modified files before executing. |
@@ -195,18 +195,18 @@ There can be some options before your `[cmd]`:
 | `-auto=?` | `unset` | event name to trigger `QuickFixCmdPre`/`QuickFixCmdPost` [name] autocmd. |
 | `-raw` | `unset` | use raw output if provided, and `&errorformat` will be ignored. |
 | `-strip` | `unset` | remove the heading/trailing messages if provided (omit command and "[Finished in ...]" message). |
-| `-pos=?` | "bottom" | When using internal terminal with `-mode=term`, `-pos` is used to specify where to split the terminal window, it can be one of `"tab"`, `"curwin"`, `"top"`, `"bottom"`, `"left"`, `"right"` and `"external"`. And you can [customize new runners](#customize-runner) and pass runner's name to `-pos` option. |
-| `-rows=num` | 0 | When using a horizontal split terminal, this value represents the height of terminal window. |
-| `-cols=num` | 0 | When using a vertical split terminal, this value represents the width of terminal window. |
 | `-errorformat=?` | `unset` | errorformat for error matching, if it is unprovided, use current `&errorformat` value. Beware that `%` needs to be escaped into `\%`. |
-| `-focus=?` | 1 | set to `0` to prevent focus changing when `-mode=term` |
-| `-hidden=?` | 0 | set to `1` to setup `bufhidden` to `hide` for internal terminal |
-| `-listed` | 1 | when using `-mode=term`, set to 0 to hide the terminal in the buffer list |
 | `-silent` | `unset` | provide `-silent` to prevent open quickfix window (will override `g:asyncrun_open` temporarily) |
-| `-close` | `unset` | when using `-mode=term`, close the terminal automatically when terminal process is finished |
 | `-scroll=?` | `unset` | set to `0` to prevent quickfix auto-scrolling |
 | `-once=?` | `unset` | set to `1` to buffer output and flush when job is finished, useful when there are multi-line patterns in your `errorformat` |
 | `-encoding=?` | `unset` | specify command encoding independently (overshadow `g:asyncrun_encs`) |
+| `-pos=?` | "bottom" | When using internal terminal with `-mode=term`, `-pos` is used to specify where to split the terminal window, it can be one of `"tab"`, `"curwin"`, `"top"`, `"bottom"`, `"left"`, `"right"` and `"external"`. And you can [customize new runners](#customize-runner) and pass runner's name to `-pos` option. |
+| `-rows=num` | 0 | When using a horizontal split terminal, this value represents the height of terminal window. |
+| `-cols=num` | 0 | When using a vertical split terminal, this value represents the width of terminal window. |
+| `-focus=?` | 1 | set to `0` to prevent focus changing when `-mode=term` |
+| `-hidden=?` | 0 | set to `1` to setup `bufhidden` to `hide` for internal terminal |
+| `-listed` | 1 | when using `-mode=term`, set to 0 to hide the terminal in the buffer list |
+| `-close` | `unset` | when using `-mode=term`, close the terminal automatically when terminal process is finished |
 
 All options must start with a minus and position **before** `[cmd]`. Since no shell command string starting with a minus. So they can be distinguished from shell command easily without any ambiguity. 
 
@@ -324,7 +324,7 @@ Internal terminal related options:
 
 | Option | Default Value | Description |
 |:-:|:-:|-|
-| `-pos=?` | "bottom" | When using internal terminal with `-mode=term`, `-pos` is used to specify where to split the terminal window, it can be one of `"tab"`, `"curwin"`, `"top"`, `"bottom"`, `"left"`, `"right"` and `"external"`. And you can [customize new runners](#customize-runner) and pass runner's name to `-pos` option. |
+| `-pos=?` | "bottom" | When using internal terminal with `-mode=term`, `-pos` is used to specify where to split the terminal window, it can be one of `"tab"`, `"curwin"`, `"top"`, `"bottom"`, `"left"`, `"right"` and `"external"`. |
 | `-rows=num` | 0 | When using a horizontal split terminal, this value represents the height of terminal window. |
 | `-cols=num` | 0 | When using a vertical split terminal, this value represents the width of terminal window. |
 | `-focus=?` | 1 | set to `0` to prevent focus changing when `-mode=term` |
