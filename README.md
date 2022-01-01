@@ -77,10 +77,10 @@ Remember to open vim's quickfix window by `:copen` (or setting  `g:asyncrun_open
 
 **Async run gcc to compile current file**
 
-	:AsyncRun gcc "$(VIM_FILEPATH)" -o "$(VIM_FILEDIR)/$(VIM_FILENOEXT)"
-	:AsyncRun g++ -O3 "$(VIM_FILEPATH)" -o "$(VIM_FILEDIR)/$(VIM_FILENOEXT)" -lpthread 
+	:AsyncRun gcc "$(VIM_FILEPATH)" -o "$(VIM_PATHNOEXT)"
+	:AsyncRun g++ -O3 "$(VIM_FILEPATH)" -o "$(VIM_PATHNOEXT)" -lpthread 
 
-This command will run gcc in the background and output to the quickfix window in real time. Macro '`$(VIM_FILEPATH)`' stands for filename with full path and '`$(VIM_FILENOEXT)`' represents filename without extension.
+This command will run gcc in the background and output to the quickfix window in real time. Macro '`$(VIM_FILEPATH)`' stands for filename with full path and '`$(VIM_PATHNOEXT)`' represents file name with full path but without extension.
 
 **Async run make**
 
