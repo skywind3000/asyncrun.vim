@@ -1,9 +1,9 @@
 " asyncrun.vim - Run shell commands in background and output to quickfix
 "
-" Maintainer: skywind3000 (at) gmail.com, 2016-2021
+" Maintainer: skywind3000 (at) gmail.com, 2016-2022
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2021/12/24 05:22
+" Last Modified: 2022/01/02 09:15
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -917,7 +917,7 @@ endfunc
 
 " extract options from command
 function! s:ExtractOpt(command)
-	let cmd = a:command
+	let cmd = substitute(a:command, '^\s*\(.\{-}\)\s*$', '\1', '')
 	let opts = {}
 	while cmd =~# '^-\%(\w\+\)\%([= ]\|$\)'
 		let opt = matchstr(cmd, '^-\zs\w\+')
@@ -2046,7 +2046,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.9.7'
+	return '2.9.8'
 endfunc
 
 
