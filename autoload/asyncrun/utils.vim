@@ -23,6 +23,23 @@ endfunc
 
 
 "----------------------------------------------------------------------
+" strip string
+"----------------------------------------------------------------------
+function! asyncrun#utils#strip(text)
+	return substitute(a:text, '^\s*\(.\{-}\)\s*$', '\1', '')
+endfunc
+
+
+"----------------------------------------------------------------------
+" Replace string
+"----------------------------------------------------------------------
+function! asyncrun#utils#replace(text, old, new)
+	let l:data = split(a:text, a:old, 1)
+	return join(l:data, a:new)
+endfunc
+
+
+"----------------------------------------------------------------------
 " display require message
 "----------------------------------------------------------------------
 function! asyncrun#utils#require(what)
