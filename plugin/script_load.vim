@@ -18,6 +18,8 @@ let g:asyncrun_runner = get(g:, 'asyncrun_runner', {})
 let g:asyncrun_program = get(g:, 'asyncrun_program', {})
 let s:script_time = {}
 
+let $PYTHONUNBUFFERED = '1'
+
 
 "----------------------------------------------------------------------
 " find script 

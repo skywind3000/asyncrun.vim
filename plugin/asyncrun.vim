@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2022
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2022/01/02 09:15
+" Last Modified: 2022/02/03 22:15
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -407,6 +407,11 @@ function! s:AsyncRun_Job_Update(count, ...)
 		let &l:efm = s:async_info.errorformat
 		let &g:efm = s:async_info.errorformat
 	endif
+	let pathfix = get(g:, 'asyncrun_pathfix', 0)
+	if pathfix != 0
+		let l:previous_cwd = getcwd()
+		silent! call s:chdir(s:async_info.cwd)
+	endif
 	let l:raw = (&efm == '')? 1 : 0
 	if s:async_info.raw == 1
 		let l:raw = 1
@@ -468,6 +473,9 @@ function! s:AsyncRun_Job_Update(count, ...)
 			unlet items
 		endif
 		unlet array
+	endif
+	if pathfix != 0
+		silent! call s:chdir(l:previous_cwd)
 	endif
 	if g:asyncrun_local != 0
 		if l:efm1 != &g:efm | let &g:efm = l:efm1 | endif
@@ -1700,6 +1708,7 @@ function! s:run(opts)
 		let s:async_info.range_buf = opts.range_buf
 		let s:async_info.strip = opts.strip
 		let s:async_info.append = opts.append
+		let s:async_info.cwd = getcwd()
 		let s:async_info.once = get(opts, 'once', 0)
 		let s:async_info.encoding = get(opts, 'encoding', g:asyncrun_encs)
 		if s:AsyncRun_Job_Start(l:command) != 0
@@ -2046,7 +2055,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.9.8'
+	return '2.9.9'
 endfunc
 
 
