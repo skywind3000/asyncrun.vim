@@ -415,6 +415,8 @@ function! s:AsyncRun_Job_Update(count, ...)
 		let array = []
 	endif
 	while s:async_tail < s:async_head
+		let s:async_info.savecwd = getcwd()
+		silent! call s:chdir(s:async_info.cwd)
 		let l:text = s:async_output[s:async_tail]
 		if l:iconv != 0
 			try
@@ -451,6 +453,7 @@ function! s:AsyncRun_Job_Update(count, ...)
 		if a:count > 0 && l:count >= a:count
 			break
 		endif
+		silent! call s:chdir(s:async_info.savecwd)
 	endwhile
 	if once != 0
 		if l:raw == 0
@@ -1700,6 +1703,7 @@ function! s:run(opts)
 		let s:async_info.range_buf = opts.range_buf
 		let s:async_info.strip = opts.strip
 		let s:async_info.append = opts.append
+		let s:async_info.cwd = opts.cwd
 		let s:async_info.once = get(opts, 'once', 0)
 		let s:async_info.encoding = get(opts, 'encoding', g:asyncrun_encs)
 		if s:AsyncRun_Job_Start(l:command) != 0
