@@ -130,6 +130,13 @@ let g:asyncrun_stop = get(g:, 'asyncrun_stop', '')
 " specify how to run your command
 let g:asyncrun_mode = get(g:, 'asyncrun_mode', 0)
 
+" Use quickfix-ID to allow concurrent use of quickfix list and not
+" interleave streamed output of a running command with output from
+" other plugins
+if !exists('g:asyncrun_qf_id_available')
+	let g:asyncrun_qf_id_available = has('patch-8.0.1023') || has('nvim-0.6.1')
+endif
+
 " command hook
 let g:asyncrun_hook = get(g:, 'asyncrun_hook', '')
 
@@ -431,16 +438,33 @@ function! s:AsyncRun_Job_Update(count, ...)
 		if once == 0
 			if l:text != ''
 				if l:raw == 0
-					if and(g:asyncrun_skip, 1) == 0
-						caddexpr l:text
+					if exists('s:qf_id')
+						let qflist = {'id': s:qf_id, 'lines': split(l:text, "\n")}
+						if and(g:asyncrun_skip, 1) == 0
+							call setqflist([], 'a', qflist)
+						else
+							noautocmd call setqflist([], 'a', qflist)
+						endif
 					else
-						noautocmd caddexpr l:text
+						if and(g:asyncrun_skip, 1) == 0
+							caddexpr l:text
+						else
+							noautocmd caddexpr l:text
+						endif
 					endif
 				else
-					call setqflist([{'text':l:text}], 'a')
+					if exists('s:qf_id')
+						call setqflist([], 'a', {'id': s:qf_id, 'items': [{'text':l:text}]})
+					else
+						call setqflist([{'text':l:text}], 'a')
+					endif
 				endif
 			elseif g:asyncrun_trim == 0
-				call setqflist(l:empty, 'a')
+				if exists('s:qf_id')
+					call setqflist([], 'a', {'id': s:qf_id, 'items': l:empty})
+				else
+					call setqflist(l:empty, 'a')
+				endif
 			endif
 		else
 			if l:text != ''
@@ -568,6 +592,9 @@ function! s:AsyncRun_Job_OnFinish()
 		call timer_stop(s:async_timer)
 		unlet s:async_timer
 	endif
+	if exists('s:qf_id')
+		unlet s:qf_id
+	endif
 	call s:AsyncRun_Job_Update(-1, s:async_info.once)
 	let l:current = localtime()
 	let l:last = l:current - s:async_start
@@ -575,13 +602,21 @@ function! s:AsyncRun_Job_OnFinish()
 	if s:async_code == 0
 		let l:text = "[Finished in ".l:last." seconds]"
 		if !s:async_info.strip
-			call setqflist([{'text':l:text}], 'a')
+			if exists('s:qf_id')
+				call setqflist([], 'a', {'id': s:qf_id, 'items': [{'text':l:text}]})
+			else
+				call setqflist([{'text':l:text}], 'a')
+			endif
 		endif
 		let g:asyncrun_status = "success"
 	else
 		let l:text = 'with code '.s:async_code
 		let l:text = "[Finished in ".l:last." seconds ".l:text."]"
-		call setqflist([{'text':l:text}], 'a')
+		if exists('s:qf_id')
+			call setqflist([], 'a', {'id': s:qf_id, 'lines': [l:text]})
+		else
+			call setqflist([{'text':l:text}], 'a')
+		endif
 		let g:asyncrun_status = "failure"
 	endif
 	let s:async_state = 0
@@ -842,8 +877,15 @@ function! s:AsyncRun_Job_Start(cmd)
 				call setqflist([], ' ', l:title)
 			endif
 		endif
+		if g:asyncrun_qf_id_available == 1
+			let s:qf_id = getqflist({'id':0}).id
+		endif
 		if !s:async_info.strip
-			call setqflist([{'text':l:arguments}], 'a')
+			if exists('s:qf_id')
+				call setqflist([], 'a', {'id': s:qf_id, 'lines': [l:arguments]})
+			else
+				call setqflist([{'text':l:arguments}], 'a')
+			endif
 		endif
 		let l:name = 'g:AsyncRun_Job_OnTimer'
 		let s:async_timer = timer_start(100, l:name, {'repeat':-1})
