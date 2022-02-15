@@ -1,5 +1,6 @@
 local terminal = require("toggleterm.terminal").Terminal
 local config = require("toggleterm.config")
+local M = {}
 
 function M.reset()
   if M._asyncrun_term ~= nil then
