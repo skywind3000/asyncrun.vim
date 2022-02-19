@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2022
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2022/02/03 22:15
+" Last Modified: 2022/02/20 00:05
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -765,6 +765,9 @@ function! s:AsyncRun_Job_Start(cmd)
 		let l:options['callback'] = function('s:AsyncRun_Job_OnCallback')
 		let l:options['close_cb'] = function('s:AsyncRun_Job_OnClose')
 		let l:options['exit_cb'] = function('s:AsyncRun_Job_OnExit')
+		if v:version < 800
+			let l:options['exit_cb'] = "<SID>AsyncRun_Job_OnExit"
+		endif
 		let l:options['out_io'] = 'pipe'
 		let l:options['err_io'] = 'out'
 		let l:options['in_io'] = 'null'
@@ -2055,7 +2058,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.9.9'
+	return '2.9.10'
 endfunc
 
 
