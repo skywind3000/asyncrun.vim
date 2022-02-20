@@ -133,8 +133,8 @@ let g:asyncrun_mode = get(g:, 'asyncrun_mode', 0)
 " Use quickfix-ID to allow concurrent use of quickfix list and not
 " interleave streamed output of a running command with output from
 " other plugins
-if !exists('g:asyncrun_qf_id_available')
-	let g:asyncrun_qf_id_available = has('patch-8.0.1023') || has('nvim-0.6.1')
+if !exists('g:asyncrun_qf_id')
+	let g:asyncrun_qf_id = has('patch-8.0.1023') || has('nvim-0.6.1')
 endif
 
 " command hook
@@ -877,7 +877,7 @@ function! s:AsyncRun_Job_Start(cmd)
 				call setqflist([], ' ', l:title)
 			endif
 		endif
-		if g:asyncrun_qf_id_available == 1
+		if g:asyncrun_qf_id == 1
 			let s:qf_id = getqflist({'id':0}).id
 		endif
 		if !s:async_info.strip

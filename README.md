@@ -247,6 +247,7 @@ parameters:
 - g:asyncrun_timer - how many messages should be inserted into quickfix every 100ms interval.
 - g:asyncrun_wrapper - enable to setup a command prefix.
 - g:asyncrun_stdin - non-zero to enable stdin (useful for cmake on windows).
+- g:asyncrun_qfid - use quickfix id to prevent interleaving output of concurrent plugins appending to the quickfix list.
 
 For more information of above options, please visit **[option details](https://github.com/skywind3000/asyncrun.vim/wiki/Options)**.
 
