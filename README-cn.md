@@ -240,6 +240,7 @@
 - g:asyncrun_timer - 每 100ms 处理多少条消息，默认为 25。
 - g:asyncrun_wrapper - 命令前缀，默认为空，比如可以设置成 `nice`。
 - g:asyncrun_stdin - 设置成非零的话，允许 stdin，比如 cmake 在 windows 下要求 stdin 为打开状态。
+- g:asyncrun_qfid - 使用 quickfix id 来防止附加到 quickfix 列表的并发插件的交错输出。
 
 更多配置内容，见 **[这里](https://github.com/skywind3000/asyncrun.vim/wiki/Options)**.
 
