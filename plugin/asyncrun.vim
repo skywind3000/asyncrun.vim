@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2022
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2022/02/20 00:05
+" Last Modified: 2022/03/08 14:33
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -133,8 +133,8 @@ let g:asyncrun_mode = get(g:, 'asyncrun_mode', 0)
 " Use quickfix-ID to allow concurrent use of quickfix list and not
 " interleave streamed output of a running command with output from
 " other plugins
-if !exists('g:asyncrun_qf_id')
-	let g:asyncrun_qf_id = has('patch-8.0.1023') || has('nvim-0.6.1')
+if !exists('g:asyncrun_qfid')
+	let g:asyncrun_qfid = has('patch-8.0.1023') || has('nvim-0.6.1')
 endif
 
 " command hook
@@ -314,12 +314,15 @@ if has('nvim')
 	endif
 endif
 
+" check qfid
+let s:has_qfid = has('patch-8.0.1023') || has('nvim-0.6.1')
+
 
 "----------------------------------------------------------------------
 "- build in background
 "----------------------------------------------------------------------
 let s:async_nvim = has('nvim')? 1 : 0
-let s:async_info = { 'text':"", 'post':'', 'postsave':'' }
+let s:async_info = { 'text':"", 'post':'', 'postsave':'', 'qfid':-1 }
 let s:async_output = {}
 let s:async_head = 0
 let s:async_tail = 0
@@ -345,6 +348,48 @@ if s:async_nvim == 0 && v:version >= 800
 	let s:async_congest = has('patch-8.0.100')? 1 : 0
 	let s:async_congest = 0
 endif
+
+" append to quickfix
+function! s:AppendText(textlist, raw)
+	let qfid = s:async_info.qfid
+	if qfid < 0
+		if a:raw == 0
+			if and(g:asyncrun_skip, 1) == 0
+				caddexpr a:textlist
+			else
+				noautocmd caddexpr a:textlist
+			endif
+		else
+			let items = []
+			for text in a:textlist
+				let items += [{'text': text}]
+			endfor
+			if and(g:asyncrun_skip, 1) == 0
+				call setqflist(items, 'a')
+			else
+				noautocmd call setqflist(items, 'a')
+			endif
+			unlet items
+		endif
+	else
+		let info = {'id': qfid}
+		if a:raw == 0
+			let info.lines = a:textlist
+		else
+			let items = []
+			for text in a:textlist
+				let items += [{'text': text}]
+			endfor
+			let info.items = items
+		endif
+		if and(g:asyncrun_skip, 1) == 0
+			call setqflist([], 'a', info)
+		else
+			noautocmd call setqflist([], 'a', info)
+		endif
+		unlet info
+	endif
+endfunc
 
 " quickfix window cursor check
 function! s:AsyncRun_Job_Cursor()
@@ -402,7 +447,6 @@ function! s:AsyncRun_Job_Update(count, ...)
 	let l:iconv = (encoding != "")? 1 : 0
 	let l:count = 0
 	let l:total = 0
-	let l:empty = [{'text':''}]
 	let l:check = s:AsyncRun_Job_CheckScroll()
 	let l:efm1 = &g:efm
 	let l:efm2 = &l:efm
@@ -437,34 +481,9 @@ function! s:AsyncRun_Job_Update(count, ...)
 		let l:text = substitute(l:text, '\r$', '', 'g')
 		if once == 0
 			if l:text != ''
-				if l:raw == 0
-					if exists('s:qf_id')
-						let qflist = {'id': s:qf_id, 'lines': split(l:text, "\n")}
-						if and(g:asyncrun_skip, 1) == 0
-							call setqflist([], 'a', qflist)
-						else
-							noautocmd call setqflist([], 'a', qflist)
-						endif
-					else
-						if and(g:asyncrun_skip, 1) == 0
-							caddexpr l:text
-						else
-							noautocmd caddexpr l:text
-						endif
-					endif
-				else
-					if exists('s:qf_id')
-						call setqflist([], 'a', {'id': s:qf_id, 'items': [{'text':l:text}]})
-					else
-						call setqflist([{'text':l:text}], 'a')
-					endif
-				endif
+				call s:AppendText([l:text], l:raw)
 			elseif g:asyncrun_trim == 0
-				if exists('s:qf_id')
-					call setqflist([], 'a', {'id': s:qf_id, 'items': l:empty})
-				else
-					call setqflist(l:empty, 'a')
-				endif
+				call s:AppendText([''], l:raw)
 			endif
 		else
 			if l:text != ''
@@ -482,20 +501,7 @@ function! s:AsyncRun_Job_Update(count, ...)
 		endif
 	endwhile
 	if once != 0
-		if l:raw == 0
-			if and(g:asyncrun_skip, 1) == 0
-				caddexpr array
-			else
-				noautocmd caddexpr array
-			endif
-		else
-			let items = []
-			for text in array
-				let items += [{'text': text}]
-			endfor
-			call setqflist(items, 'a')
-			unlet items
-		endif
+		call s:AppendText(array, l:raw)
 		unlet array
 	endif
 	if pathfix != 0
@@ -592,9 +598,6 @@ function! s:AsyncRun_Job_OnFinish()
 		call timer_stop(s:async_timer)
 		unlet s:async_timer
 	endif
-	if exists('s:qf_id')
-		unlet s:qf_id
-	endif
 	call s:AsyncRun_Job_Update(-1, s:async_info.once)
 	let l:current = localtime()
 	let l:last = l:current - s:async_start
@@ -602,21 +605,13 @@ function! s:AsyncRun_Job_OnFinish()
 	if s:async_code == 0
 		let l:text = "[Finished in ".l:last." seconds]"
 		if !s:async_info.strip
-			if exists('s:qf_id')
-				call setqflist([], 'a', {'id': s:qf_id, 'items': [{'text':l:text}]})
-			else
-				call setqflist([{'text':l:text}], 'a')
-			endif
+			call s:AppendText([l:text], 1)
 		endif
 		let g:asyncrun_status = "success"
 	else
 		let l:text = 'with code '.s:async_code
 		let l:text = "[Finished in ".l:last." seconds ".l:text."]"
-		if exists('s:qf_id')
-			call setqflist([], 'a', {'id': s:qf_id, 'lines': [l:text]})
-		else
-			call setqflist([{'text':l:text}], 'a')
-		endif
+		call s:AppendText([l:text], 1)
 		let g:asyncrun_status = "failure"
 	endif
 	let s:async_state = 0
@@ -793,6 +788,7 @@ function! s:AsyncRun_Job_Start(cmd)
 	let s:async_info.auto = s:async_info.autosave
 	let s:async_info.postsave = ''
 	let s:async_info.autosave = ''
+	let s:async_info.qfid = -1
 	let g:asyncrun_text = s:async_info.text
 	call s:AutoCmd('Pre')
 	if s:async_nvim == 0
@@ -877,15 +873,11 @@ function! s:AsyncRun_Job_Start(cmd)
 				call setqflist([], ' ', l:title)
 			endif
 		endif
-		if g:asyncrun_qf_id == 1
-			let s:qf_id = getqflist({'id':0}).id
+		if g:asyncrun_qfid && s:has_qfid
+			let s:async_info.qfid = getqflist({'id':0}).id
 		endif
 		if !s:async_info.strip
-			if exists('s:qf_id')
-				call setqflist([], 'a', {'id': s:qf_id, 'lines': [l:arguments]})
-			else
-				call setqflist([{'text':l:arguments}], 'a')
-			endif
+			call s:AppendText([l:arguments], 1)
 		endif
 		let l:name = 'g:AsyncRun_Job_OnTimer'
 		let s:async_timer = timer_start(100, l:name, {'repeat':-1})
@@ -2100,7 +2092,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.9.10'
+	return '2.9.11'
 endfunc
 
 
