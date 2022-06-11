@@ -1481,10 +1481,10 @@ function! s:start_in_terminal(opts)
 		if hr >= 0
 			if focus == 0
 				exec has('nvim')? 'stopinsert' : ''
-				if pos ==# 'TAB'
-					exec 'tabnext'
-				else
-					exec 'tabprevious'
+				let last_tid = tabpagenr('#')
+				if last_tid > 0
+					" Go to the last accessed tab page.
+					exec 'tabnext' last_tid
 				endif
 			endif
 		endif
