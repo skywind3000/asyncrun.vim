@@ -118,6 +118,9 @@
 "- Global Settings & Variables
 "----------------------------------------------------------------------
 
+if exists('g:sourced_asyncrun_plugin') | finish | endif
+let g:sourced_asyncrun_plugin = 1
+
 " script will be executed after finished.
 let g:asyncrun_exit = get(g:, 'asyncrun_exit', '')
 
