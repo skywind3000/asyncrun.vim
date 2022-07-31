@@ -2061,6 +2061,16 @@ function! asyncrun#stop(bang)
 endfunc
 
 
+"----------------------------------------------------------------------
+" asyncrun - reset
+"----------------------------------------------------------------------
+function! asyncrun#reset()
+	let s:async_state = 0
+	if exists('s:async_job')
+		let s:async_job = 0
+	endif
+endfunc
+
 
 "----------------------------------------------------------------------
 " asyncrun - status
@@ -2086,6 +2096,8 @@ command! -bang -nargs=+ -range=0 -complete=file AsyncRun
 		\ call asyncrun#run('<bang>', '', <q-args>, <count>, <line1>, <line2>)
 
 command! -bar -bang -nargs=0 AsyncStop call asyncrun#stop('<bang>')
+
+command! -nargs=0 AsyncReset call asyncrun#reset()
 
 
 "----------------------------------------------------------------------
