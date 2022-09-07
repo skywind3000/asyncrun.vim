@@ -423,6 +423,22 @@ Screenshot for `gnome` runner:
 
 When using `gnome`, `konsole`, or `xfce` runner in GVim, you get exactly the same experience like starting a command-line program from IDEs. 
 
+
+This can be configured if you want to use [toggleterm.nvim] (https://github.com/akinsho/toggleterm.nvim) in neoovim and manage it using [packer.nvim] (https://github.com/wbthomason/packer.nvim).
+```lua
+    use({
+        "skywind3000/asyncrun.vim",
+        as = "asyncrun_vim",
+        config = function()
+            require("asyncrun.toggleterm").setup({
+                mapping = "<leader>tt",
+                start_in_insert = false
+            })
+        end
+    })
+```
+You can set the shortcut key to start toggleterm, and you can also set whether to enter the insert mode when it is turned on
+
 All runners are customizable, you can modify or define your own runners, see the next section "customize runner".
 
 ### Customize Runner

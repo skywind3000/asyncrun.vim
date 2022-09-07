@@ -390,7 +390,25 @@ AsyncRun 提供足够的可能性和灵活性让你指定运行命令的各处�
 
 ![](https://raw.githubusercontent.com/skywind3000/images/master/p/asyncrun/runner-gnome2.png)
 
+如果想要在neovim使用[toggleterm.nvim](https://github.com/akinsho/toggleterm.nvim),并且使用[packer.nvim](https://github.com/wbthomason/packer.nvim)管理,可以这样配置
+
+```lua
+    use({
+        "skywind3000/asyncrun.vim",
+        as = "asyncrun_vim",
+        config = function()
+            require("asyncrun.toggleterm").setup({
+                mapping = "<leader>tt",
+                start_in_insert = false
+            })
+        end
+    })
+```
+其中可以设置启动toggleterm的快捷键，也可以设置是否打开的时候进入insert模式
+
 当你在 GVim 中使用 `gnome`, `konsole` 或者 `xfce` 之类的 runner 来运行程序，你会觉得就跟 IDE 里面启动命令行程序是一样的感觉。
+
+
 
 所有 runner 皆可定制，你可以很方便的开发新 runner，详细见下一节 “自定义 Runner”。
 
