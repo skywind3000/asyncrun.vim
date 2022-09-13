@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2022
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2022/09/12 01:46
+" Last Modified: 2022/09/13 17:50
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -2080,6 +2080,23 @@ endfunc
 
 
 "----------------------------------------------------------------------
+" asyncrun - reset
+"----------------------------------------------------------------------
+function! asyncrun#reset()
+	call asyncrun#stop('!')
+	let s:async_state = 0
+	if exists('s:async_timer')
+		call timer_stop(s:async_timer)
+		unlet s:async_timer
+	endif
+	if exists('s:async_job')
+		unlet s:async_job
+	endif
+	let s:async_state = 0
+endfunc
+
+
+"----------------------------------------------------------------------
 " Commands
 "----------------------------------------------------------------------
 command! -bang -nargs=+ -range=0 -complete=file AsyncRun
@@ -2087,8 +2104,7 @@ command! -bang -nargs=+ -range=0 -complete=file AsyncRun
 
 command! -bar -bang -nargs=0 AsyncStop call asyncrun#stop('<bang>')
 
-let s:script_name = expand('<sfile>:p')
-command! -nargs=0 AsyncReset exec 'source ' . fnameescape(s:script_name)
+command! -nargs=0 AsyncReset call asyncrun#reset()
 
 
 "----------------------------------------------------------------------
