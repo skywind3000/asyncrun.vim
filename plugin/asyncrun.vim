@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2022
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2022/09/23 13:53
+" Last Modified: 2022/10/06 04:40
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1062,8 +1062,16 @@ function! asyncrun#fullname(f)
 	endif
 	if f == '%'
 		let f = expand('%')
-		if &bt == 'terminal' || &bt == 'nofile'
+		if &bt == 'terminal'
 			let f = ''
+		elseif &bt == 'nofile'
+			let is_directory = 0
+			if f =~ '[\/\\]$'
+				if f =~ '^[\/\\]' || f =~ '^.:[\/\\]'
+					let is_directory = isdirectory(f)
+				endif
+			endif
+			let f = (is_directory)? f : ''
 		endif
 	elseif f =~ '^\~[\/\\]'
 		let f = expand(f)
@@ -2075,7 +2083,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.9.15'
+	return '2.10.0'
 endfunc
 
 
