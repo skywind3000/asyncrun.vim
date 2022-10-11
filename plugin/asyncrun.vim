@@ -144,7 +144,7 @@ let g:asyncrun_hook = get(g:, 'asyncrun_hook', '')
 let g:asyncrun_last = get(g:, 'asyncrun_last', 0)
 
 " speed for each timer
-let g:asyncrun_timer = get(g:, 'asyncrun_timer', 50)
+let g:asyncrun_timer = get(g:, 'asyncrun_timer', 100)
 
 " previous exit code
 let g:asyncrun_code = get(g:, 'asyncrun_code', '')
@@ -862,6 +862,9 @@ function! s:AsyncRun_Job_Start(cmd)
 		let s:async_start = localtime()
 		let l:arguments = "[".l:name."]"
 		let l:title = ':AsyncRun '.l:name
+		if get(g:, 'asyncrun_show_time', 0)
+			let l:arguments .= ' (' . strftime('%c', s:async_start) . ')'
+		endif
 		if !s:async_info.append
 			if s:async_nvim == 0
 				if v:version >= 800 || has('patch-7.4.2210')
