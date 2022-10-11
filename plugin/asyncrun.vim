@@ -234,9 +234,9 @@ endfunc
 function! s:AutoCmd(name)
 	if has('autocmd') && ((g:asyncrun_skip / 2) % 2) == 0
 		if g:asyncrun_silent
-			exec 'silent doautocmd User AsyncRun'.a:name
+			exec 'silent doautocmd <nomodeline> User AsyncRun'.a:name
 		else
-			exec 'doautocmd User AsyncRun'.a:name
+			exec 'doautocmd <nomodeline> User AsyncRun'.a:name
 		endif
 	endif
 endfunc
@@ -529,15 +529,15 @@ function! s:AsyncRun_Job_AutoCmd(mode, auto)
 	endif
 	if a:mode == 0
 		if g:asyncrun_silent
-			silent exec 'doautocmd QuickFixCmdPre '. name
+			silent exec 'doautocmd <nomodeline> QuickFixCmdPre '. name
 		else
-			exec 'doautocmd QuickFixCmdPre '. name
+			exec 'doautocmd <nomodeline> QuickFixCmdPre '. name
 		endif
 	else
 		if g:asyncrun_silent
-			silent exec 'doautocmd QuickFixCmdPost '. name
+			silent exec 'doautocmd <nomodeline> QuickFixCmdPost '. name
 		else
-			exec 'doautocmd QuickFixCmdPost '. name
+			exec 'doautocmd <nomodeline> QuickFixCmdPost '. name
 		endif
 	endif
 endfunc
