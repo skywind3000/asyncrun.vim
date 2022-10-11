@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2022
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2022/10/12 00:27
+" Last Modified: 2022/10/12 00:33
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -865,10 +865,10 @@ function! s:AsyncRun_Job_Start(cmd)
 		if exists('g:asyncrun_show_time')
 			let t = g:asyncrun_show_time
 			let format = ''
-			if (type(t) == type('')) && t != ''
+			if type(t) == type('')
 				let format = t
-			elseif (type(t) == type(0)) && t != 0
-				let format = '%Y/%m/%d %T'
+			elseif type(t) == type(0)
+				let format = (t != 0)? '%Y/%m/%d %T' : ''
 			endif
 			if format != ''
 				let t = strftime(format, s:async_start)
