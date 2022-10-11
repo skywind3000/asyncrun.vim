@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2022
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2022/10/12 00:01
+" Last Modified: 2022/10/12 00:27
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -862,10 +862,18 @@ function! s:AsyncRun_Job_Start(cmd)
 		let s:async_start = localtime()
 		let l:arguments = "[".l:name."]"
 		let l:title = ':AsyncRun '.l:name
-		if get(g:, 'asyncrun_show_time', 0)
-			let f = get(g:, 'asyncrun_strftime', '%Y/%m/%d %T')
-			let t = strftime(f, s:async_start)
-			let l:arguments .= ' (' . t . ')'
+		if exists('g:asyncrun_show_time')
+			let t = g:asyncrun_show_time
+			let format = ''
+			if (type(t) == type('')) && t != ''
+				let format = t
+			elseif (type(t) == type(0)) && t != 0
+				let format = '%Y/%m/%d %T'
+			endif
+			if format != ''
+				let t = strftime(format, s:async_start)
+				let l:arguments .= ' (' . t . ')'
+			endif
 		endif
 		if !s:async_info.append
 			if s:async_nvim == 0
@@ -2088,7 +2096,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.10.4'
+	return '2.10.5'
 endfunc
 
 
