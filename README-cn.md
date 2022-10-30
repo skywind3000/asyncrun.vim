@@ -373,6 +373,7 @@ AsyncRun 提供足够的可能性和灵活性让你指定运行命令的各处�
 | `floaterm_reuse` | 再一个可复用的 floaterm 窗口内运行 | [floaterm](https://github.com/voldikss/vim-floaterm) | [floaterm_reuse.vim](autoload/asyncrun/runner/floaterm.vim) |
 | `quickui` | 在 quickui 的浮窗里运行 | [vim-quickui](https://github.com/skywind3000/vim-quickui) | [quickui.vim](autoload/asyncrun/runner/quickui.vim) |
 | `toggleterm` | 使用 toggleterm 窗口运行 | [toggleterm.nvim](https://github.com/akinsho/toggleterm.nvim) | [toggleterm.vim](autoload/asyncrun/runner/toggleterm.vim) |
+| `toggleterm2` | 使用自定义 toggleterm 窗口运行 | [toggleterm.nvim](https://github.com/akinsho/toggleterm.nvim) | [toggleterm.vim](autoload/asyncrun/runner/toggleterm2.vim) |
 | `xfce` | 在 xfce 终端中运行 | xfce4-terminal | [xfce.vim](autoload/asyncrun/runner/xfce.vim) |
 | `konsole` | 在 KDE 的自带终端里运行 | KDE | [konsole.vim](autoload/asyncrun/runner/konsole.vim) |
 | `macos` | 在 macOS 的系统终端内运行 | macOS | [macos.vim](autoload/asyncrun/runner/macos.vim) |
@@ -392,6 +393,19 @@ AsyncRun 提供足够的可能性和灵活性让你指定运行命令的各处�
 
 当你在 GVim 中使用 `gnome`, `konsole` 或者 `xfce` 之类的 runner 来运行程序，你会觉得就跟 IDE 里面启动命令行程序是一样的感觉。
 
+当你使用toggleterm2这个runner，并且使用packer.nvim管理插件的时候，可以设置快捷键指定打开的窗口，比如:
+```lua
+	use({
+		"skywind3000/asyncrun.vim",
+		as = "asyncrun",
+		config = function()
+			require("asyncrun_toggleterm").setup({
+				mapping = "<leader>tt",
+				start_in_insert = false,
+			})
+		end,
+	})
+```
 所有 runner 皆可定制，你可以很方便的开发新 runner，详细见下一节 “自定义 Runner”。
 
 ### 自定义 Runner

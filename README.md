@@ -423,6 +423,20 @@ Screenshot for `gnome` runner:
 
 When using `gnome`, `konsole`, or `xfce` runner in GVim, you get exactly the same experience like starting a command-line program from IDEs. 
 
+When you use toggleterm2 and use the packer.nvim management plugin, you can set shortcut keys to specify the open window, such as:
+```lua
+	use({
+		"skywind3000/asyncrun.vim",
+		as = "asyncrun",
+		config = function()
+			require("asyncrun_toggleterm").setup({
+				mapping = "<leader>tt",
+				start_in_insert = false,
+			})
+		end,
+	})
+```
+
 All runners are customizable, you can modify or define your own runners, see the next section "customize runner".
 
 ### Customize Runner
