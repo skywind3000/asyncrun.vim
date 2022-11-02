@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2022
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2022/11/02 17:53
+" Last Modified: 2022/11/02 18:41
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -230,14 +230,21 @@ function! s:NotSupport()
 	call s:ErrorMsg(msg)
 endfunc
 
+" doautocmd
+function! s:DoAutoCmd(text)
+	let cmd = (g:asyncrun_silent)? 'silent doautocmd' : 'doautocmd'
+	if v:version >= 704
+		let cmd = cmd . ' <nomodeline>'
+	endif
+	if has('autocmd')
+		exec cmd . ' ' . a:text
+	endif
+endfunc
+
 " run autocmd
 function! s:AutoCmd(name)
 	if has('autocmd') && ((g:asyncrun_skip / 2) % 2) == 0
-		if g:asyncrun_silent
-			exec 'silent doautocmd <nomodeline> User AsyncRun'.a:name
-		else
-			exec 'doautocmd <nomodeline> User AsyncRun'.a:name
-		endif
+		call s:DoAutoCmd('User AsyncRun' . a:name)
 	endif
 endfunc
 
@@ -528,17 +535,9 @@ function! s:AsyncRun_Job_AutoCmd(mode, auto)
 		return 0
 	endif
 	if a:mode == 0
-		if g:asyncrun_silent
-			silent exec 'doautocmd <nomodeline> QuickFixCmdPre '. name
-		else
-			exec 'doautocmd <nomodeline> QuickFixCmdPre '. name
-		endif
+		call s:DoAutoCmd('QuickFixCmdPre ' . name)
 	else
-		if g:asyncrun_silent
-			silent exec 'doautocmd <nomodeline> QuickFixCmdPost '. name
-		else
-			exec 'doautocmd <nomodeline> QuickFixCmdPost '. name
-		endif
+		call s:DoAutoCmd('QuickFixCmdPost ' . name)
 	endif
 endfunc
 
@@ -2108,7 +2107,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.10.7'
+	return '2.10.8'
 endfunc
 
 
