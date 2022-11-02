@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2022
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2022/11/02 17:14
+" Last Modified: 2022/11/02 17:53
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1768,20 +1768,31 @@ function! s:run(opts)
 		endif
 		let l:efm1 = &g:efm
 		let l:efm2 = &l:efm
+		if exists('&makeencoding')
+			let l:encoding = &l:makeencoding
+			if g:asyncrun_encs != ''
+				let &l:makeencoding = g:asyncrun_encs
+			endif
+		endif
 		if g:asyncrun_local != 0
 			let &g:efm = s:async_efm
 			let &l:efm = s:async_efm
 		endif
 		if has('autocmd')
 			call s:AsyncRun_Job_AutoCmd(0, opts.auto)
-			exec "noautocmd make!"
+			silent exec "noautocmd make!"
 			call s:AsyncRun_Job_AutoCmd(1, opts.auto)
 		else
-			exec "make!"
+			silent exec "make!"
 		endif
 		if g:asyncrun_local != 0
 			if l:efm1 != &g:efm | let &g:efm = l:efm1 | endif
 			if l:efm2 != &l:efm | let &l:efm = l:efm2 | endif
+		endif
+		if exists('&makeencoding')
+			if g:asyncrun_encs != ''
+				let &l:makeencoding = l:encoding
+			endif
 		endif
 		let &l:makeprg = l:makesave
 		if s:asyncrun_windows == 0

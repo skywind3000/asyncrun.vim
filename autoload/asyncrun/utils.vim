@@ -118,3 +118,15 @@ function! asyncrun#utils#set_title(title, expanded)
 endfunction
 
 
+"----------------------------------------------------------------------
+" try to open quickfix
+"----------------------------------------------------------------------
+function! asyncrun#utils#quickfix_request()
+	let height = get(g:, "asyncrun_open", 0)
+	if height > 0
+		call asyncrun#quickfix_toggle(height, 1)
+	endif
+endfunc
+
+
+
