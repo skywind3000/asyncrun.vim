@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2022
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2022/10/30 10:25
+" Last Modified: 2022/11/02 17:14
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1616,6 +1616,7 @@ function! s:run(opts)
 	let l:program = ""
 
 	let s:async_efm = a:opts.errorformat
+	let l:opts.code = l:mode
 
 	if l:opts.program == 'make'
 		let l:program = &makeprg
@@ -2096,7 +2097,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.10.6'
+	return '2.10.7'
 endfunc
 
 
