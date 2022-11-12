@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2022
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2022/11/13 00:49
+" Last Modified: 2022/11/13 01:40
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1257,7 +1257,6 @@ endfunc
 "----------------------------------------------------------------------
 function! s:terminal_init(opts)
 	let command = a:opts.cmd
-	let hidden = get(a:opts, 'hidden', 0)
 	let shell = (has('nvim') == 0)? 1 : 0
 	let pos = get(a:opts, 'pos', 'bottom')
 	let pos = (pos == 'background')? 'hide' : pos
@@ -1355,14 +1354,24 @@ function! s:terminal_init(opts)
 		if get(a:opts, 'listed', 1) == 0
 			setlocal nobuflisted
 		endif
-		exec has('nvim')? 'startinsert' : ''
-		if has_key(a:opts, 'hidden')
-			let remove = get(g:, 'asyncrun_term_hide', 'delete')
-			exec 'setlocal bufhidden=' . (hidden? 'hide' : remove)
+		let hidden = get(g:, 'asyncrun_term_hidden', 'wipe')
+		let hidden = get(a:opts, 'hidden', hidden)
+		if type(hidden) == type(0)
+			let t = (hidden)? 'hide' : 'wipe'
+		else
+			let t = (type(hidden) == type(''))? hidden : ''
+			if t =~ '^\d\+'
+				let t = (str2nr(t))? 'hide' : 'wipe'
+			endif
+		endif
+		if t != '' || has_key(a:opts, 'hidden')
+			exec 'setlocal bufhidden=' . t
+			unsilent echom 't=' . t
 		endif
 		if exists('*win_getid')
 			let info.winid = win_getid()
 		endif
+		exec has('nvim')? 'startinsert' : ''
 	endif
 	let info.name = get(a:opts, 'name', '')
 	let info.post = get(a:opts, 'post', '')
@@ -2108,7 +2117,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.11.1'
+	return '2.11.2'
 endfunc
 
 

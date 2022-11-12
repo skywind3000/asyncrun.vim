@@ -204,7 +204,7 @@ There can be some options before your `[cmd]`:
 | `-rows=num` | 0 | When using a horizontal split terminal, this value represents the height of terminal window. |
 | `-cols=num` | 0 | When using a vertical split terminal, this value represents the width of terminal window. |
 | `-focus=?` | 1 | set to `0` to prevent focus changing when `-mode=term` |
-| `-hidden=?` | `unset` | set to `1` to init `bufhidden` to `hide` for internal terminal, set to `0` to init `bufhidden` to `delete` |
+| `-hidden=?` | 0 | set to `1` to init `bufhidden` to `hide` for internal terminal, set to `0` to init `bufhidden` to `wipe` |
 | `-listed=?` | 1 | when using `-mode=term`, set to 0 to hide the terminal in the buffer list |
 | `-close` | `unset` | when using `-mode=term`, close the terminal automatically when terminal process is finished |
 
