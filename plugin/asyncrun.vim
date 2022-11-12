@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2022
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2022/11/13 00:38
+" Last Modified: 2022/11/13 00:49
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1357,7 +1357,8 @@ function! s:terminal_init(opts)
 		endif
 		exec has('nvim')? 'startinsert' : ''
 		if has_key(a:opts, 'hidden')
-			exec 'setlocal bufhidden=' . (hidden? 'hide' : 'unload')
+			let remove = get(g:, 'asyncrun_term_hide', 'delete')
+			exec 'setlocal bufhidden=' . (hidden? 'hide' : remove)
 		endif
 		if exists('*win_getid')
 			let info.winid = win_getid()
@@ -2107,7 +2108,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.11.0'
+	return '2.11.1'
 endfunc
 
 
