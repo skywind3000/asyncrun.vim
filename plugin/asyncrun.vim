@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2022
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2022/11/13 01:40
+" Last Modified: 2022/11/13 01:42
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1364,7 +1364,7 @@ function! s:terminal_init(opts)
 				let t = (str2nr(t))? 'hide' : 'wipe'
 			endif
 		endif
-		if t != '' || has_key(a:opts, 'hidden')
+		if has_key(a:opts, 'hidden') || t != ''
 			exec 'setlocal bufhidden=' . t
 			unsilent echom 't=' . t
 		endif
