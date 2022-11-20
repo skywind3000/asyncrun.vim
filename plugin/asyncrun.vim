@@ -1301,7 +1301,7 @@ function! s:terminal_init(opts)
 				endif
 			endif
 			if has('patch-8.1.1630')
-				let opts.term_name = s:term_new_name(a:opts)
+				let opts.term_name = s:term_gen_name(1, a:opts, -1)
 			endif
 			try
 				let bid = term_start(command, opts)
@@ -1322,6 +1322,7 @@ function! s:terminal_init(opts)
 			let success = (job_status(jid) != 'fail')? 1 : 0
 		endif
 		let pid = (success)? (job_info(jid)['process']) : -1
+		let processid = pid
 	else
 		let opts = {}
 		let opts.on_exit = function('s:terminal_exit')
@@ -1344,6 +1345,7 @@ function! s:terminal_init(opts)
 		endif
 		let success = (jid > 0)? 1 : 0
 		let pid = (success)? jid : -1
+		let processid = (success)? jobpid(jid) : -1
 	endif
 	if success == 0
 		call s:ErrorMsg('Process creation failed')
@@ -1385,8 +1387,11 @@ function! s:terminal_init(opts)
 	let info.pid = pid
 	let info.jid = jid
 	let info.bid = bid
+	let info.cmd = a:opts.cmd
+	let info.processid = processid
 	let info.close = get(a:opts, 'close', 0)
 	let s:async_term[pid] = info
+	call setbufvar(bid, 'asyncrun_term_pid', pid)
 	return pid
 endfunc
 
@@ -1399,19 +1404,32 @@ function! s:terminal_open(opts)
 	if a:opts.cwd != ''
 		silent! call s:chdir(a:opts.cwd)
 	endif
-	let hr = s:terminal_init(a:opts)
+	let pid = s:terminal_init(a:opts)
 	if a:opts.cwd != ''
 		silent! call s:chdir(previous)
 	endif
-	if get(a:opts, 'reuse', 0)
-		let bid = get(a:opts, '_terminal_wipe', -1)
-		if bid > 0
-			if bufexists(bid)
-				silent! exec 'bw '  . bid
+	if pid >= 0
+		if get(a:opts, 'reuse', 0)
+			let bid = get(a:opts, '_terminal_wipe', -1)
+			if bid > 0
+				if bufexists(bid)
+					silent! exec 'bw '  . bid
+				endif
+			endif
+		endif
+		if has_key(s:async_term, pid)
+			let info = s:async_term[pid]
+			let rename = get(g:, 'asyncrun_term_rename', -1)
+			if rename >= 0
+				let name = s:term_gen_name(rename, a:opts, info.processid)
+				if name != ''
+					" echom 'name: ' . name
+					exec 'file! ' . name
+				endif
 			endif
 		endif
 	endif
-	return hr
+	return pid
 endfunc
 
 
@@ -1479,16 +1497,28 @@ endfunc
 "----------------------------------------------------------------------
 " get a proper name
 "----------------------------------------------------------------------
-function! s:term_new_name(opts)
+function! s:term_gen_name(mode, opts, pid)
+	let mode = a:mode
 	let command = a:opts.cmd
-	let name = '!' . command
+	let pid = a:pid
 	let wipe = get(a:opts, '_terminal_wipe', -1)
+	if mode == 0
+		let mode = has('nvim')? 2 : 1
+	endif
+	if mode == 1
+		let name = '!' . command
+	elseif mode == 2
+		let name = printf('term://~//%d:%s', pid, command)
+	elseif mode == 3
+		let name = printf(':AsyncRun %s', command)
+	else
+		let name = printf('!(%d) %s', pid, command)
+	endif
 	if !bufexists(name)
 		return name
 	elseif get(a:opts, 'reuse', 0)
 		let bid = bufnr(name)
 		if bid == bufnr('%')
-			unsilent echom 'match'
 			if !s:term_alive(bid)
 				if wipe == bid
 					return name
@@ -1499,7 +1529,7 @@ function! s:term_new_name(opts)
 	let index = 1
 	while 1
 		let test = printf('%s (%d)', name, index)
-		if bufnr(test) < 0
+		if !bufexists(test)
 			return test
 		elseif get(a:opts, 'reuse', 0)
 			let bid = bufnr(test)
@@ -1513,7 +1543,7 @@ function! s:term_new_name(opts)
 		endif
 		let index += 1
 	endwhile
-	return name
+	return ''
 endfunc
 
 
