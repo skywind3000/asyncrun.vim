@@ -11,13 +11,23 @@
 
 
 "----------------------------------------------------------------------
+" tune
+"----------------------------------------------------------------------
+let g:asyncrun_term_wipe = get(g:, 'asyncrun_term_wipe', 1)
+" let g:asyncrun_term_hidden = get(g:, 'asyncrun_term_hidden', 'wipe')
+if has('nvim') == 0
+	if v:version >= 802
+		let g:asyncrun_term_safe = 1
+	endif
+endif
+
+
+"----------------------------------------------------------------------
 " internal
 "----------------------------------------------------------------------
 let g:asyncrun_event = get(g:, 'asyncrun_event', {})
 let g:asyncrun_runner = get(g:, 'asyncrun_runner', {})
 let g:asyncrun_program = get(g:, 'asyncrun_program', {})
-" let g:asyncrun_term_hidden = get(g:, 'asyncrun_term_hidden', 'wipe')
-let g:asyncrun_term_wipe = get(g:, 'asyncrun_term_wipe', 1)
 let s:script_time = {}
 
 let $PYTHONUNBUFFERED = '1'
