@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2022
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2022/11/27 16:30
+" Last Modified: 2022/11/27 21:03
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -255,7 +255,7 @@ function! s:chdir(path)
 	else
 		let cmd = haslocaldir()? ((haslocaldir() == 1)? 'lcd' : 'tcd') : 'cd'
 	endif
-	silent execute 'noautocmd ' . cmd . ' '. fnameescape(a:path)
+	silent! noautocmd execute cmd . ' '. fnameescape(a:path)
 endfunc
 
 " safe shell escape for neovim
@@ -2226,7 +2226,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.11.7'
+	return '2.11.8'
 endfunc
 
 
