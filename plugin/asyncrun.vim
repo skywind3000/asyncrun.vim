@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2022
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2022/11/27 21:03
+" Last Modified: 2022/11/27 23:31
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -409,11 +409,7 @@ endfunc
 
 " find quickfix window and scroll to the bottom then return last window
 function! s:AsyncRun_Job_AutoScroll()
-	if s:async_quick == 0
-		if &buftype == 'quickfix'
-			silent exec 'normal! G'
-		endif
-	else
+	if s:async_quick != 0
 		cbottom
 	endif
 endfunc
@@ -867,7 +863,7 @@ function! s:AsyncRun_Job_Start(cmd)
 			if type(t) == type('')
 				let format = t
 			elseif type(t) == type(0)
-				let format = (t != 0)? '%Y/%m/%d %T' : ''
+				let format = (t != 0)? '%Y/%m/%d %H:%M:%S' : ''
 			endif
 			if format != ''
 				let t = strftime(format, s:async_start)
@@ -2226,7 +2222,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.11.8'
+	return '2.11.9'
 endfunc
 
 
