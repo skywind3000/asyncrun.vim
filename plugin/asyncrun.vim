@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2022
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2022/11/27 23:31
+" Last Modified: 2022/11/29 03:45
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1615,6 +1615,7 @@ function! s:start_in_terminal(opts)
 		if hr >= 0
 			if focus == 0
 				exec has('nvim')? 'stopinsert' : ''
+				exec 'normal! ggG'
 				let last_tid = tabpagenr('#')
 				if last_tid > 0
 					" Go to the last accessed tab page.
@@ -1661,6 +1662,7 @@ function! s:start_in_terminal(opts)
 	let hr = s:terminal_open(a:opts)
 	if focus == 0 && hr >= 0
 		exec has('nvim')? 'stopinsert' : ''
+		exec 'normal! ggG'
 		call win_gotoid(origin)
 	endif
 	return 0
@@ -2222,7 +2224,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.11.9'
+	return '2.11.10'
 endfunc
 
 
