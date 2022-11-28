@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2022
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2022/11/29 04:34
+" Last Modified: 2022/11/29 05:24
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1258,6 +1258,7 @@ function! s:terminal_init(opts)
 	let pos = (pos == 'background')? 'hide' : pos
 	let cwd = get(a:opts, 'cwd', '')
 	let cwd = (cwd != '' && isdirectory(cwd))? cwd : ''
+	let bid = -1
 	if get(a:opts, 'safe', get(g:, 'asyncrun_term_safe', 0)) != 0
 		let command = s:ScriptWrite(command, 0)
 		if stridx(command, ' ') >= 0
@@ -1352,6 +1353,7 @@ function! s:terminal_init(opts)
 		setlocal nonumber signcolumn=no norelativenumber
 		let b:asyncrun_cmd = a:opts.cmd
 		let b:asyncrun_name = get(a:opts, 'name', '')
+		let b:asyncrun_bid = bid
 		if get(a:opts, 'listed', 1) == 0
 			setlocal nobuflisted
 		endif
@@ -1386,7 +1388,9 @@ function! s:terminal_init(opts)
 	let info.processid = processid
 	let info.close = get(a:opts, 'close', 0)
 	let s:async_term[pid] = info
-	call setbufvar(bid, 'asyncrun_term_pid', pid)
+	if bid >= 0
+		call setbufvar(bid, 'asyncrun_pid', pid)
+	endif
 	return pid
 endfunc
 
@@ -1490,6 +1494,27 @@ endfunc
 
 
 "----------------------------------------------------------------------
+" check terminal is reusable
+"----------------------------------------------------------------------
+function! s:term_reusable(bid)
+	if getbufvar(a:bid, '&buftype') != 'terminal'
+		return 0
+	endif
+	if getbufvar(a:bid, 'asyncrun_bid', -1) < 0
+		return 0
+	endif
+	if has('nvim') == 0
+		return (term_getstatus(a:bid) == 'finished')? 1 : 0
+	else
+		let ch = getbufvar(a:bid, '&channel')
+		let status = (jobwait([ch], 0)[0] == -1)? 1 : 0
+		return (status == 0)? 1 : 0
+	endif
+	return 0
+endfunc
+
+
+"----------------------------------------------------------------------
 " get a proper name
 "----------------------------------------------------------------------
 function! s:term_gen_name(mode, opts, pid)
@@ -1555,21 +1580,10 @@ function! s:start_in_terminal(opts)
 	let a:opts._terminal_wipe = -1
 	for ii in range(winnr('$'))
 		let wid = ii + 1
-		if getwinvar(wid, '&bt') == 'terminal'
-			if has('nvim') == 0
-				let bid = winbufnr(wid)
-				if term_getstatus(bid) == 'finished'
-					let avail = wid
-					break
-				endif
-			else
-				let ch = getwinvar(wid, '&channel')
-				let status = (jobwait([ch], 0)[0] == -1)? 1 : 0
-				if status == 0
-					let avail = wid
-					break
-				endif
-			endif
+		let bid = winbufnr(wid)
+		if s:term_reusable(bid)
+			let avail = wid
+			break
 		endif
 	endfor
 	let focus = get(a:opts, 'focus', 1)
@@ -1584,20 +1598,9 @@ function! s:start_in_terminal(opts)
 			for i in range(tabpagenr('$'))
 				if tabpagewinnr(i + 1, '$') == 1
 					let bid = tabpagebuflist(i + 1)[0]
-					if getbufvar(bid, '&bt', '') == 'terminal'
-						if has('nvim') == 0
-							if term_getstatus(bid) == 'finished'
-								let avail = i + 1
-								break
-							endif
-						else
-							let ch = getbufvar(bid, '&channel')
-							let status = (jobwait([ch], 0)[0] == -1)? 1 : 0
-							if status == 0
-								let avail = i + 1
-								break
-							endif
-						endif
+					if s:term_reusable(bid)
+						let avail = i + 1
+						break
 					endif
 				endif
 			endfor
@@ -2232,7 +2235,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.11.12'
+	return '2.11.13'
 endfunc
 
 
