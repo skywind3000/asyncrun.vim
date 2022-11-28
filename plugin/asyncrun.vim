@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2022
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2022/11/29 04:03
+" Last Modified: 2022/11/29 04:34
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1637,7 +1637,7 @@ function! s:start_in_terminal(opts)
 	keepalt noautocmd windo call s:save_restore_view(0)
 	keepalt noautocmd call win_gotoid(uid)
 	let origin = win_getid()
-	if avail < 0 || get(a:opts, 'reuse', 1) == 0
+	if avail < 0 || get(a:opts, 'reuse', 0) == 0
 		let rows = get(a:opts, 'rows', '')
 		let cols = get(a:opts, 'cols', '')
 		if pos == 'top'
@@ -2031,6 +2031,10 @@ function! s:run(opts)
 		endif
 	elseif l:mode == 6
 		let opts.cmd = l:command
+		if has_key(opts, 'reuse') == 0
+			let pos = get(opts, 'pos', '')
+			let opts.reuse = (pos ==? 'tab')? 0 : 1
+		endif
 		call s:start_in_terminal(opts)
 	endif
 
@@ -2228,7 +2232,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.11.11'
+	return '2.11.12'
 endfunc
 
 
