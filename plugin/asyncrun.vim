@@ -606,7 +606,9 @@ function! s:AsyncRun_Job_OnFinish()
 	else
 		let l:text = 'with code '.s:async_code
 		let l:text = "[Finished in ".l:last." seconds ".l:text."]"
-		call s:AppendText([l:text], 1)
+		if !s:async_info.strip
+			call s:AppendText([l:text], 1)
+		endif
 		let g:asyncrun_status = "failure"
 	endif
 	let s:async_state = 0
