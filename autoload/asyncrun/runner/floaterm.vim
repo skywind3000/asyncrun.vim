@@ -1,9 +1,9 @@
 "======================================================================
 "
-" floaterm.vim - 
+" floaterm.vim -
 "
 " Created by skywind on 2021/12/15
-" Last Modified: 2021/12/15 06:47:18
+" Last Modified: 2023/03/17 12:26:25
 "
 "======================================================================
 
@@ -34,7 +34,7 @@ function! asyncrun#runner#floaterm#run(opts)
 	endif
 	let cmd = 'FloatermNew '
 	let cmd .= ' --wintype=float'
-	if has_key(a:opts, 'position') 
+	if has_key(a:opts, 'position')
 		let cmd .= ' --position=' . fnameescape(a:opts.position)
 	endif
 	if has_key(a:opts, 'width')
@@ -46,7 +46,7 @@ function! asyncrun#runner#floaterm#run(opts)
 	if has_key(a:opts, 'title')
 		let cmd .= ' --title=' . fnameescape(a:opts.title)
 	endif
-	let cmd .= ' --autoclose=0'
+	let cmd .= ' --autoclose=' . get(a:opts, 'autoclose', 0)
 	let cmd .= ' --silent=' . get(a:opts, 'silent', 0)
 	let cwd = (a:opts.cwd == '')? getcwd() : (a:opts.cwd)
 	let cmd .= ' --cwd=' . fnameescape(cwd)
