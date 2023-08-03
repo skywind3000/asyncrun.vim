@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2023
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2023/08/03 13:04
+" Last Modified: 2023/08/03 15:40
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1430,6 +1430,9 @@ function! s:terminal_open(opts)
 			endif
 		endif
 		if &bt == 'terminal'
+			if has_key(a:opts, 'hint')
+				let b:asyncrun_hint = get(a:opts, 'hint', '')
+			endif
 			if has_key(a:opts, 'init')
 				let init = get(a:opts, 'init', '')
 				try
@@ -2258,7 +2261,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.11.18'
+	return '2.11.19'
 endfunc
 
 
