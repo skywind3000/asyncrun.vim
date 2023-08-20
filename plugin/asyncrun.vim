@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2023
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2023/08/03 15:40
+" Last Modified: 2023/08/21 02:03
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1206,6 +1206,10 @@ function! asyncrun#get_root(path, ...)
 	return l:hr
 endfunc
 
+function! asyncrun#current_root()
+	return asyncrun#get_root('%')
+endfunc
+
 function! asyncrun#path_join(home, name)
 	return s:path_join(a:home, a:name)
 endfunc
@@ -2261,7 +2265,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.11.19'
+	return '2.11.20'
 endfunc
 
 
