@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2023
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2023/09/19 18:47
+" Last Modified: 2023/09/19 23:48
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1074,7 +1074,7 @@ function! asyncrun#fullname(f)
 		let f = expand('%')
 		if &bt == 'terminal'
 			let f = ''
-		elseif &bt == 'nofile'
+		elseif &bt != ''
 			let is_directory = 0
 			if f =~ '[\/\\]$'
 				if f =~ '^[\/\\]' || f =~ '^.:[\/\\]'
@@ -1129,41 +1129,43 @@ function! s:path_join(home, name)
 	endif
 endfunc
 
-" find project root
-function! s:find_root(path, markers, strict)
-	function! s:guess_root(filename, markers)
-		let fullname = asyncrun#fullname(a:filename)
-		if fullname =~ '^fugitive:/'
-			if exists('b:git_dir')
-				return fnamemodify(b:git_dir, ':h')
-			endif
-			return '' " skip any fugitive buffers early
+" guess root
+function! s:guess_root(filename, markers)
+	let fullname = asyncrun#fullname(a:filename)
+	if fullname =~ '^fugitive:/'
+		if exists('b:git_dir')
+			return fnamemodify(b:git_dir, ':h')
 		endif
-		let pivot = fullname
-		if !isdirectory(pivot)
-			let pivot = fnamemodify(pivot, ':h')
-		endif
-		while 1
-			let prev = pivot
-			for marker in a:markers
-				let newname = s:path_join(pivot, marker)
-				if newname =~ '[\*\?\[\]]'
-					if glob(newname) != ''
-						return pivot
-					endif
-				elseif filereadable(newname)
-					return pivot
-				elseif isdirectory(newname)
+		return '' " skip any fugitive buffers early
+	endif
+	let pivot = fullname
+	if !isdirectory(pivot)
+		let pivot = fnamemodify(pivot, ':h')
+	endif
+	while 1
+		let prev = pivot
+		for marker in a:markers
+			let newname = s:path_join(pivot, marker)
+			if newname =~ '[\*\?\[\]]'
+				if glob(newname) != ''
 					return pivot
 				endif
-			endfor
-			let pivot = fnamemodify(pivot, ':h')
-			if pivot == prev
-				break
+			elseif filereadable(newname)
+				return pivot
+			elseif isdirectory(newname)
+				return pivot
 			endif
-		endwhile
-		return ''
-	endfunc
+		endfor
+		let pivot = fnamemodify(pivot, ':h')
+		if pivot == prev
+			break
+		endif
+	endwhile
+	return ''
+endfunc
+
+" find project root
+function! s:find_root(path, markers, strict)
 	if a:path == '%'
 		if exists('b:asyncrun_root') && b:asyncrun_root != ''
 			return b:asyncrun_root
@@ -2272,7 +2274,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.11.21'
+	return '2.11.22'
 endfunc
 
 
