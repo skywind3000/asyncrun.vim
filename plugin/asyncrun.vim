@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2023
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2023/09/19 23:48
+" Last Modified: 2023/09/20 09:47
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -621,7 +621,14 @@ function! s:AsyncRun_Job_OnFinish()
 		exec "norm! \<esc>"
 	endif
 	if s:async_info.post != ''
-		exec s:async_info.post
+		try
+			exec s:async_info.post
+		catch
+			redraw
+			echohl ErrorMsg
+			echo 'AsyncRun: ' . v:exception
+			echohl None
+		endtry
 		let s:async_info.post = ''
 	endif
 	if g:asyncrun_exit != ""
@@ -2274,7 +2281,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.11.22'
+	return '2.11.23'
 endfunc
 
 
