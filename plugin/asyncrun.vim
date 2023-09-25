@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2023
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2023/09/25 22:55
+" Last Modified: 2023/09/25 23:10
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1876,7 +1876,7 @@ function! s:run(opts)
 	let t = s:StringStrip(l:command)
 
 	if strpart(t, 0, 1) == ':' && g:asyncrun_strict == 0
-		if t =~ '^:\s*\!\s*start\s*\/b\s\+'
+		if s:asyncrun_windows && t =~ '^:\s*\!\s*start\s*\/b\s\+'
 			let t = matchstr(t, '^:\s*\!\s*start\s*\/b\s\+\zs.*$')
 			let t = s:StringStrip(t)
 			if t == ''
@@ -1884,7 +1884,7 @@ function! s:run(opts)
 			endif
 			let l:command = t
 			let l:mode = 5
-		elseif t =~ '^:\s*\!\s*start\s\+'
+		elseif s:asyncrun_windows && t =~ '^:\s*\!\s*start\s\+'
 			let t = matchstr(t, '^:\s*\!\s*start\s\+\zs.*$')
 			let t = s:StringStrip(t)
 			if t == ''
@@ -2300,7 +2300,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.12.0'
+	return '2.12.1'
 endfunc
 
 
