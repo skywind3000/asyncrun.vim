@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2023
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2023/09/22 14:44
+" Last Modified: 2023/09/25 22:55
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1876,15 +1876,33 @@ function! s:run(opts)
 	let t = s:StringStrip(l:command)
 
 	if strpart(t, 0, 1) == ':' && g:asyncrun_strict == 0
-		try
-			exec strpart(t, 1)
-		catch
-			redraw
-			echohl ErrorMsg
-			echo 'AsyncRun: ' . v:exception
-			echohl None
-		endtry
-		return ''
+		if t =~ '^:\s*\!\s*start\s*\/b\s\+'
+			let t = matchstr(t, '^:\s*\!\s*start\s*\/b\s\+\zs.*$')
+			let t = s:StringStrip(t)
+			if t == ''
+				return ''
+			endif
+			let l:command = t
+			let l:mode = 5
+		elseif t =~ '^:\s*\!\s*start\s\+'
+			let t = matchstr(t, '^:\s*\!\s*start\s\+\zs.*$')
+			let t = s:StringStrip(t)
+			if t == ''
+				return ''
+			endif
+			let l:command = t
+			let l:mode = 4
+		else
+			try
+				exec strpart(t, 1)
+			catch
+				redraw
+				echohl ErrorMsg
+				echo 'AsyncRun: ' . v:exception
+				echohl None
+			endtry
+			return ''
+		endif
 	elseif l:runner != ''
 		let obj = deepcopy(l:opts)
 		let obj.cmd = command
@@ -2282,7 +2300,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.11.24'
+	return '2.12.0'
 endfunc
 
 
