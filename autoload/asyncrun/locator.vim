@@ -12,6 +12,18 @@
 " root locator
 "----------------------------------------------------------------------
 function! asyncrun#locator#detect()
+	if &bt == ''
+		return ''
+	elseif &bt == 'nofile'
+		if &ft == 'floggraph'
+			if exists('b:flog_state')
+				let root = get(b:flog_state, 'workdir', '')
+				if root != '' && isdirectory(root)
+					return root
+				endif
+			endif
+		endif
+	endif
 	return ''
 endfunc
 
