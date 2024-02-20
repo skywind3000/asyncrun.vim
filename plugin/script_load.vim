@@ -131,7 +131,7 @@ function! s:root_locator()
 	endif
 	let root = asyncrun#locator#detect()
 	if root != '' && isdirectory(root)
-		return asyncrun#get_root(root)
+		return root
 	endif
 	return ''
 endfunc
