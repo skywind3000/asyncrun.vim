@@ -25,6 +25,10 @@ function! asyncrun#locator#buffer_path()
 					return t:git['git_root']
 				endif
 			endif
+		elseif &ft == 'magit'
+			if exists('b:magit_top_dir')
+				return b:magit_top_dir
+			endif
 		endif
 		if exists('b:git_dir')
 			return b:git_dir
