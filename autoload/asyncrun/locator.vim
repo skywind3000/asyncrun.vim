@@ -11,7 +11,7 @@
 "----------------------------------------------------------------------
 " guess current buffer's directory
 "----------------------------------------------------------------------
-function! asyncrun#locator#buffer_path()
+function! asyncrun#locator#nofile_buffer_path()
 	if &bt == ''
 		return ''
 	elseif &bt == 'nofile'
@@ -29,6 +29,12 @@ function! asyncrun#locator#buffer_path()
 			if exists('b:magit_top_dir')
 				return b:magit_top_dir
 			endif
+		elseif &ft == 'NeogitStatus' && has('nvim')
+			try
+				let t = luaeval('require("neogit.lib.git").repo.git_root')
+				return t
+			catch
+			endtry
 		endif
 		if exists('b:git_dir')
 			return b:git_dir
@@ -45,7 +51,7 @@ function! asyncrun#locator#detect()
 	if &bt == ''
 		return ''
 	endif
-	let path = asyncrun#locator#buffer_path()
+	let path = asyncrun#locator#nofile_buffer_path()
 	if path != '' && (isdirectory(path) || filereadable(path))
 		return asyncrun#get_root(path)
 	endif
