@@ -9,9 +9,41 @@
 
 
 "----------------------------------------------------------------------
+" initialize
+"----------------------------------------------------------------------
+let s:windows = has('win32') || has('win64') || has('win16') || has('win95')
+
+
+"----------------------------------------------------------------------
+" special buffer
+"----------------------------------------------------------------------
+function! asyncrun#locator#special_buffer_path() abort
+	if &bt != ''
+		return ''
+	endif
+	let name = bufname('%')
+	if name =~ '\v^fugitive\:[\\\/][\\\/][\\\/]'
+		let path = strpart(name, s:windows? 12 : 11)
+		let pos = stridx(path, '.git')
+		if pos >= 0
+			let path = strpart(path, 0, pos)
+		endif
+		return fnamemodify(path, ':h')
+	elseif name =~ '^diffview:\/\/'
+		let part = strpart(name, 11)
+		let pos = stridx(part, '/.git/:')
+		if pos > 0
+			return strpart(part, 0, pos)
+		endif
+	endif
+	return ''
+endfunc
+
+
+"----------------------------------------------------------------------
 " guess current buffer's directory
 "----------------------------------------------------------------------
-function! asyncrun#locator#nofile_buffer_path()
+function! asyncrun#locator#nofile_buffer_path() abort
 	if &bt == ''
 		return ''
 	elseif &bt == 'nofile'
@@ -35,6 +67,11 @@ function! asyncrun#locator#nofile_buffer_path()
 				return t
 			catch
 			endtry
+		elseif &ft == 'DiffviewFiles' && has('nvim')
+			let t = getline(1)
+			if t != '' && isdirectory(t)
+				return t
+			endif
 		endif
 		if exists('b:git_dir')
 			return b:git_dir
@@ -49,7 +86,7 @@ endfunc
 "----------------------------------------------------------------------
 function! asyncrun#locator#detect()
 	if &bt == ''
-		return ''
+		return asyncrun#locator#special_buffer_path()
 	endif
 	let path = asyncrun#locator#nofile_buffer_path()
 	if path != '' && (isdirectory(path) || filereadable(path))
