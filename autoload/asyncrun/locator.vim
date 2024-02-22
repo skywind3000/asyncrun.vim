@@ -72,9 +72,52 @@ function! asyncrun#locator#nofile_buffer_path() abort
 			if t != '' && isdirectory(t)
 				return t
 			endif
+		elseif &ft == 'tagbar'
+			if bufname('%') =~ '\v^__TagBar__\.'
+				if exists('t:tagbar_state')
+					try
+						let t = t:tagbar_state._current.fpath
+						return t
+					catch
+					endtry
+				endif
+			endif
+		elseif &ft == 'vista' || &ft =~ '\v^vista_'
+			try
+				let t = g:vista.source.fname
+				return fnamemodify(t, ':p')
+			catch
+			endtry
+		elseif &ft == 'aerial'
+			if exists('b:source_buffer')
+				let name = bufname(b:source_buffer)
+				return name
+			endif
+		elseif &ft == 'Outline'
+			try
+				let t = luaeval("require('outline').current.code.buf")
+				return bufname(t)
+			catch
+				try
+					let wid = luaeval("require('symbols-outline').state.code_win")
+					let bid = winbufnr(wid)
+					return bufname(bid)
+				catch
+				endtry
+			endtry
 		endif
 		if exists('b:git_dir')
 			return b:git_dir
+		endif
+	endif
+	if &ft == 'oil' && &bt != ''
+		let name = bufname('%')
+		if name =~ '\v^oil\:[\\\/][\\\/]'
+			let t = strpart(name, s:windows? 7 : 6)
+			if s:windows && t =~ '\v^\w[\\\/]'
+				let t = strpart(t, 0, 1) . ':' . strpart(t, 1)
+			endif
+			return t
 		endif
 	endif
 	return ''
