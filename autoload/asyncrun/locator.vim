@@ -105,19 +105,34 @@ function! asyncrun#locator#nofile_buffer_path() abort
 				catch
 				endtry
 			endtry
+		elseif &ft == 'NvimTree'
+			try
+				let t = luaeval('require("nvim-tree.api").tree.get_nodes().absolute_path')
+				return t
+			catch
+			endtry
+		elseif &ft == 'defx'
+			if exists('b:defx')
+				try
+					let t = b:defx.paths[0]
+					return t
+				catch
+				endtry
+			endif
 		endif
 		if exists('b:git_dir')
 			return b:git_dir
 		endif
-	endif
-	if &ft == 'oil' && &bt != ''
-		let name = bufname('%')
-		if name =~ '\v^oil\:[\\\/][\\\/]'
-			let t = strpart(name, s:windows? 7 : 6)
-			if s:windows && t =~ '\v^\w[\\\/]'
-				let t = strpart(t, 0, 1) . ':' . strpart(t, 1)
+	elseif &bt != ''
+		if &ft == 'oil'
+			let name = bufname('%')
+			if name =~ '\v^oil\:[\\\/][\\\/]'
+				let t = strpart(name, s:windows? 7 : 6)
+				if s:windows && t =~ '\v^\w[\\\/]'
+					let t = strpart(t, 0, 1) . ':' . strpart(t, 1)
+				endif
+				return t
 			endif
-			return t
 		endif
 	endif
 	return ''
