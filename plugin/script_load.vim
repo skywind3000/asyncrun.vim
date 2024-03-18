@@ -119,7 +119,14 @@ function! s:root_locator()
 			let test = keys(g:asyncrun_rooter)
 			call sort(test)
 			for name in test
-				let root = call(g:asyncrun_rooter, [])
+				let root = call(g:asyncrun_rooter[name], [])
+				if root != ''
+					return root
+				endif
+			endfor
+		elseif type(g:asyncrun_rooter) == type([])
+			for index in range(len(g:asyncrun_rooter))
+				let root = call(g:asyncrun_rooter[index], [])
 				if root != ''
 					return root
 				endif
