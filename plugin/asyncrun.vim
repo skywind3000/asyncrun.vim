@@ -761,7 +761,7 @@ function! s:AsyncRun_Job_Start(cmd)
 			if s:async_nvim == 0
 				let l:args += [l:tmp]
 			else
-				let l:args = s:shellescape(l:tmp)
+				let l:args += [s:shellescape(l:tmp)]
 			endif
 		endif
 	elseif type(a:cmd) == 3
