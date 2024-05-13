@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2024
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2024/03/23 00:49
+" Last Modified: 2024/05/14 03:50
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1041,7 +1041,7 @@ function! asyncrun#script_write(command, pause)
 		let tmpname = fnamemodify(tempname(), ':h') . '/asyncrun.sh'
 	endif
 	if v:version >= 700
-		call writefile(lines, tmpname)
+		silent! call writefile(lines, tmpname)
 	else
 		exe 'redir ! > '.fnameescape(tmpname)
 		for line in lines
@@ -2305,7 +2305,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.12.5'
+	return '2.12.6'
 endfunc
 
 
@@ -2392,7 +2392,7 @@ function! s:program_msys(opts)
 	let flag = ' --login ' . (get(a:opts, 'inter', '')? '-i' : '')
 	let text = s:shellescape(bash) . flag . ' "' . path . '"'
 	let lines += ['call ' . text . "\r"]
-	call writefile(lines, tmpname)
+	silent! call writefile(lines, tmpname)
 	let command = a:opts.cmd
 	let names = ['FILEPATH', 'FILENAME', 'FILEDIR', 'FILENOEXT']
 	let names += ['PATHNOEXT', 'FILEEXT', 'FILETYPE', 'RELDIR']
@@ -2410,7 +2410,7 @@ function! s:program_msys(opts)
 	let cwd = asyncrun#path_win2unix(getcwd(), mount)
 	let lines += ["cd '" . cwd . "'"]
 	let lines += [command]
-	call writefile(lines, script)
+	silent! call writefile(lines, script)
 	return tmpname
 endfunc
 
