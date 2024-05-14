@@ -173,6 +173,9 @@ let g:asyncrun_shell = get(g:, 'asyncrun_shell', '')
 " specify shell cmd flag rather than &shellcmdflag
 let g:asyncrun_shellflag = get(g:, 'asyncrun_shellflag', '')
 
+" Using nvim with windows and powershell
+let g:asyncrun_using_nvim_win_powershell = get(g:, 'asyncrun_using_nvim_win_powershell', 0)
+
 " external runners for '-mode=terminal'
 let g:asyncrun_runner = get(g:, 'asyncrun_runner', {})
 
@@ -761,7 +764,11 @@ function! s:AsyncRun_Job_Start(cmd)
 			if s:async_nvim == 0
 				let l:args += [l:tmp]
 			else
-				let l:args += [s:shellescape(l:tmp)]
+				if g:asyncrun_using_nvim_win_powershell == 0
+					let l:args = s:shellescape(l:tmp)
+				else
+					let l:args = l:tmp
+				endif
 			endif
 		endif
 	elseif type(a:cmd) == 3
