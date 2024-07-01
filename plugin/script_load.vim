@@ -110,23 +110,23 @@ endfunc
 "----------------------------------------------------------------------
 " detect current root
 "----------------------------------------------------------------------
-function! s:root_locator()
+function! s:root_locator(name)
 	let root = ''
 	if exists('g:asyncrun_rooter')
 		if type(g:asyncrun_rooter) == type('')
-			let root = call(g:asyncrun_rooter, [])
+			let root = call(g:asyncrun_rooter, [a:name])
 		elseif type(g:asyncrun_rooter) == type({})
 			let test = keys(g:asyncrun_rooter)
 			call sort(test)
 			for name in test
-				let root = call(g:asyncrun_rooter[name], [])
+				let root = call(g:asyncrun_rooter[name], [a:name])
 				if root != ''
 					return root
 				endif
 			endfor
 		elseif type(g:asyncrun_rooter) == type([])
 			for index in range(len(g:asyncrun_rooter))
-				let root = call(g:asyncrun_rooter[index], [])
+				let root = call(g:asyncrun_rooter[index], [a:name])
 				if root != ''
 					return root
 				endif
@@ -136,7 +136,7 @@ function! s:root_locator()
 			return root
 		endif
 	endif
-	let root = asyncrun#locator#detect()
+	let root = asyncrun#locator#detect(a:name)
 	if root != '' && isdirectory(root)
 		return root
 	endif

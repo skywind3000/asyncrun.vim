@@ -150,7 +150,7 @@ endfunc
 "----------------------------------------------------------------------
 " root locator
 "----------------------------------------------------------------------
-function! asyncrun#locator#detect()
+function! asyncrun#locator#detect(name)
 	if &bt == ''
 		return asyncrun#locator#special_buffer_path()
 	endif
