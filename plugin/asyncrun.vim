@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2024
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2024/07/02 00:23
+" Last Modified: 2024/07/26 10:46:36
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -1248,7 +1248,11 @@ function! asyncrun#get_root(path, ...)
 		endif
 	endif
 	let strict = (a:0 >= 2)? (a:2) : 0
-	let l:hr = s:find_root(a:path, markers, strict)
+	if type(a:path) == 0 && (a:path == 0)
+		let l:hr = s:find_root('%', markers, strict)
+	else
+		let l:hr = s:find_root(a:path, markers, strict)
+	endif
 	if s:asyncrun_windows
 		let l:hr = s:StringReplace(l:hr, '/', "\\")
 	endif
@@ -2337,7 +2341,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.13.0'
+	return '2.13.1'
 endfunc
 
 
