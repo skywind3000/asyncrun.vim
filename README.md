@@ -431,9 +431,11 @@ When you use toggleterm2 and use the packer.nvim management plugin, you can set 
 		"skywind3000/asyncrun.vim",
 		as = "asyncrun",
 		config = function()
-			require("asyncrun_toggleterm").setup({
+			require("asyncrun.toggleterm2").setup({
 				mapping = "<leader>tt",
 				start_in_insert = false,
+				clear_env = false,
+				go_back = true,
 			})
 		end,
 	})
