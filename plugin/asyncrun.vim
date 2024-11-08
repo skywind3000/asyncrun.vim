@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2024
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2024/07/26 10:46:36
+" Last Modified: 2024/11/08 14:42:39
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -844,11 +844,11 @@ function! s:AsyncRun_Job_Start(cmd)
 			endif
 		endif
 		let l:slash = &shellslash
-		if l:slash && (has("win32") || has("win64") || has("win16") || has('win95'))
+		if l:slash && s:asyncrun_windows != 0
 			set noshellslash
 		endif
 		let s:async_job = jobstart(l:args, l:callbacks)
-		if l:slash && (has("win32") || has("win64") || has("win16") || has('win95'))
+		if l:slash && s:asyncrun_windows != 0
 			set shellslash
 		endif
 		let l:success = (s:async_job > 0)? 1 : 0
@@ -2341,7 +2341,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.13.1'
+	return '2.13.2'
 endfunc
 
 
