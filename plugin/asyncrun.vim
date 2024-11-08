@@ -838,17 +838,17 @@ function! s:AsyncRun_Job_Start(cmd)
 		let l:callbacks['on_exit'] = function('s:AsyncRun_Job_NeoVim')
 		let s:neovim_stdout = ''
 		let s:neovim_stderr = ''
-		if s:async_info.range <= 0 
+		if s:async_info.range <= 0
 			if g:asyncrun_stdin == 0 && has('nvim-0.6.0')
 				let l:callbacks.stdin = 'null'
 			endif
 		endif
 		let l:slash = &shellslash
-		if l:slash
+		if l:slash && (has("win32") || has("win64") || has("win16") || has('win95'))
 			set noshellslash
 		endif
 		let s:async_job = jobstart(l:args, l:callbacks)
-		if l:slash
+		if l:slash && (has("win32") || has("win64") || has("win16") || has('win95'))
 			set shellslash
 		endif
 		let l:success = (s:async_job > 0)? 1 : 0
