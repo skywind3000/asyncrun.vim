@@ -3,7 +3,7 @@
 " Maintainer: skywind3000 (at) gmail.com, 2016-2024
 " Homepage: https://github.com/skywind3000/asyncrun.vim
 "
-" Last Modified: 2025/03/24 10:40:26
+" Last Modified: 2025/03/24 10:50:34
 "
 " Run shell command in background and output to quickfix:
 "     :AsyncRun[!] [options] {cmd} ...
@@ -979,10 +979,7 @@ endfunc
 " Replace string
 function! s:StringReplace(text, old, new)
 	let l:data = split(a:text, a:old, 1)
-	if type(a:new) == 1
-		return join(l:data, a:new)
-	endif
-	return join(l:data, string(a:new))
+	return join(data, (type(a:new) == 1)? a:new : string(a:new))
 endfunc
 
 " Trim leading and tailing spaces
@@ -2344,7 +2341,7 @@ endfunc
 " asyncrun - version
 "----------------------------------------------------------------------
 function! asyncrun#version()
-	return '2.13.3'
+	return '2.13.4'
 endfunc
 
 
