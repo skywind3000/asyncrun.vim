@@ -2038,7 +2038,7 @@ function! s:run(opts)
 			call s:AutoCmd('Pre')
 			call s:AutoCmd('Start')
 		endif
-		exec '!'. escape(l:command, '%#')
+		exec '!' . shellescape(l:command, 1)
 		let g:asyncrun_text = opts.text
 		if opts.post != ''
 			exec opts.post
@@ -2129,7 +2129,7 @@ function! s:run(opts)
 			redraw
 		else
 			if l:mode == 4
-				exec '!' . escape(l:command, '%#')
+				exec '!' . shellescape(l:command, 1)
 			else
 				call system(l:command . ' &')
 			endif
