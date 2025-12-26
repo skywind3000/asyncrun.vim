@@ -598,7 +598,7 @@ function! s:AsyncRun_Job_OnFinish()
 	let l:last = l:current - s:async_start
 	let l:check = s:AsyncRun_Job_CheckScroll()
 	if s:async_code == 0
-		let l:text = "[Finished in ".l:last." seconds]"
+		let l:text = "[Finished in ".l:last." seconds with code 0]"
 		if !s:async_info.strip
 			call s:AppendText([l:text], 1)
 		endif
