@@ -1898,7 +1898,7 @@ function! s:run(opts)
 	endif
 
 	if empty(l:opts.program)
-		let normal_command = matchstr(l:command, '\v\C<[^ ]*>')
+		let normal_command = matchstr(l:command, '\v\S+')
 		if exists("b:current_compiler")
 			let save_compiler = b:current_compiler
 		endif
