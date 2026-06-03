@@ -1897,6 +1897,27 @@ function! s:run(opts)
 		return
 	endif
 
+	if empty(l:opts.program)
+		let normal_command = matchstr(l:command, '\v\C<[^ ]*>')
+		if exists("b:current_compiler")
+			let save_compiler = b:current_compiler
+		endif
+		let save_makeprg = &makeprg
+		let save_errorformat = &errorformat
+		try
+			exe "compiler ".normal_command
+			let s:async_efm = &errorformat
+			let &makeprg = save_makeprg
+			let &errorformat = save_errorformat
+			if exists("save_compiler")
+				let b:current_compiler = save_compiler
+			else
+				unlet! b:current_compiler
+			endif
+		catch
+		endtry
+	endif
+
 	let l:wrapper = get(g:, 'asyncrun_wrapper', '')
 
 	if l:wrapper != ''
